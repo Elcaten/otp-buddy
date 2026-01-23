@@ -1,5 +1,6 @@
 export interface StorageSchema {
   fastmailApiKey: string;
+  provider: string;
 
   enableLogging: boolean;
   visitCount: number;
@@ -7,6 +8,7 @@ export interface StorageSchema {
 
 export const defaultStorage: StorageSchema = {
   fastmailApiKey: '',
+  provider: 'fastmail',
 
   enableLogging: false,
   visitCount: 0,
