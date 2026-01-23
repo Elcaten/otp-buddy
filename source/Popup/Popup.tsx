@@ -26,151 +26,153 @@
  *       browser.runtime.sendMessage() sends to background script
  */
 
-import {useEffect, useState} from 'react';
+import JamClient from 'jmap-jam';
 import type {FC} from 'react';
-import browser, {Tabs} from 'webextension-polyfill';
+import {useEffect, useState} from 'react';
 import {getStorage} from '../utils/storage';
-import {
-  PageInfo,
-  PageInfoResponseMessage,
-  VisitCountResponseMessage,
-} from '../types/messages';
-import {TabInfo} from './components/TabInfo/TabInfo';
-import {FooterActions} from './components/FooterActions/FooterActions';
-import styles from './Popup.module.scss';
 
-function openWebPage(url: string): Promise<Tabs.Tab> {
-  return browser.tabs.create({url});
-}
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function useQuery<TData>({
+  queryFn,
+  enabled = true,
+}: {
+  queryFn: () => Promise<TData>;
+  enabled?: boolean;
+}) {
+  const [data, setData] = useState<TData | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState(false);
 
-interface TabData {
-  title: string;
-  url: string;
-  favIconUrl?: string;
+  useEffect(() => {
+    if (!enabled) return;
+
+    setLoading(true);
+    queryFn()
+      .then((query) => {
+        setData(query);
+      })
+      .catch((e) => {
+        setError(e);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled]);
+
+  return {data, error, loading};
 }
 
 const Popup: FC = () => {
-  const [tabInfo, setTabInfo] = useState<TabData | null>(null);
-  const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
-  const [visitCount, setVisitCount] = useState<number>(0);
-  const [username, setUsername] = useState<string>('');
+  const apiKey = useQuery({
+    queryFn: async () => {
+      const result = await getStorage(['fastmailApiKey']);
+      return result.fastmailApiKey;
+    },
+  });
 
-  useEffect(() => {
-    // Get current tab info
-    browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
-      const tab = tabs[0];
-      if (tab) {
-        setTabInfo({
-          title: tab.title || 'Unknown',
-          url: tab.url || 'Unknown',
-          favIconUrl: tab.favIconUrl,
-        });
-
-        // Request page info from content script
-        if (tab.id) {
-          browser.tabs
-            .sendMessage(tab.id, {type: 'GET_PAGE_INFO'})
-            .then((response: unknown) => {
-              const res = response as PageInfoResponseMessage;
-              if (res?.data) {
-                setPageInfo(res.data);
-              }
-            })
-            .catch(() => {
-              // Content script might not be injected on this page
-            });
-        }
-      }
-    });
-
-    // Get visit count from background script
-    browser.runtime
-      .sendMessage({type: 'GET_VISIT_COUNT'})
-      .then((response: unknown) => {
-        const res = response as VisitCountResponseMessage;
-        if (res?.count !== undefined) {
-          setVisitCount(res.count);
-        }
-      })
-      .catch(() => {
-        // Background script might not be ready
+  const recentEmailsQuery = useQuery({
+    enabled: !!apiKey.data,
+    queryFn: async () => {
+      const client = new JamClient({
+        bearerToken: apiKey.data!,
+        sessionUrl: 'https://api.fastmail.com/.well-known/jmap',
       });
 
-    // Get username from storage
-    getStorage(['username']).then(({username: storedUsername}) => {
-      setUsername(storedUsername);
-    });
-  }, []);
+      await client.session;
+      const accountId = await client.getPrimaryAccount();
 
-  const handleReloadTab = async (): Promise<void> => {
-    const tabs = await browser.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
-    const tab = tabs[0];
-    if (tab?.id) {
-      await browser.tabs.reload(tab.id);
+      const mailboxes = await client.api.Mailbox.get({
+        accountId,
+      });
+
+      const badMailboxIds = mailboxes[0].list
+        .filter(
+          (mailbox) =>
+            mailbox.name === 'Trash' ||
+            mailbox.name === 'Sent' ||
+            mailbox.name === 'Drafts'
+        )
+        .map((mailbox) => mailbox.id);
+
+      const recentEmails = await client.api.Email.query({
+        accountId,
+        filter: {
+          after: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
+          inMailboxOtherThan: badMailboxIds,
+        },
+      });
+      const emailDetails = await client.api.Email.get({
+        accountId,
+        ids: recentEmails[0].ids,
+        properties: ['subject', 'htmlBody', 'id', 'bodyValues'],
+        fetchHTMLBodyValues: true,
+      });
+      return emailDetails[0].list;
+    },
+  });
+
+  const handleCopyClick = async (id: string): Promise<void> => {
+    const email = recentEmailsQuery.data?.find((x) => x.id === id);
+    if (email) {
+      const parser = new DOMParser();
+      const mainHtmlPart = Object.values(email.bodyValues)[0]?.value;
+      if (mainHtmlPart) {
+        const doc = parser.parseFromString(mainHtmlPart, 'text/html');
+        debugger;
+        const validLinks = Array.from(doc.querySelectorAll('a'))
+          .filter((x) => new RegExp(/sign/gi).test(x.text))
+          .map((x) => x.getAttribute('href'));
+        await navigator.clipboard.writeText(
+          validLinks[0] ?? 'could not find link'
+        );
+      }
     }
   };
 
+  if (apiKey.loading || recentEmailsQuery.loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (apiKey.error) {
+    return <div>Error: {apiKey.error.message}</div>;
+  }
+  if (recentEmailsQuery.error) {
+    return <div>Error: {recentEmailsQuery.error.message}</div>;
+  }
+
+  if (!apiKey.data) {
+    return (
+      <section style={{padding: '0.25rem', minWidth: 'max-content'}}>
+        Please set your Fastmail API key in the extension settings
+      </section>
+    );
+  }
+
   return (
-    <section className={styles.popup}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Web Extension Starter</h1>
-        {username && <p className={styles.greeting}>Hello, {username}!</p>}
-      </header>
+    <section>
+      <h1>Recent OTP</h1>
 
-      {tabInfo && (
-        <div className={styles.tabCard}>
-          <TabInfo
-            title={tabInfo.title}
-            url={tabInfo.url}
-            favIconUrl={tabInfo.favIconUrl}
-            onReload={handleReloadTab}
-          />
-        </div>
-      )}
-
-      {/* Page Stats from Content Script */}
-      {pageInfo && (
-        <div className={styles.statsCard}>
-          <h3 className={styles.statsTitle}>Page Stats</h3>
-          <div className={styles.statsGrid}>
-            <div className={styles.statItem}>
-              <span className={styles.statValue}>{pageInfo.wordCount}</span>
-              <span className={styles.statLabel}>Words</span>
-            </div>
-            <div className={styles.statItem}>
-              <span className={styles.statValue}>{pageInfo.linkCount}</span>
-              <span className={styles.statLabel}>Links</span>
-            </div>
-            <div className={styles.statItem}>
-              <span className={styles.statValue}>{pageInfo.imageCount}</span>
-              <span className={styles.statLabel}>Images</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Visit Count from Background Script */}
-      <div className={styles.visitCard}>
-        <span className={styles.visitLabel}>Pages tracked:</span>
-        <span className={styles.visitCount}>{visitCount}</span>
-      </div>
-
-      <FooterActions
-        onSettings={(): Promise<Tabs.Tab> =>
-          openWebPage('/Options/options.html')
-        }
-        onGitHub={(): Promise<Tabs.Tab> =>
-          openWebPage(
-            'https://github.com/abhijithvijayan/web-extension-starter'
-          )
-        }
-        onSupport={(): Promise<Tabs.Tab> =>
-          openWebPage('https://www.buymeacoffee.com/abhijithvijayan')
-        }
-      />
+      <table style={{tableLayout: 'fixed', minWidth: 'max-content'}}>
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {recentEmailsQuery.data?.map((email) => (
+            <tr key={email.id}>
+              <td>{email.subject}</td>
+              <td>
+                <button type="button" onClick={() => handleCopyClick(email.id)}>
+                  Copy Link
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </section>
   );
 };

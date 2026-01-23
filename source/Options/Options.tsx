@@ -3,25 +3,22 @@ import type {FC} from 'react';
 import {getStorage, setStorage} from '../utils/storage';
 import {Button} from '../components/Button/Button';
 import {Input} from '../components/Input/Input';
-import {Checkbox} from '../components/Checkbox/Checkbox';
-import {GitHubIcon} from '../components/icons/GitHubIcon';
 import styles from './Options.module.scss';
 
 const Options: FC = () => {
-  const [username, setUsername] = useState('');
-  const [enableLogging, setEnableLogging] = useState(false);
+  const [fastmailApiKey, setFastmailApiKey] = useState('');
+  // const [enableLogging, setEnableLogging] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    getStorage(['username', 'enableLogging']).then((result) => {
-      setUsername(result.username);
-      setEnableLogging(result.enableLogging);
+    getStorage(['fastmailApiKey']).then((result) => {
+      setFastmailApiKey(result.fastmailApiKey);
     });
   }, []);
 
   const handleSave = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
-    await setStorage({username, enableLogging});
+    await setStorage({fastmailApiKey});
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -36,18 +33,19 @@ const Options: FC = () => {
       <form onSubmit={handleSave} className={styles.form}>
         <div className={styles.section}>
           <Input
-            label="Your Name"
-            id="username"
-            name="username"
-            placeholder="Enter your name"
+            type="password"
+            label="Fastmail API key"
+            id="fastmailApiKey"
+            name="fastmailApiKey"
+            placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX"
             spellCheck={false}
             autoComplete="off"
-            value={username}
-            onChange={(e): void => setUsername(e.target.value)}
+            value={fastmailApiKey}
+            onChange={(e): void => setFastmailApiKey(e.target.value)}
           />
         </div>
 
-        <div className={styles.section}>
+        {/* <div className={styles.section}>
           <Checkbox
             id="logging"
             name="logging"
@@ -55,7 +53,7 @@ const Options: FC = () => {
             checked={enableLogging}
             onChange={(e): void => setEnableLogging(e.target.checked)}
           />
-        </div>
+        </div> */}
 
         <div className={styles.actions}>
           <Button type="submit" variant="primary" size="large">
@@ -65,7 +63,7 @@ const Options: FC = () => {
         </div>
       </form>
 
-      <footer className={styles.footer}>
+      {/* <footer className={styles.footer}>
         <a
           href="https://github.com/abhijithvijayan/web-extension-starter"
           target="_blank"
@@ -75,7 +73,7 @@ const Options: FC = () => {
           <GitHubIcon size={18} />
           <span>View on GitHub</span>
         </a>
-      </footer>
+      </footer> */}
     </div>
   );
 };
