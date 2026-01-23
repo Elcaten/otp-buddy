@@ -1,11 +1,13 @@
 export interface StorageSchema {
-  username: string;
+  fastmailApiKey: string;
+
   enableLogging: boolean;
   visitCount: number;
 }
 
 export const defaultStorage: StorageSchema = {
-  username: '',
+  fastmailApiKey: '',
+
   enableLogging: false,
   visitCount: 0,
 };
