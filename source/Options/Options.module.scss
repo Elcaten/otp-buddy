@@ -4,7 +4,6 @@
 
 :global(body) {
   color: variables.$black;
-  background: linear-gradient(180deg, variables.$greyWhite 0%, #eef2f7 100%);
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -25,7 +24,6 @@
     font-size: 26px;
     font-weight: variables.$bold;
     margin-bottom: 10px;
-    background: linear-gradient(135deg, variables.$primary 0%, #8b5cf6 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -39,7 +37,6 @@
 }
 
 .form {
-  background: variables.$cardBg;
   border-radius: variables.$radiusLg;
   padding: 28px;
   box-shadow: variables.$shadowLg;
@@ -75,37 +72,6 @@
     background: variables.$success;
     border-radius: 50%;
     animation: pulse 1s ease-in-out;
-  }
-}
-
-.footer {
-  margin-top: 24px;
-  text-align: center;
-}
-
-.githubLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: variables.$medium;
-  color: variables.$skyBlue;
-  background: variables.$cardBg;
-  border: 1px solid variables.$border;
-  border-radius: variables.$radiusMd;
-  transition: all 0.2s ease;
-  text-decoration: none;
-
-  &:hover {
-    color: variables.$black;
-    border-color: #cbd5e1;
-    box-shadow: variables.$shadowSm;
-    transform: translateY(-1px);
-  }
-
-  svg {
-    flex-shrink: 0;
   }
 }
 
