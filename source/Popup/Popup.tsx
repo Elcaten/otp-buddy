@@ -30,6 +30,7 @@ import JamClient from 'jmap-jam';
 import type {FC} from 'react';
 import {getStorage} from '../utils/storage';
 import {useQuery} from './useQuery';
+import DOMPurify from 'dompurify';
 
 const Popup: FC = () => {
   const storageQuery = useQuery({
@@ -67,7 +68,7 @@ const Popup: FC = () => {
       const recentEmails = await client.api.Email.query({
         accountId,
         filter: {
-          after: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
+          after: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
           inMailboxOtherThan: mailboxes[0].ids,
         },
       });
@@ -88,7 +89,6 @@ const Popup: FC = () => {
       const mainHtmlPart = Object.values(email.bodyValues)[0]?.value;
       if (mainHtmlPart) {
         const doc = parser.parseFromString(mainHtmlPart, 'text/html');
-        debugger;
         const validLinks = Array.from(doc.querySelectorAll('a'))
           .filter((x) => new RegExp(/sign/gi).test(x.text))
           .map((x) => x.getAttribute('href'));
@@ -97,6 +97,39 @@ const Popup: FC = () => {
         );
       }
     }
+  };
+
+  const handlePreviewClick = async (id: string): Promise<void> => {
+    const email = recentEmailsQuery.data?.find((x) => x.id === id);
+    if (!email) {
+      return;
+    }
+
+    const mainHtmlPart = Object.values(email.bodyValues)[0]?.value;
+    if (!mainHtmlPart) {
+      return;
+    }
+
+    const newWindow = window.open('', '_blank');
+
+    if (!newWindow) {
+      return;
+    }
+
+    const policy = window.trustedTypes!.createPolicy('default', {
+      createHTML: (to_escape) =>
+        DOMPurify.sanitize(to_escape, {RETURN_TRUSTED_TYPE: false}),
+    });
+
+    if (!policy) {
+      return;
+    }
+
+    newWindow.document.open();
+    newWindow.document.write(
+      policy.createHTML(mainHtmlPart) as unknown as string
+    );
+    newWindow.document.close();
   };
 
   if (storageQuery.loading || recentEmailsQuery.loading) {
@@ -122,7 +155,13 @@ const Popup: FC = () => {
     <section>
       <h1>Recent OTP</h1>
 
-      <table style={{tableLayout: 'fixed', minWidth: 'max-content'}}>
+      <table
+        style={{
+          tableLayout: 'auto',
+          minWidth: 'fit-content',
+          whiteSpace: 'nowrap',
+        }}
+      >
         <thead>
           <tr>
             <th>Subject</th>
@@ -136,6 +175,12 @@ const Popup: FC = () => {
               <td>
                 <button type="button" onClick={() => handleCopyClick(email.id)}>
                   Copy Link
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handlePreviewClick(email.id)}
+                >
+                  Preview
                 </button>
               </td>
             </tr>
