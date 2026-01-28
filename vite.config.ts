@@ -1,4 +1,5 @@
 import {defineConfig, build} from 'vite';
+import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import process from 'node:process';
@@ -91,6 +92,8 @@ export default defineConfig(({ mode }) => {
 
 		plugins: [
 			react(),
+
+			tailwindcss(),
 
 			// delete previous built compressed file
 			clean({
