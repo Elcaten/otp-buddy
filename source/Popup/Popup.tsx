@@ -27,7 +27,7 @@
  */
 
 import JamClient from 'jmap-jam';
-import type {FC} from 'react';
+import {use, useCallback, useEffect, useState, type FC} from 'react';
 import {getStorage} from '../utils/storage';
 import {useQuery} from './useQuery';
 import DOMPurify from 'dompurify';
@@ -132,29 +132,65 @@ const FastmailEmailFetcher: EmailFetcher = {
   },
 };
 
-const Popup: FC = () => {
-  const recentEmailsQuery = useQuery({
-    queryFn: async () => FastmailEmailFetcher.fetchRecentEmails(),
-  });
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const useCopyOTPToClipboard = () => {
+  const [state, setState] = useState<'pending' | 'success' | 'error'>(
+    'pending'
+  );
+  const [stateDescription, setStateDescription] = useState<
+    string | undefined
+  >();
 
-  const handleCopyClick = async (email: Email): Promise<void> => {
+  const trigger = useCallback(async (email: Email) => {
     const emailContent = email.content;
     if (!emailContent) {
+      setState('error');
+      setStateDescription('Empty email');
       return;
     }
 
     const parser = EMAIL_PARSERS.find((p) => p.canParse(email));
     if (!parser) {
+      setState('error');
+      setStateDescription('Parser not found');
       return;
     }
 
     const result = parser.parse(email);
     if (!result) {
+      setState('error');
+      setStateDescription('Parser error');
       return;
     }
 
+    setState('success');
+
     // eslint-disable-next-line n/no-unsupported-features/node-builtins
     await navigator.clipboard.writeText(result);
+  }, []);
+
+  useEffect(() => {
+    let timeout: number;
+    if (state === 'success') {
+      timeout = window.setTimeout(() => setState('pending'), 3000);
+    }
+    return (): void => {
+      timeout && clearTimeout(timeout);
+    };
+  }, [state]);
+
+  return {trigger, state, stateDescription};
+};
+
+const Popup: FC = () => {
+  const recentEmailsQuery = useQuery({
+    queryFn: async () => FastmailEmailFetcher.fetchRecentEmails(),
+  });
+
+  const copyOTPToClipboard = useCopyOTPToClipboard();
+
+  const handleCopyClick = async (email: Email): Promise<void> => {
+    copyOTPToClipboard.trigger(email);
   };
 
   const handlePreviewClick = async (email: Email): Promise<void> => {
@@ -218,7 +254,10 @@ const Popup: FC = () => {
               <td>{email.subject}</td>
               <td>
                 <button type="button" onClick={() => handleCopyClick(email)}>
-                  Copy Link
+                  {copyOTPToClipboard.state === 'pending' && 'Copy OTP'}
+                  {copyOTPToClipboard.state === 'success' && 'Copied!'}
+                  {copyOTPToClipboard.state === 'error' &&
+                    copyOTPToClipboard.stateDescription}
                 </button>
                 <button type="button" onClick={() => handlePreviewClick(email)}>
                   Preview
