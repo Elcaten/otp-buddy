@@ -27,7 +27,7 @@
  */
 
 import JamClient from 'jmap-jam';
-import {use, useCallback, useEffect, useState, type FC} from 'react';
+import {JSX, use, useCallback, useEffect, useState, type FC} from 'react';
 import {getStorage} from '../utils/storage';
 import {useQuery} from './useQuery';
 import DOMPurify from 'dompurify';
@@ -182,16 +182,26 @@ const useCopyOTPToClipboard = () => {
   return {trigger, state, stateDescription};
 };
 
+function CopyOTPButton({email}: {email: Email}): JSX.Element {
+  const {trigger, state, stateDescription} = useCopyOTPToClipboard();
+
+  return (
+    <button
+      style={{minWidth: '130px'}}
+      type="button"
+      onClick={() => trigger(email)}
+    >
+      {state === 'pending' && 'Copy OTP'}
+      {state === 'success' && 'Copied!'}
+      {state === 'error' && stateDescription}
+    </button>
+  );
+}
+
 const Popup: FC = () => {
   const recentEmailsQuery = useQuery({
     queryFn: async () => FastmailEmailFetcher.fetchRecentEmails(),
   });
-
-  const copyOTPToClipboard = useCopyOTPToClipboard();
-
-  const handleCopyClick = async (email: Email): Promise<void> => {
-    copyOTPToClipboard.trigger(email);
-  };
 
   const handlePreviewClick = async (email: Email): Promise<void> => {
     const mainHtmlPart = email.content;
@@ -224,7 +234,11 @@ const Popup: FC = () => {
   };
 
   if (recentEmailsQuery.loading) {
-    return <div>Loading...</div>;
+    return (
+      <h1 style={{whiteSpace: 'nowrap', padding: '10px', textAlign: 'center'}}>
+        Loading...
+      </h1>
+    );
   }
 
   if (recentEmailsQuery.error) {
@@ -253,12 +267,7 @@ const Popup: FC = () => {
             <tr key={email.id}>
               <td>{email.subject}</td>
               <td>
-                <button type="button" onClick={() => handleCopyClick(email)}>
-                  {copyOTPToClipboard.state === 'pending' && 'Copy OTP'}
-                  {copyOTPToClipboard.state === 'success' && 'Copied!'}
-                  {copyOTPToClipboard.state === 'error' &&
-                    copyOTPToClipboard.stateDescription}
-                </button>
+                <CopyOTPButton email={email} />
                 <button type="button" onClick={() => handlePreviewClick(email)}>
                   Preview
                 </button>
