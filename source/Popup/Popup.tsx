@@ -175,27 +175,26 @@ const Popup: FC = () => {
 
     console.log(email);
 
-    // const newWindow = window.open('', '_blank');
+    const newWindow = window.open('', '_blank');
 
-    // if (!newWindow) {
-    //   return;
+    if (!newWindow) {
+      return;
+    }
 
-    // }
+    const policy = window.trustedTypes!.createPolicy('default', {
+      createHTML: (to_escape) =>
+        DOMPurify.sanitize(to_escape, {RETURN_TRUSTED_TYPE: false}),
+    });
 
-    // const policy = window.trustedTypes!.createPolicy('default', {
-    //   createHTML: (to_escape) =>
-    //     DOMPurify.sanitize(to_escape, {RETURN_TRUSTED_TYPE: false}),
-    // });
+    if (!policy) {
+      return;
+    }
 
-    // if (!policy) {
-    //   return;
-    // }
-
-    // newWindow.document.open();
-    // newWindow.document.write(
-    //   policy.createHTML(mainHtmlPart) as unknown as string
-    // );
-    // newWindow.document.close();
+    newWindow.document.open();
+    newWindow.document.write(
+      policy.createHTML(mainHtmlPart) as unknown as string
+    );
+    newWindow.document.close();
   };
 
   if (recentEmailsQuery.loading) {
