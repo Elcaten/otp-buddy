@@ -28,40 +28,8 @@
 
 import JamClient from 'jmap-jam';
 import type {FC} from 'react';
-import {useEffect, useState} from 'react';
 import {getStorage} from '../utils/storage';
-
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function useQuery<TData>({
-  queryFn,
-  enabled = true,
-}: {
-  queryFn: () => Promise<TData>;
-  enabled?: boolean;
-}) {
-  const [data, setData] = useState<TData | null>(null);
-  const [error, setError] = useState<Error | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!enabled) return;
-
-    setLoading(true);
-    queryFn()
-      .then((query) => {
-        setData(query);
-      })
-      .catch((e) => {
-        setError(e);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled]);
-
-  return {data, error, loading};
-}
+import {useQuery} from './useQuery';
 
 const Popup: FC = () => {
   const apiKey = useQuery({
@@ -82,24 +50,19 @@ const Popup: FC = () => {
       await client.session;
       const accountId = await client.getPrimaryAccount();
 
-      const mailboxes = await client.api.Mailbox.get({
+      const mailboxes = await client.api.Mailbox.query({
         accountId,
+        filter: {
+          operator: 'NOT',
+          conditions: [{role: 'trash'}, {role: 'sent'}, {role: 'drafts'}],
+        },
       });
-
-      const badMailboxIds = mailboxes[0].list
-        .filter(
-          (mailbox) =>
-            mailbox.name === 'Trash' ||
-            mailbox.name === 'Sent' ||
-            mailbox.name === 'Drafts'
-        )
-        .map((mailbox) => mailbox.id);
 
       const recentEmails = await client.api.Email.query({
         accountId,
         filter: {
           after: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
-          inMailboxOtherThan: badMailboxIds,
+          inMailboxOtherThan: mailboxes[0].ids,
         },
       });
       const emailDetails = await client.api.Email.get({
