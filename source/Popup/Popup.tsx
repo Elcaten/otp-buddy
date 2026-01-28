@@ -137,12 +137,7 @@ const Popup: FC = () => {
     queryFn: async () => FastmailEmailFetcher.fetchRecentEmails(),
   });
 
-  const handleCopyClick = async (id: string): Promise<void> => {
-    const email = recentEmailsQuery.data?.find((x) => x.id === id);
-    if (!email) {
-      return;
-    }
-
+  const handleCopyClick = async (email: Email): Promise<void> => {
     const emailContent = email.content;
     if (!emailContent) {
       return;
@@ -162,12 +157,7 @@ const Popup: FC = () => {
     await navigator.clipboard.writeText(result);
   };
 
-  const handlePreviewClick = async (id: string): Promise<void> => {
-    const email = recentEmailsQuery.data?.find((x) => x.id === id);
-    if (!email) {
-      return;
-    }
-
+  const handlePreviewClick = async (email: Email): Promise<void> => {
     const mainHtmlPart = email.content;
     if (!mainHtmlPart) {
       return;
@@ -227,13 +217,10 @@ const Popup: FC = () => {
             <tr key={email.id}>
               <td>{email.subject}</td>
               <td>
-                <button type="button" onClick={() => handleCopyClick(email.id)}>
+                <button type="button" onClick={() => handleCopyClick(email)}>
                   Copy Link
                 </button>
-                <button
-                  type="button"
-                  onClick={() => handlePreviewClick(email.id)}
-                >
+                <button type="button" onClick={() => handlePreviewClick(email)}>
                   Preview
                 </button>
               </td>
