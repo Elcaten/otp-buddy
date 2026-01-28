@@ -1,0 +1,68 @@
+import {JSX, useCallback, useEffect, useState} from 'react';
+import {Email} from '../../email/types';
+import {emailParser} from '../../email/parser';
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function useCopyOTPToClipboard() {
+  const [state, setState] = useState<'pending' | 'success' | 'error'>(
+    'pending'
+  );
+  const [stateDescription, setStateDescription] = useState<
+    string | undefined
+  >();
+
+  const trigger = useCallback(async (email: Email) => {
+    const emailContent = email.content;
+    if (!emailContent) {
+      setState('error');
+      setStateDescription('Empty email');
+      return;
+    }
+
+    if (!emailParser.canParse(email)) {
+      setState('error');
+      setStateDescription('Parser not found');
+      return;
+    }
+
+    const result = emailParser.parse(email);
+    if (!result) {
+      setState('error');
+      setStateDescription('Parser error');
+      return;
+    }
+
+    setState('success');
+
+    // eslint-disable-next-line n/no-unsupported-features/node-builtins
+    await navigator.clipboard.writeText(result);
+  }, []);
+
+  useEffect(() => {
+    let timeout: number;
+    if (state === 'success') {
+      timeout = window.setTimeout(() => setState('pending'), 3000);
+    }
+    return (): void => {
+      timeout && clearTimeout(timeout);
+    };
+  }, [state]);
+
+  return {trigger, state, stateDescription};
+}
+
+export function CopyOTPButton({email}: {email: Email}): JSX.Element {
+  const {trigger, state, stateDescription} = useCopyOTPToClipboard();
+
+  return (
+    <button
+      style={{minWidth: '130px'}}
+      type="button"
+      onClick={() => trigger(email)}
+    >
+      {state === 'pending' && 'Copy OTP'}
+      {state === 'success' && 'Copied!'}
+      {state === 'error' && stateDescription}
+    </button>
+  );
+}
