@@ -32,63 +32,85 @@ import {getStorage} from '../utils/storage';
 import {useQuery} from './useQuery';
 import DOMPurify from 'dompurify';
 
+type EmailAddress = {
+  name?: string | undefined;
+  email?: string | undefined;
+};
+type Email = {
+  id: string;
+  subject: string | undefined;
+  from: EmailAddress[] | undefined;
+  content: string | undefined;
+};
+interface EmailFetcher {
+  fetchRecentEmails: () => Promise<Email[]>;
+}
+interface EmailParser {
+  canParse: (email: Email) => boolean | Promise<boolean>;
+  parse: (email: Email) => string | Promise<string>;
+}
+
+const FastmailEmailFetcher: EmailFetcher = {
+  fetchRecentEmails: async () => {
+    const result = await getStorage(['fastmailApiKey', 'fastmailAccountId']);
+
+    if (!result?.fastmailApiKey || !result?.fastmailAccountId) {
+      throw new Error('Fastmail API key or account ID not found');
+    }
+
+    const client = new JamClient({
+      bearerToken: result?.fastmailApiKey!,
+      sessionUrl: 'https://api.fastmail.com/.well-known/jmap',
+    });
+
+    await client.session;
+    const accountId = result?.fastmailAccountId!;
+
+    const unwantedMailboxes = await client.api.Mailbox.query({
+      accountId,
+      filter: {
+        operator: 'OR',
+        conditions: [{role: 'trash'}, {role: 'sent'}, {role: 'drafts'}],
+      },
+    });
+
+    const recentEmails = await client.api.Email.query({
+      accountId,
+      filter: {
+        after: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+        inMailboxOtherThan: unwantedMailboxes[0].ids,
+      },
+    });
+    const emailDetails = await client.api.Email.get({
+      accountId,
+      ids: recentEmails[0].ids,
+      properties: ['id', 'subject', 'bodyValues', 'from'],
+      fetchHTMLBodyValues: true,
+    });
+
+    return emailDetails[0].list.map((email) => {
+      return {
+        id: email.id,
+        subject: email.subject,
+        from: email.from,
+        content: Object.values(email.bodyValues)[0]?.value,
+      };
+    });
+  },
+};
+
 const Popup: FC = () => {
-  const storageQuery = useQuery({
-    queryFn: async () => {
-      const result = await getStorage(['fastmailApiKey', 'fastmailAccountId']);
-      return result;
-    },
-  });
-
-  console.log(storageQuery.data);
-
-  const hasStorageData =
-    !!storageQuery.data?.fastmailApiKey &&
-    !!storageQuery.data?.fastmailAccountId;
-
   const recentEmailsQuery = useQuery({
-    enabled: hasStorageData,
-    queryFn: async () => {
-      const client = new JamClient({
-        bearerToken: storageQuery.data?.fastmailApiKey!,
-        sessionUrl: 'https://api.fastmail.com/.well-known/jmap',
-      });
-
-      await client.session;
-      const accountId = storageQuery.data?.fastmailAccountId!;
-
-      const unwantedMailboxes = await client.api.Mailbox.query({
-        accountId,
-        filter: {
-          operator: 'OR',
-          conditions: [{role: 'trash'}, {role: 'sent'}, {role: 'drafts'}],
-        },
-      });
-
-      const recentEmails = await client.api.Email.query({
-        accountId,
-        filter: {
-          after: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-          inMailboxOtherThan: unwantedMailboxes[0].ids,
-        },
-      });
-      const emailDetails = await client.api.Email.get({
-        accountId,
-        ids: recentEmails[0].ids,
-        properties: ['subject', 'htmlBody', 'id', 'bodyValues'],
-        fetchHTMLBodyValues: true,
-      });
-      return emailDetails[0].list;
-    },
+    queryFn: async () => FastmailEmailFetcher.fetchRecentEmails(),
   });
 
   const handleCopyClick = async (id: string): Promise<void> => {
     const email = recentEmailsQuery.data?.find((x) => x.id === id);
     if (email) {
       const parser = new DOMParser();
-      const mainHtmlPart = Object.values(email.bodyValues)[0]?.value;
-      if (mainHtmlPart) {
-        const doc = parser.parseFromString(mainHtmlPart, 'text/html');
+      const emailContent = email.content;
+      if (emailContent) {
+        const doc = parser.parseFromString(emailContent, 'text/html');
         const validLinks = Array.from(doc.querySelectorAll('a'))
           .filter((x) => new RegExp(/sign/gi).test(x.text))
           .map((x) => x.getAttribute('href'));
@@ -105,50 +127,42 @@ const Popup: FC = () => {
       return;
     }
 
-    const mainHtmlPart = Object.values(email.bodyValues)[0]?.value;
+    const mainHtmlPart = email.content;
     if (!mainHtmlPart) {
       return;
     }
 
-    const newWindow = window.open('', '_blank');
+    console.log(email);
 
-    if (!newWindow) {
-      return;
-    }
+    // const newWindow = window.open('', '_blank');
 
-    const policy = window.trustedTypes!.createPolicy('default', {
-      createHTML: (to_escape) =>
-        DOMPurify.sanitize(to_escape, {RETURN_TRUSTED_TYPE: false}),
-    });
+    // if (!newWindow) {
+    //   return;
 
-    if (!policy) {
-      return;
-    }
+    // }
 
-    newWindow.document.open();
-    newWindow.document.write(
-      policy.createHTML(mainHtmlPart) as unknown as string
-    );
-    newWindow.document.close();
+    // const policy = window.trustedTypes!.createPolicy('default', {
+    //   createHTML: (to_escape) =>
+    //     DOMPurify.sanitize(to_escape, {RETURN_TRUSTED_TYPE: false}),
+    // });
+
+    // if (!policy) {
+    //   return;
+    // }
+
+    // newWindow.document.open();
+    // newWindow.document.write(
+    //   policy.createHTML(mainHtmlPart) as unknown as string
+    // );
+    // newWindow.document.close();
   };
 
-  if (storageQuery.loading || recentEmailsQuery.loading) {
+  if (recentEmailsQuery.loading) {
     return <div>Loading...</div>;
   }
 
-  if (storageQuery.error) {
-    return <div>Error: {storageQuery.error.message}</div>;
-  }
   if (recentEmailsQuery.error) {
     return <div>Error: {recentEmailsQuery.error.message}</div>;
-  }
-
-  if (!hasStorageData) {
-    return (
-      <section style={{padding: '0.25rem', minWidth: 'max-content'}}>
-        Please set your Fastmail API key in the extension settings
-      </section>
-    );
   }
 
   return (
