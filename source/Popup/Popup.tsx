@@ -46,9 +46,42 @@ interface EmailFetcher {
   fetchRecentEmails: () => Promise<Email[]>;
 }
 interface EmailParser {
-  canParse: (email: Email) => boolean | Promise<boolean>;
-  parse: (email: Email) => string | Promise<string>;
+  canParse: (email: Email) => boolean;
+  parse: (email: Email) => string | undefined;
 }
+
+const GitlabEmailParser: EmailParser = {
+  canParse: (email: Email) =>
+    email.from?.some((from) => from.email?.endsWith('gitlab.com')) ?? false,
+  parse: (email: Email) => new RegExp(/\d{6}/g).exec(email.content ?? '')?.[0],
+};
+const ClaudeEmailParser: EmailParser = {
+  canParse: (email: Email) =>
+    email.from?.some((from) => from.email?.endsWith('anthropic.com')) ?? false,
+  parse: (email: Email) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(email.content ?? '', 'text/html');
+    const signInLink = Array.from(doc.querySelectorAll('a')).find((link) =>
+      new RegExp(/sign/gi).test(link.text)
+    );
+
+    return signInLink?.getAttribute('href') ?? undefined;
+  },
+};
+
+const PolymarketEmailParser: EmailParser = {
+  canParse: (email: Email) =>
+    !!email.from?.some((from) =>
+      from.name?.toLocaleLowerCase().includes('polymarket')
+    ),
+  parse: (email: Email) => new RegExp(/\d{6}/g).exec(email.subject ?? '')?.[0],
+};
+
+const EMAIL_PARSERS: EmailParser[] = [
+  GitlabEmailParser,
+  ClaudeEmailParser,
+  PolymarketEmailParser,
+];
 
 const FastmailEmailFetcher: EmailFetcher = {
   fetchRecentEmails: async () => {
@@ -106,19 +139,27 @@ const Popup: FC = () => {
 
   const handleCopyClick = async (id: string): Promise<void> => {
     const email = recentEmailsQuery.data?.find((x) => x.id === id);
-    if (email) {
-      const parser = new DOMParser();
-      const emailContent = email.content;
-      if (emailContent) {
-        const doc = parser.parseFromString(emailContent, 'text/html');
-        const validLinks = Array.from(doc.querySelectorAll('a'))
-          .filter((x) => new RegExp(/sign/gi).test(x.text))
-          .map((x) => x.getAttribute('href'));
-        await navigator.clipboard.writeText(
-          validLinks[0] ?? 'could not find link'
-        );
-      }
+    if (!email) {
+      return;
     }
+
+    const emailContent = email.content;
+    if (!emailContent) {
+      return;
+    }
+
+    const parser = EMAIL_PARSERS.find((p) => p.canParse(email));
+    if (!parser) {
+      return;
+    }
+
+    const result = parser.parse(email);
+    if (!result) {
+      return;
+    }
+
+    // eslint-disable-next-line n/no-unsupported-features/node-builtins
+    await navigator.clipboard.writeText(result);
   };
 
   const handlePreviewClick = async (id: string): Promise<void> => {
