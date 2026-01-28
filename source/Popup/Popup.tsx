@@ -57,10 +57,10 @@ const Popup: FC = () => {
       await client.session;
       const accountId = storageQuery.data?.fastmailAccountId!;
 
-      const mailboxes = await client.api.Mailbox.query({
+      const unwantedMailboxes = await client.api.Mailbox.query({
         accountId,
         filter: {
-          operator: 'NOT',
+          operator: 'OR',
           conditions: [{role: 'trash'}, {role: 'sent'}, {role: 'drafts'}],
         },
       });
@@ -69,7 +69,7 @@ const Popup: FC = () => {
         accountId,
         filter: {
           after: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-          inMailboxOtherThan: mailboxes[0].ids,
+          inMailboxOtherThan: unwantedMailboxes[0].ids,
         },
       });
       const emailDetails = await client.api.Email.get({
