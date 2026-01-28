@@ -32,23 +32,29 @@ import {getStorage} from '../utils/storage';
 import {useQuery} from './useQuery';
 
 const Popup: FC = () => {
-  const apiKey = useQuery({
+  const storageQuery = useQuery({
     queryFn: async () => {
-      const result = await getStorage(['fastmailApiKey']);
-      return result.fastmailApiKey;
+      const result = await getStorage(['fastmailApiKey', 'fastmailAccountId']);
+      return result;
     },
   });
 
+  console.log(storageQuery.data);
+
+  const hasStorageData =
+    !!storageQuery.data?.fastmailApiKey &&
+    !!storageQuery.data?.fastmailAccountId;
+
   const recentEmailsQuery = useQuery({
-    enabled: !!apiKey.data,
+    enabled: hasStorageData,
     queryFn: async () => {
       const client = new JamClient({
-        bearerToken: apiKey.data!,
+        bearerToken: storageQuery.data?.fastmailApiKey!,
         sessionUrl: 'https://api.fastmail.com/.well-known/jmap',
       });
 
       await client.session;
-      const accountId = await client.getPrimaryAccount();
+      const accountId = storageQuery.data?.fastmailAccountId!;
 
       const mailboxes = await client.api.Mailbox.query({
         accountId,
@@ -93,18 +99,18 @@ const Popup: FC = () => {
     }
   };
 
-  if (apiKey.loading || recentEmailsQuery.loading) {
+  if (storageQuery.loading || recentEmailsQuery.loading) {
     return <div>Loading...</div>;
   }
 
-  if (apiKey.error) {
-    return <div>Error: {apiKey.error.message}</div>;
+  if (storageQuery.error) {
+    return <div>Error: {storageQuery.error.message}</div>;
   }
   if (recentEmailsQuery.error) {
     return <div>Error: {recentEmailsQuery.error.message}</div>;
   }
 
-  if (!apiKey.data) {
+  if (!hasStorageData) {
     return (
       <section style={{padding: '0.25rem', minWidth: 'max-content'}}>
         Please set your Fastmail API key in the extension settings
