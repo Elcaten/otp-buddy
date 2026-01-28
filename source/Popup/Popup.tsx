@@ -101,17 +101,17 @@ const FastmailEmailFetcher: EmailFetcher = {
 
     const unwantedMailboxes = await client.api.Mailbox.query({
       accountId,
-      filter: {
-        operator: 'OR',
-        conditions: [{role: 'trash'}, {role: 'sent'}, {role: 'drafts'}],
-      },
+      // filter: {
+      //   operator: 'OR',
+      //   conditions: [{role: 'trash'}, {role: 'sent'}, {role: 'drafts'}],
+      // },
     });
 
     const recentEmails = await client.api.Email.query({
       accountId,
       filter: {
         after: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-        inMailboxOtherThan: unwantedMailboxes[0].ids,
+        // inMailboxOtherThan: unwantedMailboxes[0].ids,
       },
     });
     const emailDetails = await client.api.Email.get({
