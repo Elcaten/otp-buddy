@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect} from 'react';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function useQuery<TData>({
@@ -29,5 +29,5 @@ export function useQuery<TData>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled]);
 
-  return { data, error, loading };
+  return {data, error, loading};
 }
