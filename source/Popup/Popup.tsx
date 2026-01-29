@@ -48,14 +48,6 @@ const Popup: FC = () => {
       ).fetchRecentEmails(),
   });
 
-  if (recentEmailsQuery.loading || storageQuery.loading) {
-    return (
-      <h1 style={{whiteSpace: 'nowrap', padding: '10px', textAlign: 'center'}}>
-        Loading...
-      </h1>
-    );
-  }
-
   if (storageQuery.error) {
     return <div>Error: {storageQuery.error.message}</div>;
   }
@@ -90,6 +82,13 @@ const Popup: FC = () => {
               </td>
             </tr>
           ))}
+          {recentEmailsQuery.loading && (
+            <tr>
+              <td colSpan={2} style={{padding: '12px 128px'}}>
+                Loading...
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </section>
