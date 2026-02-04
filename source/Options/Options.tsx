@@ -1,13 +1,6 @@
 import type {FC} from 'react';
-import {Fragment, useEffect, useState} from 'react';
-import {
-  Description,
-  Field,
-  FieldGroup,
-  Fieldset,
-  Label,
-  Legend,
-} from '../components/fieldset';
+import {useEffect, useState} from 'react';
+import {Field, FieldGroup, Fieldset, Label} from '../components/fieldset';
 import {Input} from '../components/input';
 import {Radio, RadioField, RadioGroup} from '../components/radio';
 import {PROVIDERS} from '../types/providers';
