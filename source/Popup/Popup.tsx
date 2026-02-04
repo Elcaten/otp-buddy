@@ -26,21 +26,24 @@
  *       browser.runtime.sendMessage() sends to background script
  */
 
+import browser from 'webextension-polyfill';
 import {type FC} from 'react';
 import {FastmailEmailFetcher} from '../email/fetcher/fastmail-fetcher';
 import {getStorage} from '../utils/storage';
 import {CopyOTPButton} from './components/copy-opt-button';
 import {OpenPreviewButton} from './components/open-preview-button';
 import {useQuery} from './useQuery';
+import s from './Popup.module.scss';
 
 const Popup: FC = () => {
   const storageQuery = useQuery({
     queryFn: async () => getStorage(['fastmailApiKey', 'fastmailAccountId']),
   });
+  const isSettingsValid =
+    !!storageQuery.data?.fastmailApiKey &&
+    !!storageQuery.data?.fastmailAccountId;
   const recentEmailsQuery = useQuery({
-    enabled:
-      !!storageQuery.data?.fastmailApiKey &&
-      !!storageQuery.data?.fastmailAccountId,
+    enabled: isSettingsValid,
     queryFn: async () =>
       new FastmailEmailFetcher(
         storageQuery.data?.fastmailApiKey!,
@@ -48,11 +51,20 @@ const Popup: FC = () => {
       ).fetchRecentEmails(),
   });
 
-  if (storageQuery.error) {
-    return <div>Error: {storageQuery.error.message}</div>;
-  }
-  if (recentEmailsQuery.error) {
-    return <div>Error: {recentEmailsQuery.error.message}</div>;
+  if (!isSettingsValid) {
+    return (
+      <div style={{minWidth: 'max-content'}}>
+        Please set up your Fastmail API key and account ID in the{' '}
+        <button
+          type="button"
+          onClick={() => browser.runtime.openOptionsPage()}
+          className={s.buttonLink}
+        >
+          extension settings
+        </button>
+        .
+      </div>
+    );
   }
 
   return (
