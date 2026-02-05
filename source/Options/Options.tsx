@@ -11,6 +11,7 @@ import {Select} from '../components/select';
 import {JamClient} from 'jmap-jam';
 import {useQuery} from '../Popup/useQuery';
 import {Heading} from '../components/heading';
+import {GmailOptions} from './GmailOptions';
 
 const Options: FC = () => {
   const [provider, setProvider] = useState<'fastmail' | 'gmail' | 'imap'>(
@@ -73,6 +74,8 @@ const Options: FC = () => {
               </RadioField>
             ))}
           </RadioGroup>
+
+          {provider === 'gmail' && <GmailOptions />}
 
           {provider === 'fastmail' && (
             <FieldGroup>
