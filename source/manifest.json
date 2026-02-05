@@ -1,7 +1,9 @@
 {
+  "$schema": "https://json.schemastore.org/chrome-manifest.json",
+
   "manifest_version": 3,
-  "name": "Sample WebExtension",
-  "version": "0.0.0",
+  "name": "OTP Buddy",
+  "version": "1.0.0",
 
   "icons": {
     "16": "assets/icons/favicon-16.png",
@@ -13,24 +15,15 @@
   "homepage_url": "https://github.com/abhijithvijayan/web-extension-starter",
   "short_name": "Sample Name",
 
-  "permissions": [
-    "activeTab",
-    "storage"
-  ],
+  "permissions": ["identity", "storage"],
 
   "optional_permissions": [],
 
   "__chrome__host_permissions": [],
 
-  "__chrome__optional_host_permissions": [
-    "http://*/*",
-    "https://*/*"
-  ],
+  "__chrome__optional_host_permissions": ["http://*/*", "https://*/*"],
 
-  "__firefox__optional_host_permissions": [
-    "http://*/*",
-    "https://*/*"
-  ],
+  "__firefox__optional_host_permissions": ["http://*/*", "https://*/*"],
 
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self';"
@@ -74,14 +67,9 @@
   "content_scripts": [
     {
       "run_at": "document_start",
-      "matches": [
-        "http://*/*",
-        "https://*/*"
-      ],
+      "matches": ["http://*/*", "https://*/*"],
       "css": [],
-      "js": [
-        "assets/js/contentScript.bundle.js"
-      ]
+      "js": ["assets/js/contentScript.bundle.js"]
     }
   ],
 
