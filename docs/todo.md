@@ -1,0 +1,2 @@
+- support gmail messages in chrome / firefox
+- support gmail messages in safari - use native messaging for oAuth
