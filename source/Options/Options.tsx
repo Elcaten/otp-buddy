@@ -120,6 +120,9 @@ const Options: FC = () => {
           )}
         </Fieldset>
       </form>
+      <a href="https://www.flaticon.com/free-icons/otp" title="otp icons">
+        Otp icons created by Icons_Field - Flaticon
+      </a>
     </main>
   );
 };
