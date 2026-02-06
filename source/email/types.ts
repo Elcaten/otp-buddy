@@ -16,5 +16,9 @@ export type EmailFetcher = {
 
 export type EmailParser = {
   canParse: (email: Email) => boolean;
-  parse: (email: Email) => string | undefined;
+  tryParse: (
+    email: Email
+  ) =>
+    | {success: true; result: string}
+    | {success: false; error: 'ambiguous' | 'not-found' | 'unexpected'};
 };

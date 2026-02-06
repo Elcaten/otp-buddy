@@ -25,8 +25,8 @@ function useCopyOTPToClipboard() {
       return;
     }
 
-    const result = emailParser.parse(email);
-    if (!result) {
+    const result = emailParser.tryParse(email);
+    if (!result.success) {
       setState('error');
       setStateDescription('Parser error');
       return;
@@ -35,7 +35,7 @@ function useCopyOTPToClipboard() {
     setState('success');
 
     // eslint-disable-next-line n/no-unsupported-features/node-builtins
-    await navigator.clipboard.writeText(result);
+    await navigator.clipboard.writeText(result.result);
   }, []);
 
   useEffect(() => {

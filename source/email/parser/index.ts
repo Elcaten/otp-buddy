@@ -12,6 +12,11 @@ const EMAIL_PARSERS: EmailParser[] = [
 export const emailParser: EmailParser = {
   canParse: (email: Email) =>
     EMAIL_PARSERS.some((parser) => parser.canParse(email)),
-  parse: (email: Email) =>
-    EMAIL_PARSERS.find((parser) => parser.canParse(email))?.parse(email),
+  tryParse: (email: Email) => {
+    const parser = EMAIL_PARSERS.find((p) => p.canParse(email));
+    if (!parser) {
+      return {success: false, error: 'not-found'};
+    }
+    return parser.tryParse(email);
+  },
 };
