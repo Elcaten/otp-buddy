@@ -21,7 +21,8 @@
     "build:firefox": "cross-env TARGET_BROWSER=firefox vite build --config vite.config.ts",
     "build": "npm run build:chrome && npm run build:firefox",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "init:safari": "xcrun safari-web-extension-packager --project-location safari --app-name OTPBuddy --bundle-identifier com.elcaten.otpbuddy ./extension/chrome"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",

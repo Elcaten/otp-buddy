@@ -1,0 +1,985 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		93F408202F36548A00BF3AB9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F4081F2F36548A00BF3AB9 /* AppDelegate.swift */; };
+		93F408222F36548A00BF3AB9 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F408212F36548A00BF3AB9 /* SceneDelegate.swift */; };
+		93F408252F36548A00BF3AB9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93F408232F36548A00BF3AB9 /* LaunchScreen.storyboard */; };
+		93F408282F36548A00BF3AB9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93F408262F36548A00BF3AB9 /* Main.storyboard */; };
+		93F408312F36548A00BF3AB9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F408302F36548A00BF3AB9 /* AppDelegate.swift */; };
+		93F408342F36548A00BF3AB9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93F408322F36548A00BF3AB9 /* Main.storyboard */; };
+		93F4083B2F36548A00BF3AB9 /* OTPBuddy Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 93F4083A2F36548A00BF3AB9 /* OTPBuddy Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		93F408452F36548A00BF3AB9 /* OTPBuddy Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 93F408442F36548A00BF3AB9 /* OTPBuddy Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		93F4084A2F36548A00BF3AB9 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 93F4080F2F36548600BF3AB9 /* Main.html */; };
+		93F4084B2F36548A00BF3AB9 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 93F4080F2F36548600BF3AB9 /* Main.html */; };
+		93F4084C2F36548A00BF3AB9 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 93F408112F36548600BF3AB9 /* Icon.png */; };
+		93F4084D2F36548A00BF3AB9 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 93F408112F36548600BF3AB9 /* Icon.png */; };
+		93F4084E2F36548A00BF3AB9 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 93F408122F36548600BF3AB9 /* Style.css */; };
+		93F4084F2F36548A00BF3AB9 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 93F408122F36548600BF3AB9 /* Style.css */; };
+		93F408502F36548A00BF3AB9 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 93F408132F36548600BF3AB9 /* Script.js */; };
+		93F408512F36548A00BF3AB9 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 93F408132F36548600BF3AB9 /* Script.js */; };
+		93F408522F36548A00BF3AB9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F408142F36548600BF3AB9 /* ViewController.swift */; };
+		93F408532F36548A00BF3AB9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F408142F36548600BF3AB9 /* ViewController.swift */; };
+		93F408542F36548A00BF3AB9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93F408152F36548A00BF3AB9 /* Assets.xcassets */; };
+		93F408552F36548A00BF3AB9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93F408152F36548A00BF3AB9 /* Assets.xcassets */; };
+		93F408562F36548A00BF3AB9 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F408172F36548A00BF3AB9 /* SafariWebExtensionHandler.swift */; };
+		93F408572F36548A00BF3AB9 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F408172F36548A00BF3AB9 /* SafariWebExtensionHandler.swift */; };
+		93F4086D2F36548B00BF3AB9 /* Options in Resources */ = {isa = PBXBuildFile; fileRef = 93F408692F36548B00BF3AB9 /* Options */; };
+		93F4086E2F36548B00BF3AB9 /* Popup in Resources */ = {isa = PBXBuildFile; fileRef = 93F4086A2F36548B00BF3AB9 /* Popup */; };
+		93F4086F2F36548B00BF3AB9 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 93F4086B2F36548B00BF3AB9 /* manifest.json */; };
+		93F408702F36548B00BF3AB9 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 93F4086C2F36548B00BF3AB9 /* assets */; };
+		93F408712F36548B00BF3AB9 /* Options in Resources */ = {isa = PBXBuildFile; fileRef = 93F408692F36548B00BF3AB9 /* Options */; };
+		93F408722F36548B00BF3AB9 /* Popup in Resources */ = {isa = PBXBuildFile; fileRef = 93F4086A2F36548B00BF3AB9 /* Popup */; };
+		93F408732F36548B00BF3AB9 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 93F4086B2F36548B00BF3AB9 /* manifest.json */; };
+		93F408742F36548B00BF3AB9 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 93F4086C2F36548B00BF3AB9 /* assets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		93F4083C2F36548A00BF3AB9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 93F408092F36548600BF3AB9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 93F408392F36548A00BF3AB9;
+			remoteInfo = "OTPBuddy Extension (iOS)";
+		};
+		93F408462F36548A00BF3AB9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 93F408092F36548600BF3AB9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 93F408432F36548A00BF3AB9;
+			remoteInfo = "OTPBuddy Extension (macOS)";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		93F4085D2F36548A00BF3AB9 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				93F4083B2F36548A00BF3AB9 /* OTPBuddy Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		93F408642F36548A00BF3AB9 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				93F408452F36548A00BF3AB9 /* OTPBuddy Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		93F408102F36548600BF3AB9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		93F408112F36548600BF3AB9 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		93F408122F36548600BF3AB9 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		93F408132F36548600BF3AB9 /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		93F408142F36548600BF3AB9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		93F408152F36548A00BF3AB9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		93F408172F36548A00BF3AB9 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		93F4081C2F36548A00BF3AB9 /* OTPBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OTPBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		93F4081F2F36548A00BF3AB9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		93F408212F36548A00BF3AB9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		93F408242F36548A00BF3AB9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		93F408272F36548A00BF3AB9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		93F408292F36548A00BF3AB9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		93F4082E2F36548A00BF3AB9 /* OTPBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OTPBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		93F408302F36548A00BF3AB9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		93F408332F36548A00BF3AB9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		93F408352F36548A00BF3AB9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		93F4083A2F36548A00BF3AB9 /* OTPBuddy Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "OTPBuddy Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		93F4083F2F36548A00BF3AB9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		93F408442F36548A00BF3AB9 /* OTPBuddy Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "OTPBuddy Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		93F408492F36548A00BF3AB9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		93F408692F36548B00BF3AB9 /* Options */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Options; path = ../../../extension/chrome/Options; sourceTree = "<group>"; };
+		93F4086A2F36548B00BF3AB9 /* Popup */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Popup; path = ../../../extension/chrome/Popup; sourceTree = "<group>"; };
+		93F4086B2F36548B00BF3AB9 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../../extension/chrome/manifest.json; sourceTree = "<group>"; };
+		93F4086C2F36548B00BF3AB9 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../../../extension/chrome/assets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		93F408192F36548A00BF3AB9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		93F4082B2F36548A00BF3AB9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		93F408372F36548A00BF3AB9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		93F408412F36548A00BF3AB9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		93F408082F36548600BF3AB9 = {
+			isa = PBXGroup;
+			children = (
+				93F4080D2F36548600BF3AB9 /* Shared (App) */,
+				93F408162F36548A00BF3AB9 /* Shared (Extension) */,
+				93F4081E2F36548A00BF3AB9 /* iOS (App) */,
+				93F4082F2F36548A00BF3AB9 /* macOS (App) */,
+				93F4083E2F36548A00BF3AB9 /* iOS (Extension) */,
+				93F408482F36548A00BF3AB9 /* macOS (Extension) */,
+				93F4081D2F36548A00BF3AB9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		93F4080D2F36548600BF3AB9 /* Shared (App) */ = {
+			isa = PBXGroup;
+			children = (
+				93F408142F36548600BF3AB9 /* ViewController.swift */,
+				93F408152F36548A00BF3AB9 /* Assets.xcassets */,
+				93F4080E2F36548600BF3AB9 /* Resources */,
+			);
+			path = "Shared (App)";
+			sourceTree = "<group>";
+		};
+		93F4080E2F36548600BF3AB9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				93F4080F2F36548600BF3AB9 /* Main.html */,
+				93F408112F36548600BF3AB9 /* Icon.png */,
+				93F408122F36548600BF3AB9 /* Style.css */,
+				93F408132F36548600BF3AB9 /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		93F408162F36548A00BF3AB9 /* Shared (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				93F408682F36548B00BF3AB9 /* Resources */,
+				93F408172F36548A00BF3AB9 /* SafariWebExtensionHandler.swift */,
+			);
+			path = "Shared (Extension)";
+			sourceTree = "<group>";
+		};
+		93F4081D2F36548A00BF3AB9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				93F4081C2F36548A00BF3AB9 /* OTPBuddy.app */,
+				93F4082E2F36548A00BF3AB9 /* OTPBuddy.app */,
+				93F4083A2F36548A00BF3AB9 /* OTPBuddy Extension.appex */,
+				93F408442F36548A00BF3AB9 /* OTPBuddy Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		93F4081E2F36548A00BF3AB9 /* iOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				93F4081F2F36548A00BF3AB9 /* AppDelegate.swift */,
+				93F408212F36548A00BF3AB9 /* SceneDelegate.swift */,
+				93F408232F36548A00BF3AB9 /* LaunchScreen.storyboard */,
+				93F408262F36548A00BF3AB9 /* Main.storyboard */,
+				93F408292F36548A00BF3AB9 /* Info.plist */,
+			);
+			path = "iOS (App)";
+			sourceTree = "<group>";
+		};
+		93F4082F2F36548A00BF3AB9 /* macOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				93F408302F36548A00BF3AB9 /* AppDelegate.swift */,
+				93F408322F36548A00BF3AB9 /* Main.storyboard */,
+				93F408352F36548A00BF3AB9 /* Info.plist */,
+			);
+			path = "macOS (App)";
+			sourceTree = "<group>";
+		};
+		93F4083E2F36548A00BF3AB9 /* iOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				93F4083F2F36548A00BF3AB9 /* Info.plist */,
+			);
+			path = "iOS (Extension)";
+			sourceTree = "<group>";
+		};
+		93F408482F36548A00BF3AB9 /* macOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				93F408492F36548A00BF3AB9 /* Info.plist */,
+			);
+			path = "macOS (Extension)";
+			sourceTree = "<group>";
+		};
+		93F408682F36548B00BF3AB9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				93F408692F36548B00BF3AB9 /* Options */,
+				93F4086A2F36548B00BF3AB9 /* Popup */,
+				93F4086B2F36548B00BF3AB9 /* manifest.json */,
+				93F4086C2F36548B00BF3AB9 /* assets */,
+			);
+			name = Resources;
+			path = "Shared (Extension)";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		93F4081B2F36548A00BF3AB9 /* OTPBuddy (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 93F4085E2F36548A00BF3AB9 /* Build configuration list for PBXNativeTarget "OTPBuddy (iOS)" */;
+			buildPhases = (
+				93F408182F36548A00BF3AB9 /* Sources */,
+				93F408192F36548A00BF3AB9 /* Frameworks */,
+				93F4081A2F36548A00BF3AB9 /* Resources */,
+				93F4085D2F36548A00BF3AB9 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				93F4083D2F36548A00BF3AB9 /* PBXTargetDependency */,
+			);
+			name = "OTPBuddy (iOS)";
+			packageProductDependencies = (
+			);
+			productName = "OTPBuddy (iOS)";
+			productReference = 93F4081C2F36548A00BF3AB9 /* OTPBuddy.app */;
+			productType = "com.apple.product-type.application";
+		};
+		93F4082D2F36548A00BF3AB9 /* OTPBuddy (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 93F408652F36548A00BF3AB9 /* Build configuration list for PBXNativeTarget "OTPBuddy (macOS)" */;
+			buildPhases = (
+				93F4082A2F36548A00BF3AB9 /* Sources */,
+				93F4082B2F36548A00BF3AB9 /* Frameworks */,
+				93F4082C2F36548A00BF3AB9 /* Resources */,
+				93F408642F36548A00BF3AB9 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				93F408472F36548A00BF3AB9 /* PBXTargetDependency */,
+			);
+			name = "OTPBuddy (macOS)";
+			packageProductDependencies = (
+			);
+			productName = "OTPBuddy (macOS)";
+			productReference = 93F4082E2F36548A00BF3AB9 /* OTPBuddy.app */;
+			productType = "com.apple.product-type.application";
+		};
+		93F408392F36548A00BF3AB9 /* OTPBuddy Extension (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 93F4085A2F36548A00BF3AB9 /* Build configuration list for PBXNativeTarget "OTPBuddy Extension (iOS)" */;
+			buildPhases = (
+				93F408362F36548A00BF3AB9 /* Sources */,
+				93F408372F36548A00BF3AB9 /* Frameworks */,
+				93F408382F36548A00BF3AB9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "OTPBuddy Extension (iOS)";
+			packageProductDependencies = (
+			);
+			productName = "OTPBuddy Extension (iOS)";
+			productReference = 93F4083A2F36548A00BF3AB9 /* OTPBuddy Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		93F408432F36548A00BF3AB9 /* OTPBuddy Extension (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 93F408612F36548A00BF3AB9 /* Build configuration list for PBXNativeTarget "OTPBuddy Extension (macOS)" */;
+			buildPhases = (
+				93F408402F36548A00BF3AB9 /* Sources */,
+				93F408412F36548A00BF3AB9 /* Frameworks */,
+				93F408422F36548A00BF3AB9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "OTPBuddy Extension (macOS)";
+			packageProductDependencies = (
+			);
+			productName = "OTPBuddy Extension (macOS)";
+			productReference = 93F408442F36548A00BF3AB9 /* OTPBuddy Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		93F408092F36548600BF3AB9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2610;
+				LastUpgradeCheck = 2610;
+				TargetAttributes = {
+					93F4081B2F36548A00BF3AB9 = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+					93F4082D2F36548A00BF3AB9 = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+					93F408392F36548A00BF3AB9 = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+					93F408432F36548A00BF3AB9 = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+				};
+			};
+			buildConfigurationList = 93F4080C2F36548600BF3AB9 /* Build configuration list for PBXProject "OTPBuddy" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 93F408082F36548600BF3AB9;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 93F4081D2F36548A00BF3AB9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				93F4081B2F36548A00BF3AB9 /* OTPBuddy (iOS) */,
+				93F4082D2F36548A00BF3AB9 /* OTPBuddy (macOS) */,
+				93F408392F36548A00BF3AB9 /* OTPBuddy Extension (iOS) */,
+				93F408432F36548A00BF3AB9 /* OTPBuddy Extension (macOS) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		93F4081A2F36548A00BF3AB9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				93F4084C2F36548A00BF3AB9 /* Icon.png in Resources */,
+				93F408252F36548A00BF3AB9 /* LaunchScreen.storyboard in Resources */,
+				93F4084A2F36548A00BF3AB9 /* Main.html in Resources */,
+				93F408502F36548A00BF3AB9 /* Script.js in Resources */,
+				93F408542F36548A00BF3AB9 /* Assets.xcassets in Resources */,
+				93F408282F36548A00BF3AB9 /* Main.storyboard in Resources */,
+				93F4084E2F36548A00BF3AB9 /* Style.css in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		93F4082C2F36548A00BF3AB9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				93F4084D2F36548A00BF3AB9 /* Icon.png in Resources */,
+				93F4084F2F36548A00BF3AB9 /* Style.css in Resources */,
+				93F408342F36548A00BF3AB9 /* Main.storyboard in Resources */,
+				93F408512F36548A00BF3AB9 /* Script.js in Resources */,
+				93F408552F36548A00BF3AB9 /* Assets.xcassets in Resources */,
+				93F4084B2F36548A00BF3AB9 /* Main.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		93F408382F36548A00BF3AB9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				93F408712F36548B00BF3AB9 /* Options in Resources */,
+				93F408742F36548B00BF3AB9 /* assets in Resources */,
+				93F408732F36548B00BF3AB9 /* manifest.json in Resources */,
+				93F408722F36548B00BF3AB9 /* Popup in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		93F408422F36548A00BF3AB9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				93F4086D2F36548B00BF3AB9 /* Options in Resources */,
+				93F408702F36548B00BF3AB9 /* assets in Resources */,
+				93F4086F2F36548B00BF3AB9 /* manifest.json in Resources */,
+				93F4086E2F36548B00BF3AB9 /* Popup in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		93F408182F36548A00BF3AB9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				93F408522F36548A00BF3AB9 /* ViewController.swift in Sources */,
+				93F408202F36548A00BF3AB9 /* AppDelegate.swift in Sources */,
+				93F408222F36548A00BF3AB9 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		93F4082A2F36548A00BF3AB9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				93F408532F36548A00BF3AB9 /* ViewController.swift in Sources */,
+				93F408312F36548A00BF3AB9 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		93F408362F36548A00BF3AB9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				93F408562F36548A00BF3AB9 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		93F408402F36548A00BF3AB9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				93F408572F36548A00BF3AB9 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		93F4083D2F36548A00BF3AB9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 93F408392F36548A00BF3AB9 /* OTPBuddy Extension (iOS) */;
+			targetProxy = 93F4083C2F36548A00BF3AB9 /* PBXContainerItemProxy */;
+		};
+		93F408472F36548A00BF3AB9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 93F408432F36548A00BF3AB9 /* OTPBuddy Extension (macOS) */;
+			targetProxy = 93F408462F36548A00BF3AB9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		93F4080F2F36548600BF3AB9 /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				93F408102F36548600BF3AB9 /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		93F408232F36548A00BF3AB9 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				93F408242F36548A00BF3AB9 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		93F408262F36548A00BF3AB9 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				93F408272F36548A00BF3AB9 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		93F408322F36548A00BF3AB9 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				93F408332F36548A00BF3AB9 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		93F408582F36548A00BF3AB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		93F408592F36548A00BF3AB9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		93F4085B2F36548A00BF3AB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "OTPBuddy Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.elcaten.otpbuddy.Extension;
+				PRODUCT_NAME = "OTPBuddy Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		93F4085C2F36548A00BF3AB9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "OTPBuddy Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.elcaten.otpbuddy.Extension;
+				PRODUCT_NAME = "OTPBuddy Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		93F4085F2F36548A00BF3AB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = OTPBuddy;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.elcaten.otpbuddy;
+				PRODUCT_NAME = OTPBuddy;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		93F408602F36548A00BF3AB9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = OTPBuddy;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.elcaten.otpbuddy;
+				PRODUCT_NAME = OTPBuddy;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		93F408622F36548A00BF3AB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 42FT242JP9;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "OTPBuddy Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.elcaten.otpbuddy.Extension;
+				PRODUCT_NAME = "OTPBuddy Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		93F408632F36548A00BF3AB9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 42FT242JP9;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "OTPBuddy Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.elcaten.otpbuddy.Extension;
+				PRODUCT_NAME = "OTPBuddy Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		93F408662F36548A00BF3AB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 42FT242JP9;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = OTPBuddy;
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.elcaten.otpbuddy;
+				PRODUCT_NAME = OTPBuddy;
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		93F408672F36548A00BF3AB9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 42FT242JP9;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = OTPBuddy;
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.elcaten.otpbuddy;
+				PRODUCT_NAME = OTPBuddy;
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		93F4080C2F36548600BF3AB9 /* Build configuration list for PBXProject "OTPBuddy" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				93F408582F36548A00BF3AB9 /* Debug */,
+				93F408592F36548A00BF3AB9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		93F4085A2F36548A00BF3AB9 /* Build configuration list for PBXNativeTarget "OTPBuddy Extension (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				93F4085B2F36548A00BF3AB9 /* Debug */,
+				93F4085C2F36548A00BF3AB9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		93F4085E2F36548A00BF3AB9 /* Build configuration list for PBXNativeTarget "OTPBuddy (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				93F4085F2F36548A00BF3AB9 /* Debug */,
+				93F408602F36548A00BF3AB9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		93F408612F36548A00BF3AB9 /* Build configuration list for PBXNativeTarget "OTPBuddy Extension (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				93F408622F36548A00BF3AB9 /* Debug */,
+				93F408632F36548A00BF3AB9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		93F408652F36548A00BF3AB9 /* Build configuration list for PBXNativeTarget "OTPBuddy (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				93F408662F36548A00BF3AB9 /* Debug */,
+				93F408672F36548A00BF3AB9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 93F408092F36548600BF3AB9 /* Project object */;
+}
