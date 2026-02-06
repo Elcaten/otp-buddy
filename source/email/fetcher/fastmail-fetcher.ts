@@ -1,6 +1,8 @@
 import JamClient from 'jmap-jam';
 import {Email, EmailFetcher} from '../types';
 
+const afterFilterDate = new Date(Date.now() - 1000 * 60 * 60 * 100);
+
 export class FastmailEmailFetcher implements EmailFetcher {
   private readonly client: JamClient;
 
@@ -28,7 +30,7 @@ export class FastmailEmailFetcher implements EmailFetcher {
     const recentEmails = await this.client.api.Email.query({
       accountId: this.accountId,
       filter: {
-        after: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+        after: afterFilterDate.toISOString(),
         inMailboxOtherThan: unwantedMailboxes[0].ids,
       },
     });
