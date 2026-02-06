@@ -8,9 +8,7 @@ describe('GitlabEmailParser', () => {
   test('should parse the Gitlab email', () => {
     const result = GitlabEmailParser.tryParse({
       id: '123',
-      subject: 'Gitlab email',
-      from: [{email: 'test@gitlab.com'}],
-      content: gitlabJson.content,
+      ...gitlabJson,
     });
     expect(result).toMatchObject({success: true, result: '668454'});
   });
