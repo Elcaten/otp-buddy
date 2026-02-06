@@ -75,8 +75,6 @@ const Options: FC = () => {
             ))}
           </RadioGroup>
 
-          {provider === 'gmail' && <GmailOptions />}
-
           {provider === 'fastmail' && (
             <FieldGroup>
               <Field>
