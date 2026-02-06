@@ -1,2 +1,5 @@
 - support gmail messages in chrome / firefox
 - support gmail messages in safari - use native messaging for oAuth
+- delete message after successfull copy
+- enable preview in safari (NSURLERRORdomain)
+- append to input and autofill?
