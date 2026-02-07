@@ -1,17 +1,9 @@
 import type {FC} from 'react';
-import {useEffect, useState} from 'react';
-import {Field, FieldGroup, Fieldset, Label} from '../components/fieldset';
-import {Input} from '../components/input';
-import {Radio, RadioField, RadioGroup} from '../components/radio';
+import {Fragment, useEffect, useState} from 'react';
 import {PROVIDERS} from '../types/providers';
 import {getStorage, setStorage} from '../utils/storage';
-import {Button} from '../components/button';
-import {Divider} from '../components/divider';
-import {Select} from '../components/select';
 import {JamClient} from 'jmap-jam';
 import {useQuery} from '../Popup/useQuery';
-import {Heading} from '../components/heading';
-import {GmailOptions} from './GmailOptions';
 
 const Options: FC = () => {
   const [provider, setProvider] = useState<'fastmail' | 'gmail' | 'imap'>(
@@ -55,74 +47,70 @@ const Options: FC = () => {
   return (
     <main className="mx-auto max-w-md p-4">
       <form onSubmit={handleSave}>
-        <Heading level={1}>OPT settings</Heading>
-        <Fieldset>
-          <RadioGroup
-            name="providers"
-            defaultValue={'fastmail' as const}
-            value={provider}
-            onChange={(value) => setProvider(value)}
-          >
-            {Object.values(PROVIDERS).map((providerOption) => (
-              <RadioField key={providerOption.id}>
-                <Radio value={providerOption.id} />
-                <Label>{providerOption.name}</Label>
-                {/* <Description>
+        <h1>Email Provider settings</h1>
+
+        <fieldset>
+          {Object.values(PROVIDERS).map((providerOption) => (
+            <div key={providerOption.id}>
+              <input
+                type="radio"
+                name="provider"
+                id={providerOption.id}
+                value={providerOption.id}
+                checked={provider === providerOption.id}
+                onChange={(e): void =>
+                  setProvider(e.target.value as 'fastmail' | 'gmail' | 'imap')
+                }
+              />
+              <label htmlFor={providerOption.id}>{providerOption.name}</label>
+              {/* <Description>
                     Customers can resell or transfer their tickets if they can’t
                     make it to the event.
                   </Description> */}
-              </RadioField>
-            ))}
-          </RadioGroup>
-
+            </div>
+          ))}
+        </fieldset>
+        <fieldset>
           {provider === 'fastmail' && (
-            <FieldGroup>
-              <Field>
-                <Label htmlFor="fastmailApiKey">Fastmail API key</Label>
-                <Input
-                  type="password"
-                  id="fastmailApiKey"
-                  name="fastmailApiKey"
-                  placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX"
-                  spellCheck={false}
-                  autoComplete="off"
-                  value={fastmailApiKey}
-                  onChange={(e): void => setFastmailApiKey(e.target.value)}
-                />
-              </Field>
+            <Fragment>
+              <label htmlFor="fastmailApiKey">Fastmail API key</label>
+              <input
+                type="password"
+                id="fastmailApiKey"
+                name="fastmailApiKey"
+                placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX"
+                spellCheck={false}
+                autoComplete="off"
+                value={fastmailApiKey}
+                onChange={(e): void => setFastmailApiKey(e.target.value)}
+              />
 
-              <Field>
-                <Label>Account</Label>
-                <Select
-                  name="accountId"
-                  disabled={accountQuery.loading || !accountQuery.data}
-                  value={fastmailAccountId}
-                  onChange={(e): void => setFastmailAccountId(e.target.value)}
-                >
-                  <option value="">--- Select an account ---</option>
-                  {accountQuery.data?.map((account) => (
-                    <option key={account.id} value={account.id}>
-                      {account.name}
-                    </option>
-                  ))}
-                </Select>
-              </Field>
-            </FieldGroup>
+              <label htmlFor="accountId">Account</label>
+              <select
+                id="accountId"
+                name="accountId"
+                disabled={accountQuery.loading || !accountQuery.data}
+                value={fastmailAccountId}
+                onChange={(e): void => setFastmailAccountId(e.target.value)}
+              >
+                <option value="">--- Select an account ---</option>
+                {accountQuery.data?.map((account) => (
+                  <option key={account.id} value={account.id}>
+                    {account.name}
+                  </option>
+                ))}
+              </select>
+            </Fragment>
           )}
+        </fieldset>
 
-          <Divider className="my-8" />
-
-          <Button type="submit">Save Settings</Button>
-          {saved && (
-            <span className="mx-2 text-sm text-amber-500 dark:text-amber-600">
-              Settings saved!
-            </span>
-          )}
-        </Fieldset>
+        <button type="submit">Save Settings</button>
+        {saved && (
+          <span className="mx-2 text-sm text-amber-500 dark:text-amber-600">
+            Settings saved!
+          </span>
+        )}
       </form>
-      <a href="https://www.flaticon.com/free-icons/otp" title="otp icons">
-        Otp icons created by Icons_Field - Flaticon
-      </a>
     </main>
   );
 };
