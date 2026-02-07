@@ -4,6 +4,7 @@ import {PROVIDERS} from '../types/providers';
 import {getStorage, setStorage} from '../utils/storage';
 import {JamClient} from 'jmap-jam';
 import {useQuery} from '../Popup/useQuery';
+import {GmailOptions} from './GmailOptions';
 
 const Options: FC = () => {
   const [provider, setProvider] = useState<'fastmail' | 'gmail' | 'imap'>(
@@ -70,39 +71,40 @@ const Options: FC = () => {
             </div>
           ))}
         </fieldset>
-        <fieldset>
-          {provider === 'fastmail' && (
-            <Fragment>
-              <label htmlFor="fastmailApiKey">Fastmail API key</label>
-              <input
-                type="password"
-                id="fastmailApiKey"
-                name="fastmailApiKey"
-                placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX"
-                spellCheck={false}
-                autoComplete="off"
-                value={fastmailApiKey}
-                onChange={(e): void => setFastmailApiKey(e.target.value)}
-              />
 
-              <label htmlFor="accountId">Account</label>
-              <select
-                id="accountId"
-                name="accountId"
-                disabled={accountQuery.loading || !accountQuery.data}
-                value={fastmailAccountId}
-                onChange={(e): void => setFastmailAccountId(e.target.value)}
-              >
-                <option value="">--- Select an account ---</option>
-                {accountQuery.data?.map((account) => (
-                  <option key={account.id} value={account.id}>
-                    {account.name}
-                  </option>
-                ))}
-              </select>
-            </Fragment>
-          )}
-        </fieldset>
+        {provider === 'gmail' && <GmailOptions />}
+
+        {provider === 'fastmail' && (
+          <fieldset>
+            <label htmlFor="fastmailApiKey">Fastmail API key</label>
+            <input
+              type="password"
+              id="fastmailApiKey"
+              name="fastmailApiKey"
+              placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX"
+              spellCheck={false}
+              autoComplete="off"
+              value={fastmailApiKey}
+              onChange={(e): void => setFastmailApiKey(e.target.value)}
+            />
+
+            <label htmlFor="accountId">Account</label>
+            <select
+              id="accountId"
+              name="accountId"
+              disabled={accountQuery.loading || !accountQuery.data}
+              value={fastmailAccountId}
+              onChange={(e): void => setFastmailAccountId(e.target.value)}
+            >
+              <option value="">--- Select an account ---</option>
+              {accountQuery.data?.map((account) => (
+                <option key={account.id} value={account.id}>
+                  {account.name}
+                </option>
+              ))}
+            </select>
+          </fieldset>
+        )}
 
         <button type="submit">Save Settings</button>
         {saved && (
