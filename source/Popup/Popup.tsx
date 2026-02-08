@@ -27,23 +27,44 @@
  */
 
 import browser from 'webextension-polyfill';
-import {type FC} from 'react';
+import {JSX, type FC} from 'react';
 import {FastmailEmailFetcher} from '../email/fetcher/fastmail-fetcher';
-import {getStorage} from '../utils/storage';
+import {getAllStorage, getStorage} from '../utils/storage';
 import {CopyOTPButton} from './components/copy-opt-button';
 import {OpenPreviewButton} from './components/open-preview-button';
 import {useQuery} from './useQuery';
 import s from './Popup.module.scss';
+import {GmailEmailFetcher} from '../email/fetcher/gmail-fetcher/gmail-fetcher';
+import {getAccessToken} from '../email/fetcher/gmail-fetcher/auth';
+
+function MissingSettings(): JSX.Element {
+  return (
+    <div style={{minWidth: 'max-content'}}>
+      Please set up your email provider in the{' '}
+      <button
+        type="button"
+        onClick={() => browser.runtime.openOptionsPage()}
+        className={s.buttonLink}
+      >
+        extension settings
+      </button>
+      .
+    </div>
+  );
+}
 
 const Popup: FC = () => {
   const storageQuery = useQuery({
-    queryFn: async () => getStorage(['fastmailApiKey', 'fastmailAccountId']),
+    queryFn: async () => getAllStorage(),
   });
   const isSettingsValid =
-    !!storageQuery.data?.fastmailApiKey &&
-    !!storageQuery.data?.fastmailAccountId;
-  const recentEmailsQuery = useQuery({
-    enabled: isSettingsValid,
+    (storageQuery.data?.provider === 'fastmail' &&
+      !!storageQuery.data?.fastmailApiKey &&
+      !!storageQuery.data?.fastmailAccountId) ||
+    storageQuery.data?.provider === 'gmail';
+
+  const recentFastamailMessagesQuery = useQuery({
+    enabled: isSettingsValid && storageQuery.data?.provider === 'fastmail',
     queryFn: async () =>
       new FastmailEmailFetcher(
         storageQuery.data?.fastmailApiKey!,
@@ -51,21 +72,31 @@ const Popup: FC = () => {
       ).fetchRecentEmails(),
   });
 
+  const recentGmailMessagesQuery = useQuery({
+    enabled: isSettingsValid && storageQuery.data?.provider === 'gmail',
+    queryFn: async () =>
+      new GmailEmailFetcher(
+        (await getAccessToken()).access_token
+      ).fetchRecentEmails(),
+  });
+
+  const isLoading =
+    storageQuery.loading ||
+    recentFastamailMessagesQuery.loading ||
+    recentGmailMessagesQuery.loading;
+
   if (!isSettingsValid) {
-    return (
-      <div style={{minWidth: 'max-content'}}>
-        Please set up your Fastmail API key and account ID in the{' '}
-        <button
-          type="button"
-          onClick={() => browser.runtime.openOptionsPage()}
-          className={s.buttonLink}
-        >
-          extension settings
-        </button>
-        .
-      </div>
-    );
+    return <MissingSettings />;
   }
+
+  if (isLoading) {
+    return <div style={{minWidth: 'max-content'}}>Loading...</div>;
+  }
+
+  const recentMessages =
+    storageQuery.data?.provider === 'fastmail'
+      ? recentFastamailMessagesQuery.data
+      : recentGmailMessagesQuery.data;
 
   return (
     <section>
@@ -85,7 +116,7 @@ const Popup: FC = () => {
           </tr>
         </thead>
         <tbody>
-          {recentEmailsQuery.data?.map((email) => (
+          {recentMessages?.map((email) => (
             <tr key={email.id}>
               <td>{email.subject}</td>
               <td>
@@ -94,13 +125,6 @@ const Popup: FC = () => {
               </td>
             </tr>
           ))}
-          {recentEmailsQuery.loading && (
-            <tr>
-              <td colSpan={2} style={{padding: '12px 128px'}}>
-                Loading...
-              </td>
-            </tr>
-          )}
         </tbody>
       </table>
     </section>

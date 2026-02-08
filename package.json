@@ -37,11 +37,13 @@
     "postal-mime": "^2.7.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "runtypes": "^7.0.4",
     "webextension-polyfill": "^0.12.0"
   },
   "devDependencies": {
     "@abhijithvijayan/eslint-config": "^3.0.1",
     "@abhijithvijayan/tsconfig": "^1.5.1",
+    "@types/gapi.client.gmail-v1": "^0.0.4",
     "@types/node": "^25.0.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
