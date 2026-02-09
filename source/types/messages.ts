@@ -4,70 +4,38 @@
  * This file defines all message types used for communication between
  * the different parts of the extension.
  *
- * Overall Communication Architecture:
- * ┌─────────────────────────────────────────────────────────────────────────┐
- * │                                                                         │
- * │   ┌──────────────┐     PAGE_VISITED      ┌──────────────────┐           │
- * │   │              │ ───────────────────►  │                  │           │
- * │   │   Content    │                       │    Background    │           │
- * │   │   Script     │                       │    Script        │           │
- * │   │              │                       │                  │           │
- * │   └──────────────┘                       └──────────────────┘           │
- * │          ▲                                        ▲                     │
- * │          │ GET_PAGE_INFO                          │ GET_VISIT_COUNT     │
- * │          │ PAGE_INFO_RESPONSE                     │ VISIT_COUNT_RESPONSE│
- * │          │                                        │                     │
- * │          │         ┌──────────────┐               │                     │
- * │          └─────────│              │───────────────┘                     │
- * │                    │    Popup     │                                     │
- * │                    │              │                                     │
- * │                    └──────────────┘                                     │
- * │                                                                         │
- * └─────────────────────────────────────────────────────────────────────────┘
- *
- * Message Flow:
- * 1. Content Script → Background: PAGE_VISITED (on page load)
- * 2. Popup → Content Script: GET_PAGE_INFO / PAGE_INFO_RESPONSE
- * 3. Popup → Background: GET_VISIT_COUNT / VISIT_COUNT_RESPONSE
  */
 
-// Page info collected by content script
-export interface PageInfo {
-  url: string;
-  title: string;
-  wordCount: number;
-  linkCount: number;
-  imageCount: number;
-  timestamp: number;
+import * as R from 'runtypes';
+
+/** Popup/Options -> Background: start OAuth flow (Safari path; background calls native). */
+export interface OAuthLaunchMessage {
+  type: 'OAUTH_LAUNCH';
+  authURL: string;
 }
 
-// Messages
-export interface GetPageInfoMessage {
-  type: 'GET_PAGE_INFO';
+export function isOAuthLaunchMessage(
+  message: unknown
+): message is OAuthLaunchMessage {
+  return R.Object({
+    type: R.Literal('OAUTH_LAUNCH'),
+    authURL: R.String,
+  }).guard(message);
 }
 
-export interface PageInfoResponseMessage {
-  type: 'PAGE_INFO_RESPONSE';
-  data: PageInfo;
+/** Background -> Popup: OAuth result (redirect URL for identity layer, or tokens when background does exchange). */
+export interface OAuthLaunchResponse {
+  redirectURL?: string;
+  error?: string;
 }
 
-export interface PageVisitedMessage {
-  type: 'PAGE_VISITED';
-  data: PageInfo;
+export function isOAuthLaunchResponse(
+  message: unknown
+): message is OAuthLaunchResponse {
+  return R.Object({
+    redirectURL: R.String.optional(),
+    error: R.String.optional(),
+  }).guard(message);
 }
 
-export interface GetVisitCountMessage {
-  type: 'GET_VISIT_COUNT';
-}
-
-export interface VisitCountResponseMessage {
-  type: 'VISIT_COUNT_RESPONSE';
-  count: number;
-}
-
-export type ExtensionMessage =
-  | GetPageInfoMessage
-  | PageInfoResponseMessage
-  | PageVisitedMessage
-  | GetVisitCountMessage
-  | VisitCountResponseMessage;
+export type ExtensionMessage = OAuthLaunchMessage | OAuthLaunchResponse;

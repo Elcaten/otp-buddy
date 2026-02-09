@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
-import {GitlabEmailParser} from '../gitlab-email-parser';
 import {expect, test, describe} from 'vitest';
+import {GitlabEmailParser} from '../gitlab-email-parser';
 
-import gitlabJson from '../../../../otpEmailSamples/gitlab-confirm-email.json';
+import gitlabJson from './otpEmailSamples/gitlab-confirm-email.json';
 
 describe('GitlabEmailParser', () => {
   test('should parse the Gitlab email', () => {

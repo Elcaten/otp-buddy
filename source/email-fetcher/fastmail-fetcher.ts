@@ -1,5 +1,5 @@
 import JamClient from 'jmap-jam';
-import {Email, EmailFetcher} from '../types';
+import {Email, EmailFetcher} from '../types/email';
 
 const afterFilterDate = new Date(Date.now() - 1000 * 60 * 60 * 100);
 

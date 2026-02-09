@@ -1,5 +1,5 @@
 import {JSX} from 'react';
-import {Email} from '../../email/types';
+import {Email} from '../../types/email';
 import DOMPurify from 'dompurify';
 
 export function OpenPreviewButton({email}: {email: Email}): JSX.Element {
