@@ -6,7 +6,11 @@
  */
 
 import browser from 'webextension-polyfill';
-import {isOAuthLaunchMessage} from '../types/messages';
+import {
+  ExtensionMessage,
+  isOAuthLaunchMessage,
+  OAuthLaunchResponse,
+} from '../types/messages';
 import type {
   NativeOAuthRequest,
   NativeOAuthResponse,
@@ -15,25 +19,29 @@ import type {
 /** Safari native app name (containing app bundle ID). Must match Apple's expected identifier. */
 const SAFARI_NATIVE_APP_NAME = 'com.elcaten.otpbuddy';
 
-browser.runtime.onMessage.addListener(async (message: unknown) => {
-  if (isOAuthLaunchMessage(message)) {
-    try {
-      const _nativeAppResponse = await browser.runtime.sendNativeMessage(
-        SAFARI_NATIVE_APP_NAME,
-        {
-          type: 'oauth',
-          authURL: message.authURL,
-        } satisfies NativeOAuthRequest
-      );
-      const nativeAppResponse = _nativeAppResponse as NativeOAuthResponse;
-      if ('error' in nativeAppResponse) {
-        return {error: nativeAppResponse.error};
+browser.runtime.onMessage.addListener(
+  async (message: unknown): Promise<ExtensionMessage | undefined> => {
+    if (isOAuthLaunchMessage(message)) {
+      try {
+        const _nativeAppResponse = await browser.runtime.sendNativeMessage(
+          SAFARI_NATIVE_APP_NAME,
+          {
+            type: 'oauth',
+            authURL: message.authURL,
+          } satisfies NativeOAuthRequest
+        );
+        const nativeAppResponse = _nativeAppResponse as NativeOAuthResponse;
+        if ('error' in nativeAppResponse) {
+          return {error: nativeAppResponse.error} satisfies OAuthLaunchResponse;
+        }
+        return {
+          redirectURL: nativeAppResponse.redirectURL,
+        } satisfies OAuthLaunchResponse;
+      } catch (err) {
+        return {error: err instanceof Error ? err.message : String(err)};
       }
-      return {redirectURL: nativeAppResponse.redirectURL};
-    } catch (err) {
-      return {error: err instanceof Error ? err.message : String(err)};
     }
-  }
 
-  return undefined;
-});
+    return undefined;
+  }
+);
