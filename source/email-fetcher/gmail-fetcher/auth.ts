@@ -1,6 +1,7 @@
 import * as oauth from 'oauth4webapi';
 import browser from 'webextension-polyfill';
 import {isOAuthLaunchResponse, OAuthLaunchMessage} from '../../types/messages';
+import {env} from '../../utils/env';
 
 async function buildAuthURL({
   client_id,
@@ -76,9 +77,8 @@ async function requestToken({
 async function getToken_chrome_firefox(): Promise<oauth.TokenEndpointResponse> {
   const redirect_uri = browser.identity.getRedirectURL();
   const code_verifier = oauth.generateRandomCodeVerifier();
-  const client_id =
-    '56620181367-emp047d1659ob89hb5cga5bmn5k66gj2.apps.googleusercontent.com';
-  const client_secret = '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';
+  const client_id = env.OTP_BUDDY_WEB_CLIENT_ID;
+  const client_secret = env.OTP_BUDDY_WEB_CLIENT_SECRET;
   const client: oauth.Client = {
     client_id: client_id,
     client_secret: client_secret,
@@ -108,8 +108,7 @@ async function getToken_chrome_firefox(): Promise<oauth.TokenEndpointResponse> {
 async function getToken_safari(): Promise<oauth.TokenEndpointResponse> {
   const redirect_uri = 'com.elcaten.otpbuddy:/';
   const code_verifier = oauth.generateRandomCodeVerifier();
-  const client_id =
-    '56620181367-ca818gh7r9rgs9nd0s054su4o35hbli2.apps.googleusercontent.com';
+  const client_id = env.OTP_BUDDY_SAFARI_CLIENT_ID;
   const client: oauth.Client = {
     client_id: client_id,
   };

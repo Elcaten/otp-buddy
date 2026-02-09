@@ -1,0 +1,27 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dev:chrome:local",
+      "type": "shell",
+      "command": "npx dotenv-cli -- bash -c \"op run --no-masking --env-file=.env -- bash -c 'npm run dev:chrome'\"",
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "dev:firefox:local",
+      "type": "shell",
+      "command": "npx dotenv-cli -- bash -c \"op run --no-masking --env-file=.env -- bash -c 'npm run dev:firefox'\"",
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    }
+  ]
+}
