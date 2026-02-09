@@ -28,14 +28,14 @@
 
 import browser from 'webextension-polyfill';
 import {JSX, type FC} from 'react';
-import {FastmailEmailFetcher} from '../email/fetcher/fastmail-fetcher';
-import {getAllStorage, getStorage} from '../utils/storage';
+import {getAllStorage} from '../utils/storage';
 import {CopyOTPButton} from './components/copy-opt-button';
 import {OpenPreviewButton} from './components/open-preview-button';
 import {useQuery} from './useQuery';
 import s from './Popup.module.scss';
-import {GmailEmailFetcher} from '../email/fetcher/gmail-fetcher/gmail-fetcher';
-import {getAccessToken} from '../email/fetcher/gmail-fetcher/auth';
+import {FastmailEmailFetcher} from '../email-fetcher/fastmail-fetcher';
+import {getAccessToken} from '../email-fetcher/gmail-fetcher/auth';
+import {GmailEmailFetcher} from '../email-fetcher/gmail-fetcher/gmail-fetcher';
 
 function MissingSettings(): JSX.Element {
   return (

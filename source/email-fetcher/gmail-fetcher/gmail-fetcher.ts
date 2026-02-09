@@ -1,7 +1,7 @@
 import * as R from 'runtypes';
-import {Email, EmailFetcher} from '../../types';
+import {Email, EmailFetcher} from '../../types/email';
 import * as PostalMime from 'postal-mime';
-import {stringFromBase64URL} from '../../../lib/base64url';
+import {stringFromBase64URL} from '../../utils/base64url';
 
 const BASE_URL = 'https://gmail.googleapis.com';
 

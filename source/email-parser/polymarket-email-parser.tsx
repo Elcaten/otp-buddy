@@ -1,4 +1,4 @@
-import {EmailParser, Email} from '../types';
+import {Email, EmailParser} from '../types/email';
 
 export const PolymarketEmailParser: EmailParser = {
   canParse: (email: Email) =>

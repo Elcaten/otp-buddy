@@ -1,6 +1,6 @@
 import {JSX, useCallback, useEffect, useState} from 'react';
-import {Email} from '../../email/types';
-import {emailParser} from '../../email/parser';
+import {Email} from '../../types/email';
+import {emailParser} from '../../email-parser';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function useCopyOTPToClipboard() {
@@ -34,7 +34,6 @@ function useCopyOTPToClipboard() {
 
     setState('success');
 
-    // eslint-disable-next-line n/no-unsupported-features/node-builtins
     await navigator.clipboard.writeText(result.result);
   }, []);
 

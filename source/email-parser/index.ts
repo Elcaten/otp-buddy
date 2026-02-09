@@ -1,4 +1,4 @@
-import {Email, EmailParser} from '../types';
+import {Email, EmailParser} from '../types/email';
 import {ClaudeEmailParser} from './claude-email-parser';
 import {GitlabEmailParser} from './gitlab-email-parser';
 import {PolymarketEmailParser} from './polymarket-email-parser';

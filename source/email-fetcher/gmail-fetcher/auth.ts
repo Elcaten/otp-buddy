@@ -1,22 +1,23 @@
 import * as oauth from 'oauth4webapi';
-import browser from 'webextension-polyfill';
+import {launchOAuthFlow} from './launch-oauth-flow';
+import {getRedirectURI} from './get-redirect-uri';
 
 const CLIENT_ID =
-  '56620181367-emp047d1659ob89hb5cga5bmn5k66gj2.apps.googleusercontent.com';
-const CLIENT_SECRET = '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';
+  '56620181367-ca818gh7r9rgs9nd0s054su4o35hbli2.apps.googleusercontent.com';
+const CLIENT_SECRET = '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';
 const ISSUER = 'https://accounts.google.com';
 const ALGORITHM = 'oauth2';
-const REDIRECT_URI = browser.identity.getRedirectURL();
 
 const client: oauth.Client = {
   client_id: CLIENT_ID,
-  client_secret: CLIENT_SECRET,
 };
 
-async function validate({
+export async function validate({
+  redirectURI,
   redirectURL,
   code_verifier,
 }: {
+  redirectURI: string;
   redirectURL: string;
   code_verifier: string;
 }): Promise<oauth.TokenEndpointResponse> {
@@ -31,9 +32,9 @@ async function validate({
   const response = await oauth.authorizationCodeGrantRequest(
     as,
     client,
-    oauth.ClientSecretPost(CLIENT_SECRET),
+    oauth.None(),
     params,
-    REDIRECT_URI,
+    redirectURI,
     code_verifier
   );
 
@@ -47,15 +48,17 @@ async function validate({
 }
 
 async function authorize({
+  redirectURI,
   code_verifier,
 }: {
+  redirectURI: string;
   code_verifier: string;
 }): Promise<string> {
   const scopes = ['https://www.googleapis.com/auth/gmail.readonly'];
   let authURL = 'https://accounts.google.com/o/oauth2/auth';
   authURL += `?client_id=${CLIENT_ID}`;
   authURL += `&response_type=code`;
-  authURL += `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+  authURL += `&redirect_uri=${encodeURIComponent(redirectURI)}`;
   authURL += `&scope=${encodeURIComponent(scopes.join(' '))}`;
 
   const code_challenge_method = 'S256';
@@ -63,17 +66,15 @@ async function authorize({
   authURL += `&code_challenge=${code_challenge}`;
   authURL += `&code_challenge_method=${code_challenge_method}`;
 
-  return browser.identity.launchWebAuthFlow({
-    interactive: true,
-    url: authURL,
-  });
+  return launchOAuthFlow(authURL);
 }
 
 export async function getAccessToken(): Promise<oauth.TokenEndpointResponse> {
+  const redirectURI = await getRedirectURI();
   const code_verifier = oauth.generateRandomCodeVerifier();
 
-  const redirectURL = await authorize({code_verifier});
-  const result = await validate({redirectURL, code_verifier});
+  const redirectURL = await authorize({redirectURI, code_verifier});
+  const result = await validate({redirectURI, redirectURL, code_verifier});
 
   return result;
 }
