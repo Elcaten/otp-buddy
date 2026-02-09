@@ -118,7 +118,7 @@ const Popup: FC = () => {
         <tbody>
           {recentMessages?.map((email) => (
             <tr key={email.id}>
-              <td>{email.subject}</td>
+              <td style={{verticalAlign: 'middle'}}>{email.subject}</td>
               <td>
                 <CopyOTPButton email={email} />
                 <OpenPreviewButton email={email} />
