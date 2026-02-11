@@ -106,6 +106,7 @@ async function getToken_chrome_firefox(): Promise<oauth.TokenEndpointResponse> {
 }
 
 async function getToken_safari(): Promise<oauth.TokenEndpointResponse> {
+  // Same as associated URL type in main app Info.plist
   const redirect_uri = 'com.elcaten.otpbuddy:/';
   const code_verifier = oauth.generateRandomCodeVerifier();
   const client_id = env.OTP_BUDDY_SAFARI_CLIENT_ID;

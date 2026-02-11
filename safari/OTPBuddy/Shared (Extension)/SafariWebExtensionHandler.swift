@@ -9,6 +9,7 @@ import AuthenticationServices
 import SafariServices
 import os.log
 
+// Same as associated URL type in main app Info.plist
 private let oauthCallbackScheme = "com.elcaten.otpbuddy"
 
 class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {

@@ -16,6 +16,7 @@ import SafariServices
 typealias PlatformViewController = NSViewController
 #endif
 
+// same as App extension bundle ID
 let extensionBundleIdentifier = "com.elcaten.otpbuddy.Extension"
 
 class ViewController: PlatformViewController, WKNavigationDelegate, WKScriptMessageHandler {

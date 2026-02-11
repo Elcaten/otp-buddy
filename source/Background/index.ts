@@ -16,7 +16,7 @@ import type {
   NativeOAuthResponse,
 } from '../types/native-messages';
 
-/** Safari native app name (containing app bundle ID). Must match Apple's expected identifier. */
+/** Same as safari native app bundle ID. NOT extension bundle ID. */
 const SAFARI_NATIVE_APP_NAME = 'com.elcaten.otpbuddy';
 
 browser.runtime.onMessage.addListener(
