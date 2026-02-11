@@ -30,6 +30,7 @@ export default [
       // Disable due to resolver issues in ESM
       'import-x/no-duplicates': 'off',
       'n/no-unsupported-features/node-builtins': 'off',
+      "@typescript-eslint/no-use-before-define": "off",
     },
   },
   {
