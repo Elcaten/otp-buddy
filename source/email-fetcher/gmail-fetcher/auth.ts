@@ -2,6 +2,7 @@ import * as oauth from 'oauth4webapi';
 import browser from 'webextension-polyfill';
 import {isOAuthLaunchResponse, OAuthLaunchMessage} from '../../types/messages';
 import {env} from '../../utils/env';
+import {log} from '../../utils/logger';
 
 async function buildAuthURL({
   client_id,
@@ -14,7 +15,11 @@ async function buildAuthURL({
 }): Promise<string> {
   let authURL = 'https://accounts.google.com/o/oauth2/auth';
 
-  const scopes = ['https://www.googleapis.com/auth/gmail.readonly'];
+  const scopes = [
+    'https://www.googleapis.com/auth/gmail.readonly',
+    'profile',
+    'email',
+  ];
   const code_challenge_method = 'S256';
   const code_challenge = await oauth.calculatePKCECodeChallenge(code_verifier);
 
@@ -90,10 +95,14 @@ async function getToken_chrome_firefox(): Promise<oauth.TokenEndpointResponse> {
     redirect_uri,
     code_verifier,
   });
+  log.emailFetcher.info('Requesting access', {authURL});
   const redirectUrlWithParams = await browser.identity.launchWebAuthFlow({
     interactive: true,
     url: authURL,
   });
+  log.emailFetcher.info('Access granted', {redirectUrlWithParams});
+
+  log.emailFetcher.info('Requesting token', {redirectUrlWithParams});
   const tokenResponse = await requestToken({
     client,
     clientAuth,
@@ -101,6 +110,7 @@ async function getToken_chrome_firefox(): Promise<oauth.TokenEndpointResponse> {
     redirectUrlSearchParams: new URL(redirectUrlWithParams).searchParams,
     code_verifier,
   });
+  log.emailFetcher.info('Token granted', {tokenResponse});
 
   return tokenResponse;
 }
@@ -135,6 +145,7 @@ async function getToken_safari(): Promise<oauth.TokenEndpointResponse> {
     throw new Error('No redirect URL from OAuth flow');
   }
   const redirectUrlWithParams = backgroundResponse.redirectURL;
+  log.emailFetcher.info('Access granted', {redirectUrlWithParams});
 
   const tokenResponse = await requestToken({
     client,
@@ -143,11 +154,14 @@ async function getToken_safari(): Promise<oauth.TokenEndpointResponse> {
     redirectUrlSearchParams: new URL(redirectUrlWithParams).searchParams,
     code_verifier,
   });
+  log.emailFetcher.info('Token granted', {tokenResponse});
 
   return tokenResponse;
 }
 
 export async function getAccessToken(): Promise<oauth.TokenEndpointResponse> {
+  debugger;
+
   if (typeof browser.identity?.getRedirectURL === 'function') {
     return getToken_chrome_firefox();
   }

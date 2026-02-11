@@ -7,19 +7,11 @@
  */
 
 import browser from 'webextension-polyfill';
-import {getStorage} from '../utils/storage';
+import {log} from '../utils/logger';
 
 // Listen for messages from popup or background
 browser.runtime.onMessage.addListener(
   (): Promise<undefined> | undefined => undefined
 );
 
-// Log when content script loads (if logging is enabled)
-getStorage(['enableLogging']).then(({enableLogging}) => {
-  if (enableLogging) {
-    console.log(
-      '[Web Extension Starter] Content script loaded on:',
-      window.location.href
-    );
-  }
-});
+log.content.info('Content script loaded', {url: window.location.href});

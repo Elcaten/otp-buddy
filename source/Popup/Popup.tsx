@@ -27,8 +27,9 @@
  */
 
 import browser from 'webextension-polyfill';
-import {JSX, type FC} from 'react';
+import {JSX, type FC, useEffect} from 'react';
 import {getAllStorage} from '../utils/storage';
+import {log} from '../utils/logger';
 import {CopyOTPButton} from './components/copy-opt-button';
 import {OpenPreviewButton} from './components/open-preview-button';
 import {useQuery} from './useQuery';
@@ -84,6 +85,18 @@ const Popup: FC = () => {
     storageQuery.loading ||
     recentFastamailMessagesQuery.loading ||
     recentGmailMessagesQuery.loading;
+
+  useEffect(() => {
+    const err =
+      storageQuery.error ??
+      recentFastamailMessagesQuery.error ??
+      recentGmailMessagesQuery.error;
+    if (err) log.popup.error('Query failed', err);
+  }, [
+    storageQuery.error,
+    recentFastamailMessagesQuery.error,
+    recentGmailMessagesQuery.error,
+  ]);
 
   if (!isSettingsValid) {
     return <MissingSettings />;
