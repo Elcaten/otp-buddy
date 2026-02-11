@@ -219,8 +219,6 @@ async function getToken_safari(): Promise<oauth.TokenEndpointResponse> {
 }
 
 export async function getAccessToken(): Promise<oauth.TokenEndpointResponse> {
-  debugger;
-
   if (typeof browser.identity?.getRedirectURL === 'function') {
     return getToken_chrome_firefox();
   }

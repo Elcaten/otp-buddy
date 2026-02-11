@@ -4,7 +4,11 @@
 - [Safari oAuth] - Support iOS
 - delete message after successfull copy
 - append to input and autofill?
-- error handling
+- add notice where generate api key (only available in X sub, oAuth coming soon)
+- error handling fastmail
+  1. typo in api key
+  2. expired api key (same error?)
+- error handling gmail
   1. any request errored
   2. any request cancelled
   3. invalid apikey
