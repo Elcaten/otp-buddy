@@ -3,6 +3,7 @@ import browser from 'webextension-polyfill';
 import {isOAuthLaunchResponse, OAuthLaunchMessage} from '../../types/messages';
 import {env} from '../../utils/env';
 import {log} from '../../utils/logger';
+import {getStorage, setStorage} from '../../utils/storage';
 
 async function buildAuthURL({
   client_id,
@@ -79,6 +80,41 @@ async function requestToken({
   return result;
 }
 
+async function refreshToken({
+  client,
+  clientAuth,
+  refresh_token,
+}: {
+  client: oauth.Client;
+  clientAuth: oauth.ClientAuth;
+  refresh_token: string;
+}): Promise<oauth.TokenEndpointResponse> {
+  const ISSUER = 'https://accounts.google.com';
+  const ALGORITHM = 'oauth2';
+  const authServerMetadata = await oauth
+    .discoveryRequest(new URL(ISSUER), {algorithm: ALGORITHM})
+    .then((response) =>
+      oauth.processDiscoveryResponse(new URL(ISSUER), response)
+    );
+
+  const response = await oauth.refreshTokenGrantRequest(
+    authServerMetadata,
+    client,
+    clientAuth,
+    refresh_token
+  );
+
+  const result = await oauth.processRefreshTokenResponse(
+    authServerMetadata,
+    client,
+    response
+  );
+
+  log.emailFetcher.info('Token refreshed', {result});
+
+  return result;
+}
+
 async function getToken_chrome_firefox(): Promise<oauth.TokenEndpointResponse> {
   const redirect_uri = browser.identity.getRedirectURL();
   const code_verifier = oauth.generateRandomCodeVerifier();
@@ -131,6 +167,24 @@ async function getToken_safari(): Promise<oauth.TokenEndpointResponse> {
     code_verifier,
   });
 
+  const {gmailRefreshToken} = await getStorage(['gmailRefreshToken']);
+
+  if (gmailRefreshToken) {
+    const tokenResponse = await refreshToken({
+      client,
+      clientAuth,
+      refresh_token: gmailRefreshToken,
+    });
+    log.emailFetcher.info('Token refreshed', {tokenResponse});
+
+    if (tokenResponse.refresh_token) {
+      log.emailFetcher.info('Refresh token stored', {tokenResponse});
+      await setStorage({gmailRefreshToken: tokenResponse.refresh_token});
+    }
+
+    return tokenResponse;
+  }
+
   const backgroundResponse = await browser.runtime.sendMessage({
     type: 'OAUTH_LAUNCH',
     authURL,
@@ -155,6 +209,11 @@ async function getToken_safari(): Promise<oauth.TokenEndpointResponse> {
     code_verifier,
   });
   log.emailFetcher.info('Token granted', {tokenResponse});
+
+  if (tokenResponse.refresh_token) {
+    log.emailFetcher.info('Refresh token stored', {tokenResponse});
+    await setStorage({gmailRefreshToken: tokenResponse.refresh_token});
+  }
 
   return tokenResponse;
 }
