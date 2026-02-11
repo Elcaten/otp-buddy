@@ -2,10 +2,10 @@ import type {FC} from 'react';
 import {useEffect, useState} from 'react';
 import {PROVIDERS} from '../types/providers';
 import {getStorage, setStorage} from '../utils/storage';
-import {log} from '../utils/logger';
 import {JamClient} from 'jmap-jam';
 import {useQuery} from '../Popup/useQuery';
 import {GmailOptions} from './GmailOptions';
+import {useDebounceState} from '../utils/use-debounce-state';
 
 const Options: FC = () => {
   const [provider, setProvider] = useState<'fastmail' | 'gmail' | 'imap'>(
@@ -13,13 +13,18 @@ const Options: FC = () => {
   );
   const [saved, setSaved] = useState(false);
 
-  const [fastmailApiKey, setFastmailApiKey] = useState('');
+  const [fastmailApiKey, setFastmailApiKey] = useDebounceState('', {
+    delay: 300,
+    leading: true,
+    trailing: true,
+  });
   const [fastmailAccountId, setFastmailAccountId] = useState('');
   const accountQuery = useQuery({
-    enabled: !!fastmailApiKey,
+    queryKey: 'fastmailAccounts' + fastmailApiKey.debounced,
+    enabled: !!fastmailApiKey.debounced,
     queryFn: async () => {
       const client = new JamClient({
-        bearerToken: fastmailApiKey,
+        bearerToken: fastmailApiKey.debounced,
         sessionUrl: 'https://api.fastmail.com/.well-known/jmap',
       });
       const session = await client.session;
@@ -37,13 +42,16 @@ const Options: FC = () => {
         setProvider(result.provider);
       }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSave = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
-    await setStorage({fastmailApiKey, fastmailAccountId, provider});
-    debugger;
-    log.options.info('Settings saved');
+    await setStorage({
+      fastmailApiKey: fastmailApiKey.debounced,
+      fastmailAccountId,
+      provider,
+    });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -67,10 +75,6 @@ const Options: FC = () => {
                 }
               />
               <label htmlFor={providerOption.id}>{providerOption.name}</label>
-              {/* <Description>
-                    Customers can resell or transfer their tickets if they can’t
-                    make it to the event.
-                  </Description> */}
             </div>
           ))}
         </fieldset>
@@ -80,6 +84,23 @@ const Options: FC = () => {
         {provider === 'fastmail' && (
           <fieldset>
             <label htmlFor="fastmailApiKey">Fastmail API key</label>
+            <div
+              style={{
+                fontSize: '0.85em',
+                color: 'var(--text-muted)',
+                marginBottom: '4px',
+              }}
+            >
+              You can generate API key in{' '}
+              <a
+                href="https://app.fastmail.com/settings/security/tokens"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Fastmail settings
+              </a>
+              . Unfortunatelly, API keys are not available for Basic accounts.
+            </div>
             <input
               type="password"
               id="fastmailApiKey"
@@ -87,9 +108,18 @@ const Options: FC = () => {
               placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX"
               spellCheck={false}
               autoComplete="off"
-              value={fastmailApiKey}
+              value={fastmailApiKey.value}
               onChange={(e): void => setFastmailApiKey(e.target.value)}
             />
+            {Boolean(accountQuery.loading) && <div>⏳</div>}
+            {Boolean(accountQuery.error) && (
+              <div style={{color: 'var(--highlight)'}}>
+                Can&apos;t connect to Fastmail. Please check your API key.
+              </div>
+            )}
+            {!Boolean(accountQuery.loading) && !Boolean(accountQuery.error) && (
+              <div>&nbsp;</div>
+            )}
 
             <label htmlFor="accountId">Account</label>
             <select
@@ -111,7 +141,7 @@ const Options: FC = () => {
 
         <button type="submit">Save Settings</button>
         {saved && (
-          <span className="mx-2 text-sm text-amber-500 dark:text-amber-600">
+          <span style={{color: 'var(--highlight)', marginLeft: '8px'}}>
             Settings saved!
           </span>
         )}

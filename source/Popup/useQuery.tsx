@@ -1,33 +1,41 @@
 import {useState, useEffect} from 'react';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export function useQuery<TData>({
+export function useQuery<TData, TError = Error>({
+  queryKey,
   queryFn,
   enabled = true,
+  onError,
 }: {
+  queryKey: string;
   queryFn: () => Promise<TData>;
   enabled?: boolean;
+  onError?: (error: unknown) => TError;
 }) {
   const [data, setData] = useState<TData | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<TError | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!enabled) return;
 
     setLoading(true);
+    setData(null);
+    setError(null);
+
     queryFn()
       .then((query) => {
         setData(query);
       })
       .catch((e) => {
-        setError(e);
+        setData(null);
+        setError(onError ? onError(e) : e);
       })
       .finally(() => {
         setLoading(false);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled]);
+  }, [enabled, queryKey]);
 
   return {data, error, loading};
 }
