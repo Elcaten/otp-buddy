@@ -1,7 +1,8 @@
 import type {FC} from 'react';
-import {Fragment, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {PROVIDERS} from '../types/providers';
 import {getStorage, setStorage} from '../utils/storage';
+import {log} from '../utils/logger';
 import {JamClient} from 'jmap-jam';
 import {useQuery} from '../Popup/useQuery';
 import {GmailOptions} from './GmailOptions';
@@ -41,6 +42,8 @@ const Options: FC = () => {
   const handleSave = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     await setStorage({fastmailApiKey, fastmailAccountId, provider});
+    debugger;
+    log.options.info('Settings saved');
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };

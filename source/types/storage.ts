@@ -14,6 +14,6 @@ export const defaultStorage: StorageSchema = {
   fastmailApiKey: '',
   fastmailAccountId: '',
 
-  enableLogging: false,
+  enableLogging: true,
   visitCount: 0,
 };

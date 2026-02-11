@@ -38,4 +38,33 @@ export function isOAuthLaunchResponse(
   }).guard(message);
 }
 
-export type ExtensionMessage = OAuthLaunchMessage | OAuthLaunchResponse;
+/** Any context -> Background: log entry for centralized logging. */
+export interface LogMessage {
+  type: 'log';
+  level: 'debug' | 'info' | 'warn' | 'error';
+  source: 'background' | 'popup' | 'content' | 'options' | 'email-fetcher';
+  message: string;
+  data?: unknown;
+  timestamp?: number;
+}
+
+export function isLogMessage(message: unknown): message is LogMessage {
+  return R.Object({
+    type: R.Literal('log'),
+    level: R.Union(
+      R.Literal('debug'),
+      R.Literal('info'),
+      R.Literal('warn'),
+      R.Literal('error')
+    ),
+    source: R.String,
+    message: R.String,
+    data: R.Unknown.optional(),
+    timestamp: R.Number.optional(),
+  }).guard(message);
+}
+
+export type ExtensionMessage =
+  | OAuthLaunchMessage
+  | OAuthLaunchResponse
+  | LogMessage;
