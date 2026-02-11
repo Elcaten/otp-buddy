@@ -56,6 +56,7 @@ function MissingSettings(): JSX.Element {
 
 const Popup: FC = () => {
   const storageQuery = useQuery({
+    queryKey: 'storage',
     queryFn: async () => getAllStorage(),
   });
   const isSettingsValid =
@@ -66,6 +67,7 @@ const Popup: FC = () => {
 
   const recentFastamailMessagesQuery = useQuery({
     enabled: isSettingsValid && storageQuery.data?.provider === 'fastmail',
+    queryKey: 'recentFastamailMessages',
     queryFn: async () =>
       new FastmailEmailFetcher(
         storageQuery.data?.fastmailApiKey!,
@@ -75,9 +77,10 @@ const Popup: FC = () => {
 
   const recentGmailMessagesQuery = useQuery({
     enabled: isSettingsValid && storageQuery.data?.provider === 'gmail',
+    queryKey: 'recentGmailMessages',
     queryFn: async () =>
       new GmailEmailFetcher(
-        (await getAccessToken()).access_token
+        (await getAccessToken({interactive: true})).access_token
       ).fetchRecentEmails(),
   });
 

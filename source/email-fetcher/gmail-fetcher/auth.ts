@@ -115,7 +115,54 @@ async function refreshToken({
   return result;
 }
 
-async function getToken_chrome_firefox(): Promise<oauth.TokenEndpointResponse> {
+async function revokeToken({
+  client,
+  clientAuth,
+  token,
+}: {
+  client: oauth.Client;
+  clientAuth: oauth.ClientAuth;
+  token: string;
+}): Promise<void> {
+  const ISSUER = 'https://accounts.google.com';
+  const ALGORITHM = 'oauth2';
+  const authServerMetadata = await oauth
+    .discoveryRequest(new URL(ISSUER), {algorithm: ALGORITHM})
+    .then((response) =>
+      oauth.processDiscoveryResponse(new URL(ISSUER), response)
+    );
+
+  const response = await oauth.revocationRequest(
+    authServerMetadata,
+    client,
+    clientAuth,
+    token
+  );
+  const result = await oauth.processRevocationResponse(response);
+  log.emailFetcher.info('Token revoked', {result});
+
+  return result;
+}
+
+export async function signOut_chrome_firefox(): Promise<void> {
+  const client_id = env.OTP_BUDDY_WEB_CLIENT_ID;
+  const client_secret = env.OTP_BUDDY_WEB_CLIENT_SECRET;
+  const client: oauth.Client = {
+    client_id: client_id,
+    client_secret: client_secret,
+  };
+  const clientAuth = oauth.ClientSecretPost(client_secret);
+
+  const token = await getAccessToken({interactive: false});
+
+  await revokeToken({client, clientAuth, token: token.access_token});
+}
+
+async function getToken_chrome_firefox({
+  interactive,
+}: {
+  interactive: boolean;
+}): Promise<oauth.TokenEndpointResponse> {
   const redirect_uri = browser.identity.getRedirectURL();
   const code_verifier = oauth.generateRandomCodeVerifier();
   const client_id = env.OTP_BUDDY_WEB_CLIENT_ID;
@@ -133,7 +180,7 @@ async function getToken_chrome_firefox(): Promise<oauth.TokenEndpointResponse> {
   });
   log.emailFetcher.info('Requesting access', {authURL});
   const redirectUrlWithParams = await browser.identity.launchWebAuthFlow({
-    interactive: true,
+    interactive: interactive,
     url: authURL,
   });
   log.emailFetcher.info('Access granted', {redirectUrlWithParams});
@@ -218,9 +265,13 @@ async function getToken_safari(): Promise<oauth.TokenEndpointResponse> {
   return tokenResponse;
 }
 
-export async function getAccessToken(): Promise<oauth.TokenEndpointResponse> {
+export async function getAccessToken({
+  interactive,
+}: {
+  interactive: boolean;
+}): Promise<oauth.TokenEndpointResponse> {
   if (typeof browser.identity?.getRedirectURL === 'function') {
-    return getToken_chrome_firefox();
+    return getToken_chrome_firefox({interactive});
   }
 
   return getToken_safari();
