@@ -9,26 +9,22 @@ export function OpenPreviewButton({email}: {email: Email}): JSX.Element {
       return;
     }
 
-    const newWindow = window.open('', '_blank');
-
-    if (!newWindow) {
-      return;
-    }
-
-    const policy = window.trustedTypes!.createPolicy('default', {
-      createHTML: (to_escape) =>
-        DOMPurify.sanitize(to_escape, {RETURN_TRUSTED_TYPE: false}),
+    // Sanitize the HTML
+    const sanitizedHtml = DOMPurify.sanitize(mainHtmlPart, {
+      RETURN_TRUSTED_TYPE: false,
     });
 
-    if (!policy) {
-      return;
-    }
+    // Create a Blob from the HTML content
+    const blob = new Blob([sanitizedHtml], {type: 'text/html'});
+    const blobUrl = URL.createObjectURL(blob);
 
-    newWindow.document.open();
-    newWindow.document.write(
-      policy.createHTML(mainHtmlPart) as unknown as string
-    );
-    newWindow.document.close();
+    // Open the blob URL in a new window
+    const newWindow = window.open(blobUrl, '_blank');
+
+    // Optional: Revoke the URL after a delay to free up memory
+    if (newWindow) {
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+    }
   };
 
   return (
