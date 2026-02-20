@@ -10,7 +10,13 @@ export const test = base.extend<{
   extensionId: string;
 }>({
   context: async ({}, use) => {
-    const userDataDir = path.join(__dirname, '..', '..', '.playwright-user-data', 'chromium');
+    const userDataDir = path.join(
+      __dirname,
+      '..',
+      '..',
+      '.playwright-user-data',
+      'chromium'
+    );
     const context = await chromium.launchPersistentContext(userDataDir, {
       channel: 'chromium',
       headless: false,

@@ -10,7 +10,9 @@ test.describe('Popup', () => {
     await expect(
       page.getByRole('button', {name: /extension settings/i})
     ).toBeVisible({timeout: 5000});
-    await expect(page.getByText(/please set up your email provider/i)).toBeVisible();
+    await expect(
+      page.getByText(/please set up your email provider/i)
+    ).toBeVisible();
   });
 
   test('has link to open options page', async ({page, extensionId}) => {
