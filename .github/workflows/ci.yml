@@ -21,3 +21,38 @@ jobs:
 
       - run: npm run lint
       - run: npm run test
+
+  # E2E: requires GitHub secret OP_SERVICE_ACCOUNT_TOKEN (1Password service account).
+  # In 1Password: create vault "ci", item "otp-buddy-env" with fields
+  # VITE_OTP_BUDDY_SAFARI_CLIENT_ID, VITE_OTP_BUDDY_WEB_CLIENT_ID, VITE_OTP_BUDDY_WEB_CLIENT_SECRET.
+  e2e:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Load env from 1Password
+        uses: 1password/load-secrets-action@v3
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          VITE_OTP_BUDDY_SAFARI_CLIENT_ID: op://CLI-OTP-Buddy/otp-buddy-safari-native-app/client_id
+          VITE_OTP_BUDDY_WEB_CLIENT_ID: op://CLI-OTP-Buddy/otp-buddy-web/client_id
+          VITE_OTP_BUDDY_WEB_CLIENT_SECRET: op://CLI-OTP-Buddy/otp-buddy-web/client_secret
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Build extension
+        run: npm run build:chrome
+
+      - name: Run E2E tests
+        run: npx playwright test --project=chromium
