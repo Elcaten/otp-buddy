@@ -1,27 +1,24 @@
 {
-	"extends": "@abhijithvijayan/tsconfig",
-	"compilerOptions": {
-		/* Let Vite control the final JS output */
-		"target": "ESNext",
-		"module": "ESNext",
-		"noEmit": true,
+  "extends": "@abhijithvijayan/tsconfig",
+  "compilerOptions": {
+    /* Let Vite control the final JS output */
+    "target": "ESNext",
+    "module": "ESNext",
+    "noEmit": true,
 
-		"lib": [
-			"dom",
-			"dom.iterable",
-			"ES2023"
-		],
+    "lib": ["dom", "dom.iterable", "ES2023"],
 
-		/* Bundler-specific settings */
-		"moduleResolution": "bundler",
-		"isolatedModules": true,
-		"resolveJsonModule": true,
-		"declaration": false,
+    /* Bundler-specific settings */
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "declaration": false,
 
-		/* React JSX transform */
-		"jsx": "react-jsx"
-	},
-	"include": [
-		"source"
-	]
+    "skipDefaultLibCheck": true,
+    "allowImportingTsExtensions": true,
+
+    /* React JSX transform */
+    "jsx": "react-jsx"
+  },
+  "include": ["source"]
 }
