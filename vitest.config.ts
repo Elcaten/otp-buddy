@@ -12,6 +12,7 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    setupFiles: ['source/test-setup.ts'],
     include: ['source/**/*.spec.ts', 'source/**/*.spec.tsx'],
     exclude: ['node_modules', 'extension', 'safari', '**/*.d.ts'],
     globals: true,
@@ -26,6 +27,7 @@ export default defineConfig({
         'source/vite-env.d.ts',
         'source/globals.d.ts',
         'source/__mocks__/**',
+        'source/test-setup.ts',
         '**/*.json',
       ],
       reporter: ['text', 'html'],
