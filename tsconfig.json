@@ -15,6 +15,7 @@
 		/* Bundler-specific settings */
 		"moduleResolution": "bundler",
 		"isolatedModules": true,
+		"resolveJsonModule": true,
 		"declaration": false,
 
 		/* React JSX transform */
