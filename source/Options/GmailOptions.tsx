@@ -1,4 +1,4 @@
-import {Fragment, JSX} from 'react';
+import {JSX} from 'react';
 import {useQuery} from '../Popup/useQuery';
 import {getUserProfile} from '../email-fetcher/gmail-fetcher/user-profile';
 import {getAccessToken} from '../email-fetcher/gmail-fetcher/auth';

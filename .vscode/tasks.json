@@ -23,6 +23,17 @@
         "reveal": "always",
         "panel": "shared"
       }
+    },
+    {
+      "label": "test:e2e",
+      "type": "shell",
+      "command": "npx dotenv-cli -- bash -c \"op run --no-masking --env-file=.env -- bash -c 'npm run test:e2e'\"",
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
     }
   ]
 }

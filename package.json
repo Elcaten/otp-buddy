@@ -25,6 +25,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "npm run build:chrome && playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "init:safari": "xcrun safari-web-extension-packager --project-location safari --app-name OTPBuddy --bundle-identifier com.elcaten.otpbuddy ./extension/chrome"
   },
   "dependencies": {
@@ -47,6 +49,7 @@
   "devDependencies": {
     "@abhijithvijayan/eslint-config": "^3.0.1",
     "@abhijithvijayan/tsconfig": "^1.5.1",
+    "@playwright/test": "^1.58.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/gapi.client.gmail-v1": "^0.0.4",
