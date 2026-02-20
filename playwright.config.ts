@@ -1,7 +1,6 @@
 import {defineConfig, devices} from '@playwright/test';
 
 export default defineConfig({
-  testDir: './e2e',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: 0,
@@ -11,5 +10,11 @@ export default defineConfig({
   use: {
     trace: 'on-first-retry',
   },
-  projects: [{name: 'chromium', use: {...devices['Desktop Chrome']}}],
+  projects: [
+    {
+      name: 'chromium',
+      testDir: './e2e/chromium',
+      use: {...devices['Desktop Chrome']},
+    },
+  ],
 });

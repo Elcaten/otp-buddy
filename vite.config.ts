@@ -6,6 +6,7 @@ import zipPack from 'vite-plugin-zip-pack';
 import checker from 'vite-plugin-checker';
 import clean from 'vite-plugin-clean';
 import WextManifest from 'vite-plugin-wext-manifest';
+import 'dotenv/config';
 
 import type {Plugin} from 'vite';
 

@@ -3,14 +3,14 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const pathToExtension = path.join(__dirname, '..', 'extension', 'chrome');
+const pathToExtension = path.join(__dirname, '..', '..', 'extension', 'chrome');
 
 export const test = base.extend<{
   context: BrowserContext;
   extensionId: string;
 }>({
   context: async ({}, use) => {
-    const userDataDir = path.join(__dirname, '..', '.playwright-user-data');
+    const userDataDir = path.join(__dirname, '..', '..', '.playwright-user-data', 'chromium');
     const context = await chromium.launchPersistentContext(userDataDir, {
       channel: 'chromium',
       headless: false,
