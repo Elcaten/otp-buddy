@@ -2,7 +2,6 @@ import {JSX, useCallback, useEffect, useState} from 'react';
 import {Email} from '../../types/email';
 import {emailParser} from '../../email-parser';
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function useCopyOTPToClipboard() {
   const [state, setState] = useState<'pending' | 'success' | 'error'>(
     'pending'

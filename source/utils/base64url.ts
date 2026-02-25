@@ -1,4 +1,3 @@
-/* eslint-disable  */
 /**
  * Avoid modifying this file. It's part of
  * https://github.com/supabase-community/base64url-js.  Submit all fixes on

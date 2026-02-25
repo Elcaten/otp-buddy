@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /**
  * Mock for webextension-polyfill for use in integration tests.
  *
