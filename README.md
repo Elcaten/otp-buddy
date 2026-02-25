@@ -50,8 +50,8 @@
 This starter uses **Manifest V3** for all browsers.
 
 | [![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png)](/) | [![Firefox](https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png)](/) | [![Opera](https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png)](/) | [![Edge](https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png)](/) | [![Brave](https://raw.githubusercontent.com/alrra/browser-logos/master/src/brave/brave_48x48.png)](/) |
-| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| 88+ (Jan 2021)                                                                                | 109+ (Jan 2023)                                                                                  | 74+ (Chromium-based)                                                                       | 88+ (Chromium-based)                                                                    | Latest (Chromium-based)                                                                    |
+| -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| 88+ (Jan 2021)                                                                                           | 109+ (Jan 2023)                                                                                             | 74+ (Chromium-based)                                                                                  | 88+ (Chromium-based)                                                                               | Latest (Chromium-based)                                                                               |
 
 > **Note**: Firefox 109+ is required for Manifest V3 support with ES modules in background scripts.
 >
@@ -146,20 +146,15 @@ See [vite-plugin-wext-manifest](https://github.com/abhijithvijayan/vite-plugin-w
 
 ## Scripts
 
-| Script              | Description                              |
-| ------------------- | ---------------------------------------- |
-| `npm run dev:chrome`  | Start dev server for Chrome            |
-| `npm run dev:firefox` | Start dev server for Firefox           |
-| `npm run build:chrome`| Build production Chrome extension      |
-| `npm run build:firefox`| Build production Firefox addon        |
-| `npm run build`       | Build for all browsers                 |
-| `npm run lint`        | Run ESLint                             |
-| `npm run lint:fix`    | Run ESLint with auto-fix               |
-
-## Linting & TypeScript Config
-
-- Shared ESLint & Prettier Configuration - [`@abhijithvijayan/eslint-config`](https://www.npmjs.com/package/@abhijithvijayan/eslint-config)
-- Shared TypeScript Configuration - [`@abhijithvijayan/tsconfig`](https://www.npmjs.com/package/@abhijithvijayan/tsconfig)
+| Script                  | Description                       |
+| ----------------------- | --------------------------------- |
+| `npm run dev:chrome`    | Start dev server for Chrome       |
+| `npm run dev:firefox`   | Start dev server for Firefox      |
+| `npm run build:chrome`  | Build production Chrome extension |
+| `npm run build:firefox` | Build production Firefox addon    |
+| `npm run build`         | Build for all browsers            |
+| `npm run lint`          | Run ESLint                        |
+| `npm run lint:fix`      | Run ESLint with auto-fix          |
 
 ## Bugs
 
