@@ -48,7 +48,6 @@
     "webextension-polyfill": "^0.12.0"
   },
   "devDependencies": {
-    "@abhijithvijayan/tsconfig": "^1.5.1",
     "@playwright/test": "^1.58.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
