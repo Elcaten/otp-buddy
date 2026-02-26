@@ -8,9 +8,7 @@ import {GmailOptions} from './GmailOptions';
 import {useDebounceState} from '../utils/use-debounce-state';
 
 const Options: FC = () => {
-  const [provider, setProvider] = useState<'fastmail' | 'gmail' | 'imap'>(
-    'fastmail'
-  );
+  const [provider, setProvider] = useState<'fastmail' | 'gmail'>('fastmail');
   const [saved, setSaved] = useState(false);
 
   const [fastmailApiKey, setFastmailApiKey] = useDebounceState('', {
@@ -71,7 +69,7 @@ const Options: FC = () => {
                 value={providerOption.id}
                 checked={provider === providerOption.id}
                 onChange={(e): void =>
-                  setProvider(e.target.value as 'fastmail' | 'gmail' | 'imap')
+                  setProvider(e.target.value as 'fastmail' | 'gmail')
                 }
               />
               <label htmlFor={providerOption.id}>{providerOption.name}</label>

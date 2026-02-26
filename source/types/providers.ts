@@ -14,11 +14,4 @@ export const PROVIDERS = {
     authType: 'oauth2',
     scopes: ['https://www.googleapis.com/auth/gmail.readonly'],
   },
-  IMAP: {
-    id: 'imap',
-    name: 'Generic IMAP',
-    type: 'IMAP',
-    authType: 'password',
-    requiresNativeHost: true,
-  },
 } as const;
