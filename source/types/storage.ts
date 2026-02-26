@@ -1,5 +1,5 @@
 export interface StorageSchema {
-  provider: 'fastmail' | 'gmail' | 'imap';
+  provider: 'fastmail' | 'gmail';
 
   fastmailApiKey: string;
   fastmailAccountId: string;
