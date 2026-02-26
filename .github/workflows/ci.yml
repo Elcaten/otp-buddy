@@ -114,36 +114,37 @@ jobs:
 
       - name: Build Safari app (unsigned)
         run: |
+          SAFARI_BUILD_DIR="$GITHUB_WORKSPACE/safari/OTPBuddy/build"
           xcodebuild \
             -project "safari/OTPBuddy/OTPBuddy.xcodeproj" \
             -target "OTPBuddy (macOS)" \
             -configuration Release \
-            SYMROOT="safari/OTPBuddy/build" \
+            SYMROOT="$SAFARI_BUILD_DIR" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             build
 
       - name: Debug Safari build outputs
         run: |
-          ls -la "safari/OTPBuddy/build"
-          ls -la "safari/OTPBuddy/build/Release"
+          ls -la "$GITHUB_WORKSPACE/safari/OTPBuddy/build"
+          ls -la "$GITHUB_WORKSPACE/safari/OTPBuddy/build/Release"
 
       - name: Upload Safari build products
         uses: actions/upload-artifact@v4
         with:
           name: safari-build-unsigned
-          path: safari/OTPBuddy/build/Release
+          path: ${{ github.workspace }}/safari/OTPBuddy/build/Release
 
       - name: Package Safari build products
         run: |
-          cd safari/OTPBuddy/build
+          cd "$GITHUB_WORKSPACE/safari/OTPBuddy/build"
           ditto -c -k --sequesterRsrc --keepParent Release safari-unsigned.zip
 
       - name: Upload Safari package
         uses: actions/upload-artifact@v4
         with:
           name: safari-build-unsigned-zip
-          path: safari/OTPBuddy/build/safari-unsigned.zip
+          path: ${{ github.workspace }}/safari/OTPBuddy/build/safari-unsigned.zip
 
   e2e-chromium:
     runs-on: ubuntu-latest
