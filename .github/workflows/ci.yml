@@ -109,33 +109,41 @@ jobs:
           VITE_OTP_BUDDY_WEB_CLIENT_ID: ${{ secrets.VITE_OTP_BUDDY_WEB_CLIENT_ID }}
           VITE_OTP_BUDDY_WEB_CLIENT_SECRET: ${{ secrets.VITE_OTP_BUDDY_WEB_CLIENT_SECRET }}
 
+      - name: Debug Xcode project metadata
+        run: xcodebuild -list -project "safari/OTPBuddy/OTPBuddy.xcodeproj"
+
       - name: Build Safari app (unsigned)
         run: |
           xcodebuild \
             -project "safari/OTPBuddy/OTPBuddy.xcodeproj" \
             -target "OTPBuddy (macOS)" \
             -configuration Release \
-            -derivedDataPath "safari/OTPBuddy/build" \
+            SYMROOT="safari/OTPBuddy/build" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             build
+
+      - name: Debug Safari build outputs
+        run: |
+          ls -la "safari/OTPBuddy/build"
+          ls -la "safari/OTPBuddy/build/Release"
 
       - name: Upload Safari build products
         uses: actions/upload-artifact@v4
         with:
           name: safari-build-unsigned
-          path: safari/OTPBuddy/build/Build/Products/Release
+          path: safari/OTPBuddy/build/Release
 
       - name: Package Safari build products
         run: |
-          cd safari/OTPBuddy/build/Build/Products
+          cd safari/OTPBuddy/build
           ditto -c -k --sequesterRsrc --keepParent Release safari-unsigned.zip
 
       - name: Upload Safari package
         uses: actions/upload-artifact@v4
         with:
           name: safari-build-unsigned-zip
-          path: safari/OTPBuddy/build/Build/Products/safari-unsigned.zip
+          path: safari/OTPBuddy/build/safari-unsigned.zip
 
   e2e-chromium:
     runs-on: ubuntu-latest
