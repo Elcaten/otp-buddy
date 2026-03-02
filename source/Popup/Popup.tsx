@@ -32,7 +32,7 @@ import {getAllStorage} from '../utils/storage';
 import {log} from '../utils/logger';
 import {CopyOTPButton} from './components/copy-opt-button';
 import {OpenPreviewButton} from './components/open-preview-button';
-import {useQuery} from './useQuery';
+import useSWR from 'swr';
 import s from './Popup.module.scss';
 import {FastmailEmailFetcher} from '../email-fetcher/fastmail-fetcher';
 import {getAccessToken} from '../email-fetcher/gmail-fetcher/auth';
@@ -55,39 +55,45 @@ function MissingSettings(): JSX.Element {
 }
 
 const Popup: FC = () => {
-  const storageQuery = useQuery({
-    queryKey: 'storage',
-    queryFn: async () => getAllStorage(),
-  });
+  const storageQuery = useSWR(
+    {
+      queryKey: 'storage',
+    },
+    async () => getAllStorage()
+  );
   const isSettingsValid =
     (storageQuery.data?.provider === 'fastmail' &&
       !!storageQuery.data?.fastmailApiKey &&
       !!storageQuery.data?.fastmailAccountId) ||
     storageQuery.data?.provider === 'gmail';
 
-  const recentFastamailMessagesQuery = useQuery({
-    enabled: isSettingsValid && storageQuery.data?.provider === 'fastmail',
-    queryKey: 'recentFastamailMessages',
-    queryFn: async () =>
+  const recentFastamailMessagesQuery = useSWR(
+    isSettingsValid && storageQuery.data?.provider === 'fastmail'
+      ? 'recentFastamailMessages'
+      : null,
+
+    async () =>
       new FastmailEmailFetcher(
         storageQuery.data?.fastmailApiKey!,
         storageQuery.data?.fastmailAccountId!
-      ).fetchRecentEmails(),
-  });
+      ).fetchRecentEmails()
+  );
 
-  const recentGmailMessagesQuery = useQuery({
-    enabled: isSettingsValid && storageQuery.data?.provider === 'gmail',
-    queryKey: 'recentGmailMessages',
-    queryFn: async () =>
+  const recentGmailMessagesQuery = useSWR(
+    isSettingsValid && storageQuery.data?.provider === 'gmail'
+      ? 'recentGmailMessages'
+      : null,
+
+    async () =>
       new GmailEmailFetcher(
         (await getAccessToken({interactive: true})).access_token
-      ).fetchRecentEmails(),
-  });
+      ).fetchRecentEmails()
+  );
 
   const isLoading =
-    storageQuery.loading ||
-    recentFastamailMessagesQuery.loading ||
-    recentGmailMessagesQuery.loading;
+    storageQuery.isValidating ||
+    recentFastamailMessagesQuery.isValidating ||
+    recentGmailMessagesQuery.isValidating;
 
   useEffect(() => {
     const err =
