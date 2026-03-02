@@ -106,7 +106,14 @@ const Popup: FC = () => {
   }
 
   if (isLoading) {
-    return <div style={{minWidth: 'max-content'}}>Loading...</div>;
+    return (
+      <PopupLayout>
+        <PopupHeader />
+        <PopupContent>
+          <p>Loading...</p>
+        </PopupContent>
+      </PopupLayout>
+    );
   }
 
   const recentMessages =
@@ -114,47 +121,70 @@ const Popup: FC = () => {
       ? recentFastamailMessagesQuery.data
       : recentGmailMessagesQuery.data;
 
-  return (
-    <section>
-      <h1>Recent OTP</h1>
+  if (recentMessages?.length === 0) {
+    return (
+      <PopupLayout>
+        <PopupHeader />
+        <PopupContent>
+          <p>No recent messages</p>
+        </PopupContent>
+      </PopupLayout>
+    );
+  }
 
-      <table
-        style={{
-          tableLayout: 'auto',
-          minWidth: 'fit-content',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <thead>
-          <tr>
-            <th>Subject</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {recentMessages?.map((email) => (
-            <tr key={email.id}>
-              <td
-                style={{
-                  verticalAlign: 'middle',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  maxWidth: '400px',
-                }}
-              >
-                {email.subject}
-              </td>
-              <td>
-                <CopyOTPButton email={email} />
-                <OpenPreviewButton email={email} />
-              </td>
+  return (
+    <PopupLayout>
+      <PopupHeader />
+
+      <PopupContent>
+        <table
+          style={{
+            tableLayout: 'auto',
+            minWidth: 'fit-content',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </section>
+          </thead>
+          <tbody>
+            {recentMessages?.map((email) => (
+              <tr key={email.id}>
+                <td
+                  style={{
+                    verticalAlign: 'middle',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    maxWidth: '400px',
+                  }}
+                >
+                  {email.subject}
+                </td>
+                <td>
+                  <CopyOTPButton email={email} />
+                  <OpenPreviewButton email={email} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </PopupContent>
+    </PopupLayout>
   );
 };
 
 export default Popup;
+
+const PopupLayout: FC<{children: React.ReactNode}> = ({children}) => (
+  <section>{children}</section>
+);
+
+const PopupHeader: FC = () => <h1>Recent OTP</h1>;
+
+const PopupContent: FC<{children: React.ReactNode}> = ({children}) => (
+  <>{children}</>
+);
