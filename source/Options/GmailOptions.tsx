@@ -6,12 +6,8 @@ import {SignInWithGoogleButton} from './sign-in-with-google-button';
 import {SignOutButton} from './sign-out-button';
 
 export const GmailOptions = (): JSX.Element => {
-  const userProfileQuery = useSWR(
-    {
-      queryKey: 'gmailUserProfile',
-    },
-    async () =>
-      getUserProfile((await getAccessToken({interactive: false})).access_token)
+  const userProfileQuery = useSWR('gmailUserProfile', async () =>
+    getUserProfile((await getAccessToken({interactive: false})).access_token)
   );
   return (
     <div>
