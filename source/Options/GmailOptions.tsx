@@ -1,19 +1,21 @@
 import {JSX} from 'react';
-import {useQuery} from '../Popup/useQuery';
+import useSWR from 'swr';
 import {getUserProfile} from '../email-fetcher/gmail-fetcher/user-profile';
 import {getAccessToken} from '../email-fetcher/gmail-fetcher/auth';
 import {SignInWithGoogleButton} from './sign-in-with-google-button';
 import {SignOutButton} from './sign-out-button';
 
 export const GmailOptions = (): JSX.Element => {
-  const userProfileQuery = useQuery({
-    queryKey: 'gmailUserProfile',
-    queryFn: async () =>
-      getUserProfile((await getAccessToken({interactive: false})).access_token),
-  });
+  const userProfileQuery = useSWR(
+    {
+      queryKey: 'gmailUserProfile',
+    },
+    async () =>
+      getUserProfile((await getAccessToken({interactive: false})).access_token)
+  );
   return (
     <div>
-      {Boolean(userProfileQuery.loading) && (
+      {Boolean(userProfileQuery.isValidating) && (
         <div>
           <div
             style={{
@@ -37,7 +39,7 @@ export const GmailOptions = (): JSX.Element => {
 
       {Boolean(userProfileQuery.error) && <SignInWithGoogleButton />}
 
-      {!userProfileQuery.loading && !userProfileQuery.error && (
+      {!userProfileQuery.isValidating && !userProfileQuery.error && (
         <div>
           <div style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
             {!!userProfileQuery.data?.picture && (
