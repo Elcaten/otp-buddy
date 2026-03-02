@@ -26,171 +26,160 @@
  *       browser.runtime.sendMessage() sends to background script
  */
 
-import browser from 'webextension-polyfill';
-import {JSX, type FC, useEffect} from 'react';
-import {getAllStorage} from '../utils/storage';
-import {log} from '../utils/logger';
-import {CopyOTPButton} from './components/copy-opt-button';
-import {OpenPreviewButton} from './components/open-preview-button';
+import {PropsWithChildren, Suspense} from 'react';
+import {ErrorBoundary, FallbackProps as ErrorBoundaryFallbackProps} from 'react-error-boundary';
 import useSWR from 'swr';
-import s from './Popup.module.scss';
+import browser from 'webextension-polyfill';
 import {FastmailEmailFetcher} from '../email-fetcher/fastmail-fetcher';
 import {getAccessToken} from '../email-fetcher/gmail-fetcher/auth';
 import {GmailEmailFetcher} from '../email-fetcher/gmail-fetcher/gmail-fetcher';
+import {getAllStorage} from '../utils/storage';
+import s from './Popup.module.scss';
+import {EmailsTable} from './components/emails-table';
+import {Email} from '../types/email';
 
-function MissingSettings(): JSX.Element {
-  return (
-    <div style={{minWidth: 'max-content'}}>
-      Please set up your email provider in the{' '}
-      <button
-        type="button"
-        onClick={() => browser.runtime.openOptionsPage()}
-        className={s.buttonLink}
-      >
-        extension settings
-      </button>
-      .
-    </div>
+//#region Popup layout
+
+const PopupLayout = Object.assign(
+  function ({children}: PropsWithChildren) {
+    return <section>{children}</section>;
+  },
+  {
+    Header: function Header() {
+      return <h1>Recent OTP</h1>;
+    },
+    Content: function Content({children}: PropsWithChildren) {
+      return <>{children}</>;
+    },
+  }
+);
+//#endregion
+
+//#region Popup states
+
+const PopupState = {
+  Loading: () => (
+    <PopupLayout>
+      <PopupLayout.Header />
+      <PopupLayout.Content>
+        <p>Loading...</p>
+      </PopupLayout.Content>
+    </PopupLayout>
+  ),
+  Error: (_props: ErrorBoundaryFallbackProps) => (
+    <PopupLayout>
+      <PopupLayout.Header />
+      <PopupLayout.Content>
+        <p>Something went wrong</p>
+      </PopupLayout.Content>
+    </PopupLayout>
+  ),
+  MissingSettings: () => (
+    <PopupLayout>
+      <PopupLayout.Header />
+      <PopupLayout.Content>
+        <p>
+          Please set up your email provider in the{' '}
+          <button type="button" onClick={() => browser.runtime.openOptionsPage()} className={s.buttonLink}>
+            extension settings
+          </button>
+          .
+        </p>
+      </PopupLayout.Content>
+    </PopupLayout>
+  ),
+  NoMessages: () => (
+    <PopupLayout>
+      <PopupLayout.Header />
+      <PopupLayout.Content>
+        <p>No recent messages</p>
+      </PopupLayout.Content>
+    </PopupLayout>
+  ),
+  MessagesList: (props: {emails: Email[]}) => (
+    <PopupLayout>
+      <PopupLayout.Header />
+      <PopupLayout.Content>
+        <EmailsTable emails={props.emails} />
+      </PopupLayout.Content>
+    </PopupLayout>
+  ),
+};
+//#endregion
+
+//#region Container components
+
+function FastmailMessagesContainer(props: {fastmailApiKey: string; fastmailAccountId: string}) {
+  const {fastmailApiKey, fastmailAccountId} = props;
+
+  const recentFastmailMessagesQuery = useSWR(
+    'recentFastmailMessages',
+
+    async () => new FastmailEmailFetcher(fastmailApiKey, fastmailAccountId).fetchRecentEmails(),
+    {suspense: true}
   );
+
+  if (recentFastmailMessagesQuery.data.length === 0) {
+    return <PopupState.NoMessages />;
+  }
+
+  return <PopupState.MessagesList emails={recentFastmailMessagesQuery.data} />;
 }
 
-const Popup: FC = () => {
-  const storageQuery = useSWR(
-    {
-      queryKey: 'storage',
-    },
-    async () => getAllStorage()
-  );
-  const isSettingsValid =
-    (storageQuery.data?.provider === 'fastmail' &&
-      !!storageQuery.data?.fastmailApiKey &&
-      !!storageQuery.data?.fastmailAccountId) ||
-    storageQuery.data?.provider === 'gmail';
-
-  const recentFastamailMessagesQuery = useSWR(
-    isSettingsValid && storageQuery.data?.provider === 'fastmail'
-      ? 'recentFastamailMessages'
-      : null,
-
-    async () =>
-      new FastmailEmailFetcher(
-        storageQuery.data?.fastmailApiKey!,
-        storageQuery.data?.fastmailAccountId!
-      ).fetchRecentEmails()
-  );
-
+function GmailMessagesContainer() {
   const recentGmailMessagesQuery = useSWR(
-    isSettingsValid && storageQuery.data?.provider === 'gmail'
-      ? 'recentGmailMessages'
-      : null,
-
-    async () =>
-      new GmailEmailFetcher(
-        (await getAccessToken({interactive: true})).access_token
-      ).fetchRecentEmails()
+    'recentGmailMessages',
+    async () => new GmailEmailFetcher((await getAccessToken({interactive: true})).access_token).fetchRecentEmails(),
+    {suspense: true}
   );
 
-  const isLoading =
-    storageQuery.isValidating ||
-    recentFastamailMessagesQuery.isValidating ||
-    recentGmailMessagesQuery.isValidating;
+  if (recentGmailMessagesQuery.data.length === 0) {
+    return <PopupState.NoMessages />;
+  }
 
-  useEffect(() => {
-    const err =
-      storageQuery.error ??
-      recentFastamailMessagesQuery.error ??
-      recentGmailMessagesQuery.error;
-    if (err) log.popup.error('Query failed', err);
-  }, [
-    storageQuery.error,
-    recentFastamailMessagesQuery.error,
-    recentGmailMessagesQuery.error,
-  ]);
+  return <PopupState.MessagesList emails={recentGmailMessagesQuery.data} />;
+}
+
+function PopupContentContainer() {
+  const storageQuery = useSWR('storage', async () => getAllStorage(), {
+    suspense: true,
+  });
+  const isSettingsValid =
+    (storageQuery.data.provider === 'fastmail' &&
+      !!storageQuery.data.fastmailApiKey &&
+      !!storageQuery.data.fastmailAccountId) ||
+    storageQuery.data.provider === 'gmail';
 
   if (!isSettingsValid) {
-    return <MissingSettings />;
+    return <PopupState.MissingSettings />;
   }
 
-  if (isLoading) {
+  if (storageQuery.data.provider === 'fastmail') {
     return (
-      <PopupLayout>
-        <PopupHeader />
-        <PopupContent>
-          <p>Loading...</p>
-        </PopupContent>
-      </PopupLayout>
+      <FastmailMessagesContainer
+        fastmailApiKey={storageQuery.data.fastmailApiKey}
+        fastmailAccountId={storageQuery.data.fastmailAccountId}
+      />
     );
   }
 
-  const recentMessages =
-    storageQuery.data?.provider === 'fastmail'
-      ? recentFastamailMessagesQuery.data
-      : recentGmailMessagesQuery.data;
-
-  if (recentMessages?.length === 0) {
-    return (
-      <PopupLayout>
-        <PopupHeader />
-        <PopupContent>
-          <p>No recent messages</p>
-        </PopupContent>
-      </PopupLayout>
-    );
+  if (storageQuery.data.provider === 'gmail') {
+    return <GmailMessagesContainer />;
   }
 
+  throw new Error('Unknown provider');
+}
+//#endregion
+
+//#region Popup itself
+
+export default function Popup() {
   return (
-    <PopupLayout>
-      <PopupHeader />
-
-      <PopupContent>
-        <table
-          style={{
-            tableLayout: 'auto',
-            minWidth: 'fit-content',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <thead>
-            <tr>
-              <th>Subject</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {recentMessages?.map((email) => (
-              <tr key={email.id}>
-                <td
-                  style={{
-                    verticalAlign: 'middle',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    maxWidth: '400px',
-                  }}
-                >
-                  {email.subject}
-                </td>
-                <td>
-                  <CopyOTPButton email={email} />
-                  <OpenPreviewButton email={email} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </PopupContent>
-    </PopupLayout>
+    <ErrorBoundary FallbackComponent={PopupState.Error}>
+      <Suspense fallback={<PopupState.Loading />}>
+        <PopupContentContainer />
+      </Suspense>
+    </ErrorBoundary>
   );
-};
-
-export default Popup;
-
-const PopupLayout: FC<{children: React.ReactNode}> = ({children}) => (
-  <section>{children}</section>
-);
-
-const PopupHeader: FC = () => <h1>Recent OTP</h1>;
-
-const PopupContent: FC<{children: React.ReactNode}> = ({children}) => (
-  <>{children}</>
-);
+}
+//#endregion
