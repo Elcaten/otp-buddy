@@ -13,8 +13,7 @@ export function Button({children, className, size = 'default', ...props}: Button
     [styles.buttonIcon]: size === 'icon',
   });
   return (
-    // eslint-disable-next-line react/button-has-type
-    <button className={buttonClassName} {...props}>
+    <button type="button" className={buttonClassName} {...props}>
       {children}
     </button>
   );

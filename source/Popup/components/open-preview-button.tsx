@@ -30,7 +30,7 @@ export function OpenPreviewButton({email}: {email: Email}): JSX.Element {
   };
 
   return (
-    <Button size="icon" onClick={handlePreviewClick}>
+    <Button size="icon" onClick={handlePreviewClick} aria-label="Preview">
       <EyeIcon size={14} />
     </Button>
   );
