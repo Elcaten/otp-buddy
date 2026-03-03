@@ -41,7 +41,7 @@
   "__chrome__minimum_chrome_version": "88",
 
   "action": {
-    "default_popup": "Popup/popup.html",
+    "default_popup": "popup/popup.html",
     "default_icon": {
       "16": "assets/icons/favicon-16.png",
       "32": "assets/icons/favicon-32.png",
@@ -51,9 +51,9 @@
     "default_title": "Receive OTPs"
   },
 
-  "__chrome__options_page": "Options/options.html",
+  "__chrome__options_page": "options/options.html",
   "options_ui": {
-    "page": "Options/options.html",
+    "page": "options/options.html",
     "open_in_tab": true
   },
 

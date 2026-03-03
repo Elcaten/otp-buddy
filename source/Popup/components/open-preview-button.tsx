@@ -2,7 +2,7 @@ import {JSX} from 'react';
 import {Email} from '../../types/email';
 import DOMPurify from 'dompurify';
 import {EyeIcon} from 'lucide-react';
-import {Button} from '../../components/ui/Button';
+import {Button} from '../../components/ui/button';
 
 export function OpenPreviewButton({email}: {email: Email}): JSX.Element {
   const handlePreviewClick = async (): Promise<void> => {

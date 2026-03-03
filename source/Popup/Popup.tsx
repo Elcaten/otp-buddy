@@ -34,7 +34,7 @@ import {FastmailEmailFetcher} from '../email-fetcher/fastmail-fetcher';
 import {getAccessToken} from '../email-fetcher/gmail-fetcher/auth';
 import {GmailEmailFetcher} from '../email-fetcher/gmail-fetcher/gmail-fetcher';
 import {getAllStorage} from '../utils/storage';
-import s from './Popup.module.scss';
+import s from './popup.module.scss';
 import {EmailsTable} from './components/emails-table';
 import {Email} from '../types/email';
 import clsx from 'clsx';

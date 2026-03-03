@@ -103,8 +103,8 @@
 		93F4083F2F36548A00BF3AB9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		93F408442F36548A00BF3AB9 /* OTPBuddy Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "OTPBuddy Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		93F408492F36548A00BF3AB9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		93F408692F36548B00BF3AB9 /* Options */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Options; path = ../../../extension/chrome/Options; sourceTree = "<group>"; };
-		93F4086A2F36548B00BF3AB9 /* Popup */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Popup; path = ../../../extension/chrome/Popup; sourceTree = "<group>"; };
+		93F408692F36548B00BF3AB9 /* Options */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Options; path = ../../../extension/chrome/options; sourceTree = "<group>"; };
+		93F4086A2F36548B00BF3AB9 /* Popup */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Popup; path = ../../../extension/chrome/popup; sourceTree = "<group>"; };
 		93F4086B2F36548B00BF3AB9 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../../extension/chrome/manifest.json; sourceTree = "<group>"; };
 		93F4086C2F36548B00BF3AB9 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../../../extension/chrome/assets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
