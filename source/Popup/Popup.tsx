@@ -37,6 +37,7 @@ import {getAllStorage} from '../utils/storage';
 import s from './Popup.module.scss';
 import {EmailsTable} from './components/emails-table';
 import {Email} from '../types/email';
+import clsx from 'clsx';
 
 //#region Popup layout
 
@@ -58,7 +59,16 @@ const PopupState = {
   Loading: () => (
     <PopupLayout>
       <PopupLayout.Content>
-        <p>Loading...</p>
+        <img
+          src="/assets/images/loading_splash_light.webp"
+          alt=""
+          className={clsx(s.loadingImage, s.loadingImageLight)}
+        />
+        <img
+          src="/assets/images/loading_splash_dark.webp"
+          alt=""
+          className={clsx(s.loadingImage, s.loadingImageDark)}
+        />
       </PopupLayout.Content>
     </PopupLayout>
   ),

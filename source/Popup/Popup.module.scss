@@ -1,3 +1,18 @@
+.loadingImage {
+  display: block;
+}
+.loadingImageDark {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  .loadingImageDark {
+    display: block;
+  }
+  .loadingImageLight {
+    display: none;
+  }
+}
+
 .buttonLink {
   display: inline;
   padding: 0;
