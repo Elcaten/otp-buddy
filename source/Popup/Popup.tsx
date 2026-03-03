@@ -45,9 +45,6 @@ const PopupLayout = Object.assign(
     return <section>{children}</section>;
   },
   {
-    Header: function Header() {
-      return <h1>Recent OTP</h1>;
-    },
     Content: function Content({children}: PropsWithChildren) {
       return <>{children}</>;
     },
@@ -60,7 +57,6 @@ const PopupLayout = Object.assign(
 const PopupState = {
   Loading: () => (
     <PopupLayout>
-      <PopupLayout.Header />
       <PopupLayout.Content>
         <p>Loading...</p>
       </PopupLayout.Content>
@@ -68,7 +64,6 @@ const PopupState = {
   ),
   Error: (_props: ErrorBoundaryFallbackProps) => (
     <PopupLayout>
-      <PopupLayout.Header />
       <PopupLayout.Content>
         <p>Something went wrong</p>
       </PopupLayout.Content>
@@ -76,7 +71,6 @@ const PopupState = {
   ),
   MissingSettings: () => (
     <PopupLayout>
-      <PopupLayout.Header />
       <PopupLayout.Content>
         <p>
           Please set up your email provider in the{' '}
@@ -90,7 +84,6 @@ const PopupState = {
   ),
   NoMessages: () => (
     <PopupLayout>
-      <PopupLayout.Header />
       <PopupLayout.Content>
         <p>No recent messages</p>
       </PopupLayout.Content>
@@ -98,7 +91,6 @@ const PopupState = {
   ),
   MessagesList: (props: {emails: Email[]}) => (
     <PopupLayout>
-      <PopupLayout.Header />
       <PopupLayout.Content>
         <EmailsTable emails={props.emails} />
       </PopupLayout.Content>

@@ -2,15 +2,10 @@ import type {FC} from 'react';
 import {Email} from '../../types/email';
 import {CopyOTPButton} from './copy-opt-button';
 import {OpenPreviewButton} from './open-preview-button';
+import styles from './emails-table.module.css';
 
 export const EmailsTable: FC<{emails: Email[]}> = ({emails}) => (
-  <table
-    style={{
-      tableLayout: 'auto',
-      minWidth: 'fit-content',
-      whiteSpace: 'nowrap',
-    }}
-  >
+  <table className={styles.table}>
     <thead>
       <tr>
         <th>Subject</th>
@@ -20,18 +15,8 @@ export const EmailsTable: FC<{emails: Email[]}> = ({emails}) => (
     <tbody>
       {emails?.map((email) => (
         <tr key={email.id}>
-          <td
-            style={{
-              verticalAlign: 'middle',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              maxWidth: '400px',
-            }}
-          >
-            {email.subject}
-          </td>
-          <td>
+          <td className={styles.subjectCell}>{email.subject}</td>
+          <td className={styles.actionsCell}>
             <CopyOTPButton email={email} />
             <OpenPreviewButton email={email} />
           </td>
