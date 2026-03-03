@@ -38,6 +38,7 @@
     "install": "^0.13.0",
     "jmap-client-ts": "^1.0.0",
     "jmap-jam": "^0.13.1",
+    "lucide-react": "^0.576.0",
     "motion": "^12.29.2",
     "oauth4webapi": "^3.8.3",
     "postal-mime": "^2.7.3",

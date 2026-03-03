@@ -1,14 +1,11 @@
 import {JSX, useCallback, useEffect, useState} from 'react';
 import {Email} from '../../types/email';
 import {emailParser} from '../../email-parser';
+import {Button} from '../../components/ui/button';
 
 function useCopyOTPToClipboard() {
-  const [state, setState] = useState<'pending' | 'success' | 'error'>(
-    'pending'
-  );
-  const [stateDescription, setStateDescription] = useState<
-    string | undefined
-  >();
+  const [state, setState] = useState<'pending' | 'success' | 'error'>('pending');
+  const [stateDescription, setStateDescription] = useState<string | undefined>();
 
   const trigger = useCallback(async (email: Email) => {
     const emailContent = email.content;
@@ -53,14 +50,10 @@ export function CopyOTPButton({email}: {email: Email}): JSX.Element {
   const {trigger, state, stateDescription} = useCopyOTPToClipboard();
 
   return (
-    <button
-      style={{minWidth: '130px'}}
-      type="button"
-      onClick={() => trigger(email)}
-    >
+    <Button style={{minWidth: '140px'}} onClick={() => trigger(email)}>
       {state === 'pending' && 'Copy OTP'}
       {state === 'success' && 'Copied!'}
       {state === 'error' && stateDescription}
-    </button>
+    </Button>
   );
 }
