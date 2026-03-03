@@ -14,7 +14,7 @@ vi.mock('../utils/logger', () => {
 
 await import('./index');
 
-describe('ContentScript', () => {
+describe('content-script', () => {
   test('registers onMessage listener', () => {
     expect(mockBrowser.runtime.onMessage.addListener).toHaveBeenCalled();
   });

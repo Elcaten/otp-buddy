@@ -4,7 +4,7 @@ import {PROVIDERS} from '../types/providers';
 import {getStorage, setStorage} from '../utils/storage';
 import {JamClient} from 'jmap-jam';
 import useSWR from 'swr';
-import {GmailOptions} from './GmailOptions';
+import {GmailOptions} from './gmail-options';
 import {useDebounceState} from '../utils/use-debounce-state';
 
 const Options: FC = () => {
@@ -18,9 +18,7 @@ const Options: FC = () => {
   });
   const [fastmailAccountId, setFastmailAccountId] = useState('');
   const accountQuery = useSWR(
-    !!fastmailApiKey.debounced
-      ? 'fastmailAccounts' + fastmailApiKey.debounced
-      : null,
+    !!fastmailApiKey.debounced ? 'fastmailAccounts' + fastmailApiKey.debounced : null,
 
     async () => {
       const client = new JamClient({
@@ -35,13 +33,11 @@ const Options: FC = () => {
   );
 
   useEffect(() => {
-    getStorage(['fastmailApiKey', 'fastmailAccountId', 'provider']).then(
-      (result) => {
-        setFastmailApiKey(result.fastmailApiKey);
-        setFastmailAccountId(result.fastmailAccountId);
-        setProvider(result.provider);
-      }
-    );
+    getStorage(['fastmailApiKey', 'fastmailAccountId', 'provider']).then((result) => {
+      setFastmailApiKey(result.fastmailApiKey);
+      setFastmailAccountId(result.fastmailAccountId);
+      setProvider(result.provider);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -70,9 +66,7 @@ const Options: FC = () => {
                 id={providerOption.id}
                 value={providerOption.id}
                 checked={provider === providerOption.id}
-                onChange={(e): void =>
-                  setProvider(e.target.value as 'fastmail' | 'gmail')
-                }
+                onChange={(e): void => setProvider(e.target.value as 'fastmail' | 'gmail')}
               />
               <label htmlFor={providerOption.id}>{providerOption.name}</label>
             </div>
@@ -92,11 +86,7 @@ const Options: FC = () => {
               }}
             >
               You can generate API key in{' '}
-              <a
-                href="https://app.fastmail.com/settings/security/tokens"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://app.fastmail.com/settings/security/tokens" target="_blank" rel="noopener noreferrer">
                 Fastmail settings
               </a>
               . Unfortunatelly, API keys are not available for Basic accounts.
@@ -113,12 +103,9 @@ const Options: FC = () => {
             />
             {Boolean(accountQuery.isValidating) && <div>⏳</div>}
             {Boolean(accountQuery.error) && (
-              <div style={{color: 'var(--highlight)'}}>
-                Can&apos;t connect to Fastmail. Please check your API key.
-              </div>
+              <div style={{color: 'var(--highlight)'}}>Can&apos;t connect to Fastmail. Please check your API key.</div>
             )}
-            {!Boolean(accountQuery.isValidating) &&
-              !Boolean(accountQuery.error) && <div>&nbsp;</div>}
+            {!Boolean(accountQuery.isValidating) && !Boolean(accountQuery.error) && <div>&nbsp;</div>}
 
             <label htmlFor="accountId">Account</label>
             <select
@@ -139,11 +126,7 @@ const Options: FC = () => {
         )}
 
         <button type="submit">Save Settings</button>
-        {saved && (
-          <span style={{color: 'var(--highlight)', marginLeft: '8px'}}>
-            Settings saved!
-          </span>
-        )}
+        {saved && <span style={{color: 'var(--highlight)', marginLeft: '8px'}}>Settings saved!</span>}
       </form>
     </main>
   );
