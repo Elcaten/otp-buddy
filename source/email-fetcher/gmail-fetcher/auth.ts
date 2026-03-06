@@ -1,5 +1,5 @@
 import * as oauth from 'oauth4webapi';
-import browser, {storage} from 'webextension-polyfill';
+import browser from 'webextension-polyfill';
 import {isOAuthLaunchResponse, OAuthLaunchMessage} from '../../types/messages';
 import {env} from '../../utils/env';
 import {log} from '../../utils/logger';
@@ -26,6 +26,9 @@ async function buildAuthURL({
   authURL += `&scope=${encodeURIComponent(scopes.join(' '))}`;
   authURL += `&code_challenge=${code_challenge}`;
   authURL += `&code_challenge_method=${code_challenge_method}`;
+  // these 2 parameters force server to return refresh_token
+  authURL += `&access_type=offline`;
+  authURL += `&prompt=consent`;
 
   return authURL;
 }
@@ -75,19 +78,24 @@ async function refreshToken({
   clientAuth: oauth.ClientAuth;
   refresh_token: string;
 }): Promise<oauth.TokenEndpointResponse> {
-  const ISSUER = 'https://accounts.google.com';
-  const ALGORITHM = 'oauth2';
-  const authServerMetadata = await oauth
-    .discoveryRequest(new URL(ISSUER), {algorithm: ALGORITHM})
-    .then((response) => oauth.processDiscoveryResponse(new URL(ISSUER), response));
+  try {
+    const ISSUER = 'https://accounts.google.com';
+    const ALGORITHM = 'oauth2';
+    const authServerMetadata = await oauth
+      .discoveryRequest(new URL(ISSUER), {algorithm: ALGORITHM})
+      .then((response) => oauth.processDiscoveryResponse(new URL(ISSUER), response));
 
-  const response = await oauth.refreshTokenGrantRequest(authServerMetadata, client, clientAuth, refresh_token);
+    const response = await oauth.refreshTokenGrantRequest(authServerMetadata, client, clientAuth, refresh_token);
 
-  const result = await oauth.processRefreshTokenResponse(authServerMetadata, client, response);
+    const result = await oauth.processRefreshTokenResponse(authServerMetadata, client, response);
 
-  log.emailFetcher.info('Token refreshed', {result});
+    log.emailFetcher.info('Refresh token succeeded');
 
-  return result;
+    return result;
+  } catch (error) {
+    log.emailFetcher.error('Refresh token failed', {error});
+    throw error;
+  }
 }
 
 async function revokeToken({
@@ -99,6 +107,8 @@ async function revokeToken({
   clientAuth: oauth.ClientAuth;
   token: string;
 }): Promise<void> {
+  await clearStorage(['gmailToken', 'gmailTokenTimestamp']);
+
   const ISSUER = 'https://accounts.google.com';
   const ALGORITHM = 'oauth2';
   const authServerMetadata = await oauth
@@ -107,6 +117,7 @@ async function revokeToken({
 
   const response = await oauth.revocationRequest(authServerMetadata, client, clientAuth, token);
   const result = await oauth.processRevocationResponse(response);
+
   log.emailFetcher.info('Token revoked', {result});
 
   return result;
@@ -125,6 +136,33 @@ export async function signOut_chrome_firefox(): Promise<void> {
 
   await revokeToken({client, clientAuth, token: token.access_token});
 }
+
+// type RefreshTokenResult = {type: 'success'; token: oauth.TokenEndpointResponse} | {type: 'error'; error?: unknown};
+// async function tryRefreshToken({
+//   token,
+//   client,
+//   clientAuth,
+// }: {
+//   token: oauth.TokenEndpointResponse;
+//   client: oauth.Client;
+//   clientAuth: oauth.ClientAuth;
+// }): Promise<RefreshTokenResult> {
+//   if (!token.refresh_token) {
+//     return {type: 'error', error: new Error('No refresh token in token response')};
+//   }
+
+//   try {
+//     const tokenResponse = await refreshToken({
+//       client,
+//       clientAuth,
+//       refresh_token: token.refresh_token,
+//     });
+//     log.emailFetcher.info('Token refreshed', {tokenResponse});
+//     return {type: 'success', token: tokenResponse};
+//   } catch (error) {
+//     return {type: 'error', error: error};
+//   }
+// }
 
 async function getToken_chrome_firefox({interactive}: {interactive: boolean}): Promise<oauth.TokenEndpointResponse> {
   const redirect_uri = browser.identity.getRedirectURL();
@@ -178,29 +216,6 @@ async function getToken_safari(): Promise<oauth.TokenEndpointResponse> {
     code_verifier,
   });
 
-  const {gmailRefreshToken} = await getStorage(['gmailRefreshToken']);
-
-  if (gmailRefreshToken) {
-    try {
-      const tokenResponse = await refreshToken({
-        client,
-        clientAuth,
-        refresh_token: gmailRefreshToken,
-      });
-      log.emailFetcher.info('Token refreshed', {tokenResponse});
-
-      if (tokenResponse.refresh_token) {
-        log.emailFetcher.info('Refresh token stored', {tokenResponse});
-        await setStorage({gmailRefreshToken: tokenResponse.refresh_token});
-      }
-
-      return tokenResponse;
-    } catch (error) {
-      log.emailFetcher.error('Failed to refresh token', {error});
-      await clearStorage('gmailRefreshToken');
-    }
-  }
-
   const backgroundResponse = await browser.runtime.sendMessage({
     type: 'OAUTH_LAUNCH',
     authURL,
@@ -226,18 +241,96 @@ async function getToken_safari(): Promise<oauth.TokenEndpointResponse> {
   });
   log.emailFetcher.info('Token granted', {tokenResponse});
 
-  if (tokenResponse.refresh_token) {
-    log.emailFetcher.info('Refresh token stored', {tokenResponse});
-    await setStorage({gmailRefreshToken: tokenResponse.refresh_token});
-  }
-
   return tokenResponse;
 }
 
-export async function getAccessToken({interactive}: {interactive: boolean}): Promise<oauth.TokenEndpointResponse> {
-  if (typeof browser.identity?.getRedirectURL === 'function') {
-    return getToken_chrome_firefox({interactive});
+type StoredToken =
+  | {type: 'not_found'}
+  | {type: 'valid'; token: oauth.TokenEndpointResponse}
+  | {type: 'expired'; token: oauth.TokenEndpointResponse};
+
+async function getStoredToken(): Promise<StoredToken> {
+  const {gmailToken: gmailTokenString, gmailTokenTimestamp} = await getStorage(['gmailToken', 'gmailTokenTimestamp']);
+
+  let parsedToken: oauth.TokenEndpointResponse | null = null;
+  try {
+    parsedToken = JSON.parse(gmailTokenString) as oauth.TokenEndpointResponse;
+  } catch (error) {
+    log.emailFetcher.error('Failed to parse token', {error});
   }
 
-  return getToken_safari();
+  if (!parsedToken || !parsedToken.expires_in) {
+    log.emailFetcher.info('Stored token is invalid', {parsedToken});
+    return {type: 'not_found'};
+  }
+
+  const expiryDate = new Date(gmailTokenTimestamp + parsedToken.expires_in * 1000);
+  const _10_minutes_from_now = new Date(Date.now() + 10 * 60 * 1000);
+
+  if (+expiryDate > +_10_minutes_from_now) {
+    log.emailFetcher.info('Stored token is still valid', {expiryDate});
+    return {type: 'valid', token: parsedToken};
+  }
+
+  log.emailFetcher.info('Stored token is expired', {expiryDate});
+  return {type: 'expired', token: parsedToken};
+}
+
+async function saveTokenToStorage(token: oauth.TokenEndpointResponse): Promise<void> {
+  log.emailFetcher.info('Saving token to storage', {timestamp: Date.now()});
+  await setStorage({gmailToken: JSON.stringify(token), gmailTokenTimestamp: Date.now()});
+}
+
+export async function getAccessToken({interactive}: {interactive: boolean}): Promise<oauth.TokenEndpointResponse> {
+  const storedToken = await getStoredToken();
+  if (storedToken.type === 'valid') {
+    return storedToken.token;
+  }
+
+  const browserType = typeof browser.identity?.getRedirectURL === 'function' ? 'chrome_firefox' : 'safari';
+
+  let client: oauth.Client;
+  let clientAuth: oauth.ClientAuth;
+
+  if (browserType === 'chrome_firefox') {
+    client = {
+      client_id: env.OTP_BUDDY_WEB_CLIENT_ID,
+      client_secret: env.OTP_BUDDY_WEB_CLIENT_SECRET,
+    };
+    clientAuth = oauth.ClientSecretPost(env.OTP_BUDDY_WEB_CLIENT_SECRET);
+  } else {
+    client = {
+      client_id: env.OTP_BUDDY_SAFARI_CLIENT_ID,
+    };
+    clientAuth = oauth.None();
+  }
+
+  if (storedToken.type === 'expired' && storedToken.token.refresh_token) {
+    try {
+      const tokenResponse = await refreshToken({
+        client,
+        clientAuth,
+        refresh_token: storedToken.token.refresh_token,
+      });
+
+      await saveTokenToStorage(tokenResponse);
+      return tokenResponse;
+    } catch (error) {
+      // Ignore errors, we will try to get a new token
+      // it's the easiest way to handle expired refresh_token
+      log.emailFetcher.error('Failed to refresh token', {error});
+    }
+  }
+
+  let tokenResponse: oauth.TokenEndpointResponse;
+
+  if (browserType === 'chrome_firefox') {
+    tokenResponse = await getToken_chrome_firefox({interactive});
+  } else {
+    tokenResponse = await getToken_safari();
+  }
+
+  await saveTokenToStorage(tokenResponse);
+
+  return tokenResponse;
 }

@@ -4,7 +4,8 @@ export interface StorageSchema {
   fastmailApiKey: string;
   fastmailAccountId: string;
 
-  gmailRefreshToken: string;
+  gmailToken: string;
+  gmailTokenTimestamp: number;
 
   enableLogging: boolean;
   visitCount: number;
@@ -16,7 +17,8 @@ export const defaultStorage: StorageSchema = {
   fastmailApiKey: '',
   fastmailAccountId: '',
 
-  gmailRefreshToken: '',
+  gmailToken: '',
+  gmailTokenTimestamp: 0,
 
   enableLogging: true,
   visitCount: 0,
