@@ -1,0 +1,12 @@
+.profileAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profileInfo {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}

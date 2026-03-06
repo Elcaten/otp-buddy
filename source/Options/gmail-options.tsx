@@ -1,63 +1,90 @@
-import {JSX} from 'react';
+import {PropsWithChildren, Suspense} from 'react';
+import {ErrorBoundary, FallbackProps as ErrorBoundaryFallbackProps} from 'react-error-boundary';
 import useSWR from 'swr';
-import {getUserProfile} from '../email-fetcher/gmail-fetcher/user-profile';
+import {getUserProfile, UserProfile} from '../email-fetcher/gmail-fetcher/user-profile';
 import {getAccessToken} from '../email-fetcher/gmail-fetcher/auth';
 import {SignInWithGoogleButton} from './sign-in-with-google-button';
 import {SignOutButton} from './sign-out-button';
+import s from './gmail-options.module.scss';
 
-export const GmailOptions = (): JSX.Element => {
-  const userProfileQuery = useSWR('gmailUserProfile', async () =>
-    getUserProfile((await getAccessToken({interactive: false})).access_token)
-  );
-  return (
-    <div>
-      {Boolean(userProfileQuery.isValidating) && (
-        <div>
-          <div
-            style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              overflow: 'hidden',
-              backgroundColor: 'magenta',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            J
-            <div />
-          </div>
-          <div>John Dorian</div>
-          <div>john@example.com</div>
-        </div>
-      )}
+//#region GmailOptions layout
 
-      {Boolean(userProfileQuery.error) && <SignInWithGoogleButton />}
+const GmailOptionsLayout = Object.assign(
+  function ({children}: PropsWithChildren) {
+    return <div>{children}</div>;
+  },
+  {
+    Content: function Content({children}: PropsWithChildren) {
+      return <>{children}</>;
+    },
+  }
+);
 
-      {!userProfileQuery.isValidating && !userProfileQuery.error && (
-        <div>
-          <div style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
-            {!!userProfileQuery.data?.picture && (
-              <div
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  overflow: 'hidden',
-                }}
-              >
-                <img src={userProfileQuery.data?.picture} alt="User profile" />
-              </div>
-            )}
-            <div>
-              <div>{userProfileQuery.data?.name}</div>
-              <div>{userProfileQuery.data?.email}</div>
+//#endregion
+
+//#region GmailOptions states
+
+const GmailOptionsState = {
+  Loading: () => (
+    <GmailOptionsLayout>
+      <GmailOptionsLayout.Content>
+        <SignInWithGoogleButton disabled />
+      </GmailOptionsLayout.Content>
+    </GmailOptionsLayout>
+  ),
+
+  Error: (_props: ErrorBoundaryFallbackProps) => (
+    <GmailOptionsLayout>
+      <GmailOptionsLayout.Content>
+        <SignInWithGoogleButton />
+      </GmailOptionsLayout.Content>
+    </GmailOptionsLayout>
+  ),
+
+  SignedIn: (props: {profile: UserProfile}) => (
+    <GmailOptionsLayout>
+      <GmailOptionsLayout.Content>
+        <div className={s.profileInfo}>
+          {!!props.profile.picture && (
+            <div className={s.profileAvatar}>
+              <img src={props.profile.picture} alt="User profile" />
             </div>
+          )}
+          <div>
+            <div>{props.profile.name}</div>
+            <div>{props.profile.email}</div>
           </div>
-          <SignOutButton />
         </div>
-      )}
-    </div>
-  );
+        <SignOutButton />
+      </GmailOptionsLayout.Content>
+    </GmailOptionsLayout>
+  ),
 };
+
+//#endregion
+
+//#region Container
+
+function GmailOptionsContainer() {
+  const userProfileQuery = useSWR(
+    'gmailUserProfile',
+    async () => getUserProfile((await getAccessToken({interactive: false})).access_token),
+    {suspense: true}
+  );
+
+  return <GmailOptionsState.SignedIn profile={userProfileQuery.data} />;
+}
+
+//#endregion
+
+//#region GmailOptions itself
+
+export const GmailOptions = () => (
+  <ErrorBoundary FallbackComponent={GmailOptionsState.Error}>
+    <Suspense fallback={<GmailOptionsState.Loading />}>
+      <GmailOptionsContainer />
+    </Suspense>
+  </ErrorBoundary>
+);
+
+//#endregion
