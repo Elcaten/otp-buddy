@@ -38,6 +38,7 @@ import s from './popup.module.scss';
 import {EmailsTable} from './components/emails-table';
 import {Email} from '../types/email';
 import clsx from 'clsx';
+import {log} from '../utils/logger';
 
 //#region Popup layout
 
@@ -131,7 +132,15 @@ function FastmailMessagesContainer(props: {fastmailApiKey: string; fastmailAccou
 function GmailMessagesContainer() {
   const recentGmailMessagesQuery = useSWR(
     'recentGmailMessages',
-    async () => new GmailEmailFetcher((await getAccessToken({interactive: true})).access_token).fetchRecentEmails(),
+    async () => {
+      const tokenResponse = await getAccessToken({interactive: true});
+      log.info('popup', 'tokenResponse', tokenResponse);
+
+      const recentEmails = await new GmailEmailFetcher(tokenResponse.access_token).fetchRecentEmails();
+      log.info('popup', 'recentEmails', recentEmails);
+
+      return recentEmails;
+    },
     {suspense: true}
   );
 
