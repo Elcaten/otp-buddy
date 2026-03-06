@@ -19,22 +19,14 @@ describe('storage utils', () => {
         enableLogging: false,
       });
 
-      const result = await getStorage([
-        'provider',
-        'enableLogging',
-        'visitCount',
-      ]);
+      const result = await getStorage(['provider', 'enableLogging', 'visitCount']);
 
       expect(result).toMatchObject({
         provider: 'gmail',
         enableLogging: false,
         visitCount: 0,
       });
-      expect(mockBrowser.storage.local.get).toHaveBeenCalledWith([
-        'provider',
-        'enableLogging',
-        'visitCount',
-      ]);
+      expect(mockBrowser.storage.local.get).toHaveBeenCalledWith(['provider', 'enableLogging', 'visitCount']);
     });
   });
 
@@ -53,14 +45,12 @@ describe('storage utils', () => {
     test('returns merged defaultStorage and stored values', async () => {
       vi.mocked(mockBrowser.storage.local.get).mockResolvedValue({
         provider: 'gmail',
-        gmailRefreshToken: 'token123',
       });
 
       const result = await getAllStorage();
 
       expect(result).toMatchObject({
         provider: 'gmail',
-        gmailRefreshToken: 'token123',
         fastmailApiKey: '',
         enableLogging: true,
       });
