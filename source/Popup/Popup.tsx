@@ -31,7 +31,6 @@ import {ErrorBoundary, FallbackProps as ErrorBoundaryFallbackProps} from 'react-
 import useSWR from 'swr';
 import browser from 'webextension-polyfill';
 import {FastmailEmailFetcher} from '../email-fetcher/fastmail-fetcher';
-import {getAccessToken} from '../email-fetcher/gmail-fetcher/auth';
 import {GmailEmailFetcher} from '../email-fetcher/gmail-fetcher/gmail-fetcher';
 import {getAllStorage} from '../utils/storage';
 import s from './popup.module.scss';
@@ -39,6 +38,7 @@ import {EmailsTable} from './components/emails-table';
 import {Email} from '../types/email';
 import clsx from 'clsx';
 import {log} from '../utils/logger';
+import {tokenManager} from '../email-fetcher/gmail-fetcher/token-manager';
 
 //#region Popup layout
 
@@ -133,7 +133,7 @@ function GmailMessagesContainer() {
   const recentGmailMessagesQuery = useSWR(
     'recentGmailMessages',
     async () => {
-      const tokenResponse = await getAccessToken({interactive: true});
+      const tokenResponse = await tokenManager.getAccessToken({interactive: true});
       log.info('popup', 'tokenResponse', tokenResponse);
 
       const recentEmails = await new GmailEmailFetcher(tokenResponse.access_token).fetchRecentEmails();

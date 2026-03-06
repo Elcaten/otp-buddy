@@ -2,10 +2,10 @@ import {PropsWithChildren, Suspense} from 'react';
 import {ErrorBoundary, FallbackProps as ErrorBoundaryFallbackProps} from 'react-error-boundary';
 import useSWR from 'swr';
 import {getUserProfile, UserProfile} from '../email-fetcher/gmail-fetcher/user-profile';
-import {getAccessToken} from '../email-fetcher/gmail-fetcher/auth';
 import {SignInWithGoogleButton} from './sign-in-with-google-button';
 import {SignOutButton} from './sign-out-button';
 import s from './gmail-options.module.scss';
+import {tokenManager} from '../email-fetcher/gmail-fetcher/token-manager';
 
 //#region GmailOptions layout
 
@@ -68,7 +68,12 @@ const GmailOptionsState = {
 function GmailOptionsContainer() {
   const userProfileQuery = useSWR(
     'gmailUserProfile',
-    async () => getUserProfile((await getAccessToken({interactive: false})).access_token),
+    async () => {
+      const token = await tokenManager.getAccessToken({interactive: false});
+      const profile = await getUserProfile(token.access_token);
+
+      return profile;
+    },
     {suspense: true}
   );
 
