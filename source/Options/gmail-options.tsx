@@ -11,11 +11,11 @@ import {tokenManager} from '../email-fetcher/gmail-fetcher/token-manager';
 
 const GmailOptionsLayout = Object.assign(
   function ({children}: PropsWithChildren) {
-    return <div>{children}</div>;
+    return <fieldset>{children}</fieldset>;
   },
   {
     Content: function Content({children}: PropsWithChildren) {
-      return <>{children}</>;
+      return <div className={s.content}>{children}</div>;
     },
   }
 );
