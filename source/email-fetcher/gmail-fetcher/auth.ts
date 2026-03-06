@@ -1,9 +1,9 @@
 import * as oauth from 'oauth4webapi';
-import browser from 'webextension-polyfill';
+import browser, {storage} from 'webextension-polyfill';
 import {isOAuthLaunchResponse, OAuthLaunchMessage} from '../../types/messages';
 import {env} from '../../utils/env';
 import {log} from '../../utils/logger';
-import {getStorage, setStorage} from '../../utils/storage';
+import {clearStorage, getStorage, setStorage} from '../../utils/storage';
 
 async function buildAuthURL({
   client_id,
@@ -16,11 +16,7 @@ async function buildAuthURL({
 }): Promise<string> {
   let authURL = 'https://accounts.google.com/o/oauth2/auth';
 
-  const scopes = [
-    'https://www.googleapis.com/auth/gmail.readonly',
-    'profile',
-    'email',
-  ];
+  const scopes = ['https://www.googleapis.com/auth/gmail.readonly', 'profile', 'email'];
   const code_challenge_method = 'S256';
   const code_challenge = await oauth.calculatePKCECodeChallenge(code_verifier);
 
@@ -52,15 +48,9 @@ async function requestToken({
 
   const authServerMetadata = await oauth
     .discoveryRequest(new URL(ISSUER), {algorithm: ALGORITHM})
-    .then((response) =>
-      oauth.processDiscoveryResponse(new URL(ISSUER), response)
-    );
+    .then((response) => oauth.processDiscoveryResponse(new URL(ISSUER), response));
 
-  const params = oauth.validateAuthResponse(
-    authServerMetadata,
-    client,
-    redirectUrlSearchParams
-  );
+  const params = oauth.validateAuthResponse(authServerMetadata, client, redirectUrlSearchParams);
 
   const response = await oauth.authorizationCodeGrantRequest(
     authServerMetadata,
@@ -71,11 +61,7 @@ async function requestToken({
     code_verifier
   );
 
-  const result = await oauth.processAuthorizationCodeResponse(
-    authServerMetadata,
-    client,
-    response
-  );
+  const result = await oauth.processAuthorizationCodeResponse(authServerMetadata, client, response);
 
   return result;
 }
@@ -93,22 +79,11 @@ async function refreshToken({
   const ALGORITHM = 'oauth2';
   const authServerMetadata = await oauth
     .discoveryRequest(new URL(ISSUER), {algorithm: ALGORITHM})
-    .then((response) =>
-      oauth.processDiscoveryResponse(new URL(ISSUER), response)
-    );
+    .then((response) => oauth.processDiscoveryResponse(new URL(ISSUER), response));
 
-  const response = await oauth.refreshTokenGrantRequest(
-    authServerMetadata,
-    client,
-    clientAuth,
-    refresh_token
-  );
+  const response = await oauth.refreshTokenGrantRequest(authServerMetadata, client, clientAuth, refresh_token);
 
-  const result = await oauth.processRefreshTokenResponse(
-    authServerMetadata,
-    client,
-    response
-  );
+  const result = await oauth.processRefreshTokenResponse(authServerMetadata, client, response);
 
   log.emailFetcher.info('Token refreshed', {result});
 
@@ -128,16 +103,9 @@ async function revokeToken({
   const ALGORITHM = 'oauth2';
   const authServerMetadata = await oauth
     .discoveryRequest(new URL(ISSUER), {algorithm: ALGORITHM})
-    .then((response) =>
-      oauth.processDiscoveryResponse(new URL(ISSUER), response)
-    );
+    .then((response) => oauth.processDiscoveryResponse(new URL(ISSUER), response));
 
-  const response = await oauth.revocationRequest(
-    authServerMetadata,
-    client,
-    clientAuth,
-    token
-  );
+  const response = await oauth.revocationRequest(authServerMetadata, client, clientAuth, token);
   const result = await oauth.processRevocationResponse(response);
   log.emailFetcher.info('Token revoked', {result});
 
@@ -158,11 +126,7 @@ export async function signOut_chrome_firefox(): Promise<void> {
   await revokeToken({client, clientAuth, token: token.access_token});
 }
 
-async function getToken_chrome_firefox({
-  interactive,
-}: {
-  interactive: boolean;
-}): Promise<oauth.TokenEndpointResponse> {
+async function getToken_chrome_firefox({interactive}: {interactive: boolean}): Promise<oauth.TokenEndpointResponse> {
   const redirect_uri = browser.identity.getRedirectURL();
   const code_verifier = oauth.generateRandomCodeVerifier();
   const client_id = env.OTP_BUDDY_WEB_CLIENT_ID;
@@ -217,19 +181,24 @@ async function getToken_safari(): Promise<oauth.TokenEndpointResponse> {
   const {gmailRefreshToken} = await getStorage(['gmailRefreshToken']);
 
   if (gmailRefreshToken) {
-    const tokenResponse = await refreshToken({
-      client,
-      clientAuth,
-      refresh_token: gmailRefreshToken,
-    });
-    log.emailFetcher.info('Token refreshed', {tokenResponse});
+    try {
+      const tokenResponse = await refreshToken({
+        client,
+        clientAuth,
+        refresh_token: gmailRefreshToken,
+      });
+      log.emailFetcher.info('Token refreshed', {tokenResponse});
 
-    if (tokenResponse.refresh_token) {
-      log.emailFetcher.info('Refresh token stored', {tokenResponse});
-      await setStorage({gmailRefreshToken: tokenResponse.refresh_token});
+      if (tokenResponse.refresh_token) {
+        log.emailFetcher.info('Refresh token stored', {tokenResponse});
+        await setStorage({gmailRefreshToken: tokenResponse.refresh_token});
+      }
+
+      return tokenResponse;
+    } catch (error) {
+      log.emailFetcher.error('Failed to refresh token', {error});
+      await clearStorage('gmailRefreshToken');
     }
-
-    return tokenResponse;
   }
 
   const backgroundResponse = await browser.runtime.sendMessage({
@@ -265,11 +234,7 @@ async function getToken_safari(): Promise<oauth.TokenEndpointResponse> {
   return tokenResponse;
 }
 
-export async function getAccessToken({
-  interactive,
-}: {
-  interactive: boolean;
-}): Promise<oauth.TokenEndpointResponse> {
+export async function getAccessToken({interactive}: {interactive: boolean}): Promise<oauth.TokenEndpointResponse> {
   if (typeof browser.identity?.getRedirectURL === 'function') {
     return getToken_chrome_firefox({interactive});
   }

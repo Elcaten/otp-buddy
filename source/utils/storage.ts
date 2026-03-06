@@ -1,9 +1,7 @@
 import browser from 'webextension-polyfill';
 import {StorageSchema, defaultStorage} from '../types/storage';
 
-export async function getStorage<K extends keyof StorageSchema>(
-  keys: K[]
-): Promise<Pick<StorageSchema, K>> {
+export async function getStorage<K extends keyof StorageSchema>(keys: K[]): Promise<Pick<StorageSchema, K>> {
   const result = await browser.storage.local.get(keys);
 
   const output = {} as Pick<StorageSchema, K>;
@@ -14,10 +12,12 @@ export async function getStorage<K extends keyof StorageSchema>(
   return output;
 }
 
-export async function setStorage<K extends keyof StorageSchema>(
-  items: Pick<StorageSchema, K>
-): Promise<void> {
+export async function setStorage<K extends keyof StorageSchema>(items: Pick<StorageSchema, K>): Promise<void> {
   await browser.storage.local.set(items);
+}
+
+export async function clearStorage<K extends keyof StorageSchema>(keys: K | K[]): Promise<void> {
+  await browser.storage.local.remove(keys);
 }
 
 export async function getAllStorage(): Promise<StorageSchema> {
