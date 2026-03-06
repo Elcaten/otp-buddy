@@ -1,0 +1,14 @@
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.savedIcon {
+  font-size: 20px;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+.savedIconVisible {
+  opacity: 0.75;
+}
