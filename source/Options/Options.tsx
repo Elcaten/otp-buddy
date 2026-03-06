@@ -1,12 +1,15 @@
 import {JamClient} from 'jmap-jam';
-import {PropsWithChildren, ReactNode, Suspense, useState} from 'react';
+import {PropsWithChildren, ReactNode, SubmitEventHandler, Suspense, useRef, useState} from 'react';
 import {ErrorBoundary, FallbackProps as ErrorBoundaryFallbackProps} from 'react-error-boundary';
 import useSWR from 'swr';
+import useSWRMutation from 'swr/mutation';
 import {Button} from '../components/ui/button';
 import {PROVIDERS} from '../types/providers';
-import {getAllStorage} from '../utils/storage';
+import {getAllStorage, setStorage} from '../utils/storage';
 import {useDebounceState} from '../utils/use-debounce-state';
 import {GmailOptions} from './gmail-options';
+import styles from './options.module.css';
+import clsx from 'clsx';
 
 //#region Options layout
 
@@ -167,6 +170,9 @@ function OptionsFormContainer(props: {
   });
   const [fastmailAccountId, setFastmailAccountId] = useState(props.initialFastmailAccountId);
 
+  const [saved, setSaved] = useState(false);
+  const savedTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const accountQuery = useSWR(
     !!fastmailApiKey.debounced ? 'fastmailAccounts' + fastmailApiKey.debounced : null,
     async () => {
@@ -189,10 +195,39 @@ function OptionsFormContainer(props: {
     setFastmailAccountId(value);
   };
 
+  const onSubmit = useSWRMutation('storage', async () => {
+    if (accountQuery.error) {
+      return;
+    }
+
+    savedTimeout.current && clearTimeout(savedTimeout.current);
+
+    await setStorage({
+      provider: provider,
+      fastmailApiKey: fastmailApiKey.value,
+      fastmailAccountId: fastmailAccountId,
+    });
+
+    setSaved(true);
+    savedTimeout.current = setTimeout(() => {
+      setSaved(false);
+    }, 2000);
+  });
+
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+
+    if (onSubmit.isMutating) {
+      return;
+    }
+
+    onSubmit.trigger();
+  };
+
   return (
     <OptionsLayout>
       <OptionsLayout.Content>
-        <OptionsLayout.Form>
+        <OptionsLayout.Form onSubmit={handleSubmit}>
           <fieldset>
             <ProviderSelector value={provider} onChange={setProvider} />
           </fieldset>
@@ -216,7 +251,12 @@ function OptionsFormContainer(props: {
             </fieldset>
           )}
 
-          <Button type="submit">Save</Button>
+          <div className={styles.actions}>
+            <Button type="submit">Save</Button>
+            <span aria-hidden="true" className={clsx(styles.savedIcon, saved && styles.savedIconVisible)}>
+              ✅
+            </span>
+          </div>
         </OptionsLayout.Form>
       </OptionsLayout.Content>
     </OptionsLayout>
