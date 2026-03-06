@@ -1,31 +1,9 @@
-import {CSSProperties, JSX} from 'react';
+import {JSX} from 'react';
 import {getAccessToken} from '../email-fetcher/gmail-fetcher/auth';
+import styles from './sign-in-with-google-button.module.scss';
 
-const buttonReset: CSSProperties = {
-  margin: 0,
-  padding: 0,
-  border: 'none',
-  background: 'none',
-  font: 'inherit',
-  color: 'inherit',
-  cursor: 'pointer',
-  appearance: 'none',
-  WebkitAppearance: 'none',
-};
-
-const buttonStyle: CSSProperties = {
-  ...buttonReset,
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-};
-
-export const SignInWithGoogleButton = (): JSX.Element => (
-  <button
-    type="button"
-    style={buttonStyle}
-    onClick={() => getAccessToken({interactive: true})}
-  >
+export const SignInWithGoogleButton = ({disabled = false}: {disabled?: boolean}): JSX.Element => (
+  <button type="button" className={styles.button} disabled={disabled} onClick={() => getAccessToken({interactive: true})}>
     <GoogleIcon />
     Sign In With Google
   </button>
