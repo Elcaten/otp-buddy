@@ -14,9 +14,7 @@ export interface OAuthLaunchMessage {
   authURL: string;
 }
 
-export function isOAuthLaunchMessage(
-  message: unknown
-): message is OAuthLaunchMessage {
+export function isOAuthLaunchMessage(message: unknown): message is OAuthLaunchMessage {
   return R.Object({
     type: R.Literal('OAUTH_LAUNCH'),
     authURL: R.String,
@@ -29,9 +27,7 @@ export interface OAuthLaunchResponse {
   error?: string;
 }
 
-export function isOAuthLaunchResponse(
-  message: unknown
-): message is OAuthLaunchResponse {
+export function isOAuthLaunchResponse(message: unknown): message is OAuthLaunchResponse {
   return R.Object({
     redirectURL: R.String.optional(),
     error: R.String.optional(),
@@ -42,7 +38,7 @@ export function isOAuthLaunchResponse(
 export interface LogMessage {
   type: 'log';
   level: 'debug' | 'info' | 'warn' | 'error';
-  source: 'background' | 'popup' | 'content' | 'options' | 'email-fetcher';
+  source: 'background' | 'popup' | 'content' | 'options' | 'email-fetcher' | 'email-parser';
   message: string;
   data?: unknown;
   timestamp?: number;
@@ -51,12 +47,7 @@ export interface LogMessage {
 export function isLogMessage(message: unknown): message is LogMessage {
   return R.Object({
     type: R.Literal('log'),
-    level: R.Union(
-      R.Literal('debug'),
-      R.Literal('info'),
-      R.Literal('warn'),
-      R.Literal('error')
-    ),
+    level: R.Union(R.Literal('debug'), R.Literal('info'), R.Literal('warn'), R.Literal('error')),
     source: R.String,
     message: R.String,
     data: R.Unknown.optional(),
@@ -64,7 +55,4 @@ export function isLogMessage(message: unknown): message is LogMessage {
   }).guard(message);
 }
 
-export type ExtensionMessage =
-  | OAuthLaunchMessage
-  | OAuthLaunchResponse
-  | LogMessage;
+export type ExtensionMessage = OAuthLaunchMessage | OAuthLaunchResponse | LogMessage;

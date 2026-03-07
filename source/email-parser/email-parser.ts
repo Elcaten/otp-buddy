@@ -1,3 +1,4 @@
+import {log} from '@/utils/logger';
 import {Email, EmailParser as IEmailParser} from '../types/email';
 import {
   CssOtpExtractor,
@@ -63,7 +64,12 @@ function applyOp(op: EmailMatcher['op'], str: string, value: string): boolean {
     case 'equals':
       return str === value;
     case 'matches':
-      return new RegExp(value).test(str);
+      try {
+        return new RegExp(value).test(str);
+      } catch {
+        log.emailParser.error('Invalid regex pattern', {pattern: value});
+        return false;
+      }
   }
 }
 
@@ -83,8 +89,7 @@ function runExtractor(extractor: OtpExtractor, email: Email): ParseResult {
 }
 
 function runRegexExtractor(extractor: RegexOtpExtractor, email: Email): ParseResult {
-  const text =
-    extractor.source === 'subject' ? (email.subject ?? '') : (email.content ?? '');
+  const text = extractor.source === 'subject' ? (email.subject ?? '') : (email.content ?? '');
   const matches = [...text.matchAll(new RegExp(extractor.pattern, 'g'))];
   if (matches.length === 0) return {success: false, error: 'not-found'};
   if (matches.length > 1) return {success: false, error: 'ambiguous'};
@@ -96,13 +101,7 @@ function runRegexExtractor(extractor: RegexOtpExtractor, email: Email): ParseRes
 
 function runXpathExtractor(extractor: XpathOtpExtractor, email: Email): ParseResult {
   const doc = new DOMParser().parseFromString(email.content ?? '', 'text/html');
-  const xpathResult = document.evaluate(
-    extractor.expression,
-    doc,
-    null,
-    XPathResult.ANY_TYPE,
-    null,
-  );
+  const xpathResult = doc.evaluate(extractor.expression, doc, null, XPathResult.ANY_TYPE, null);
   const results: string[] = [];
   let node = xpathResult.iterateNext();
   while (node) {
@@ -119,9 +118,7 @@ function runCssExtractor(extractor: CssOtpExtractor, email: Email): ParseResult 
   const doc = new DOMParser().parseFromString(email.content ?? '', 'text/html');
   const elements = Array.from(doc.querySelectorAll(extractor.selector));
   const results = elements
-    .map((el) =>
-      extractor.attribute ? el.getAttribute(extractor.attribute) : el.textContent?.trim(),
-    )
+    .map((el) => (extractor.attribute ? el.getAttribute(extractor.attribute) : el.textContent?.trim()))
     .filter((v): v is string => v != null && v.length > 0);
   if (results.length === 0) return {success: false, error: 'not-found'};
   if (results.length > 1) return {success: false, error: 'ambiguous'};
