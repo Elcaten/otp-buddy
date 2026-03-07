@@ -65,4 +65,55 @@ describe('useDebounceState', () => {
 
     expect(result.current[0].debounced).toBe(42);
   });
+
+  test('with leading: true, debounced updates immediately after quiet period', () => {
+    const {result} = renderHook(() =>
+      useDebounceState('initial', {delay: 300, leading: true})
+    );
+
+    // The leading edge fires on mount, consuming isFirstChange.current.
+    // Advance timers to let the trailing callback reset isFirstChange.current = true.
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+
+    // Now the next change should fire the leading edge immediately.
+    act(() => {
+      result.current[1]('first');
+    });
+
+    expect(result.current[0].debounced).toBe('first');
+  });
+
+  test('with leading: true, subsequent rapid changes only apply on trailing edge', () => {
+    const {result} = renderHook(() =>
+      useDebounceState('initial', {delay: 300, leading: true, trailing: true})
+    );
+
+    // Reset isFirstChange after mount's trailing timer
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+
+    // First change: leading fires immediately
+    act(() => {
+      result.current[1]('first');
+    });
+
+    expect(result.current[0].debounced).toBe('first');
+
+    // Second rapid change: isFirstChange is now false, so leading does NOT fire
+    act(() => {
+      result.current[1]('second');
+    });
+
+    expect(result.current[0].debounced).toBe('first');
+
+    // After delay: trailing fires with the latest value
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+
+    expect(result.current[0].debounced).toBe('second');
+  });
 });

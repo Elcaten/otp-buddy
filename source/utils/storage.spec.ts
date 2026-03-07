@@ -1,6 +1,6 @@
 import {describe, test, expect, vi, beforeEach} from 'vitest';
 import {mockBrowser} from '../__mocks__/webextension-polyfill';
-import {getStorage, setStorage, getAllStorage} from './storage';
+import {getStorage, setStorage, getAllStorage, clearStorage} from './storage';
 
 vi.mock('webextension-polyfill', () => {
   return {default: mockBrowser};
@@ -55,6 +55,27 @@ describe('storage utils', () => {
         enableLogging: true,
       });
       expect(mockBrowser.storage.local.get).toHaveBeenCalledWith(null);
+    });
+  });
+
+  describe('clearStorage', () => {
+    test('calls browser.storage.local.remove with the given keys', async () => {
+      vi.mocked(mockBrowser.storage.local.remove).mockResolvedValue(undefined);
+
+      await clearStorage(['gmailToken', 'gmailTokenTimestamp']);
+
+      expect(mockBrowser.storage.local.remove).toHaveBeenCalledWith([
+        'gmailToken',
+        'gmailTokenTimestamp',
+      ]);
+    });
+
+    test('accepts a single key', async () => {
+      vi.mocked(mockBrowser.storage.local.remove).mockResolvedValue(undefined);
+
+      await clearStorage('provider');
+
+      expect(mockBrowser.storage.local.remove).toHaveBeenCalledWith('provider');
     });
   });
 });
