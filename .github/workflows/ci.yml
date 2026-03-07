@@ -91,6 +91,7 @@ jobs:
   # Build Safari app/extension wrapper unsigned on macOS.
   build-safari-unsigned:
     runs-on: macos-latest
+    if: startsWith(github.ref, 'refs/tags/')
     needs: lint-and-test
     steps:
       - uses: actions/checkout@v4
