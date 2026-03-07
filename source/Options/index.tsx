@@ -1,7 +1,7 @@
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 
-import Options from './options';
+import Options from './Options';
 import {SWRConfig, SWRConfiguration} from 'swr';
 
 const container = document.getElementById('options-root');

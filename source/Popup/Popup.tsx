@@ -33,7 +33,7 @@ import browser from 'webextension-polyfill';
 import {FastmailEmailFetcher} from '../email-fetcher/fastmail-fetcher';
 import {GmailEmailFetcher} from '../email-fetcher/gmail-fetcher/gmail-fetcher';
 import {getAllStorage} from '../utils/storage';
-import s from './popup.module.scss';
+import s from './Popup.module.scss';
 import {EmailsTable} from './components/emails-table';
 import {Email} from '../types/email';
 import clsx from 'clsx';

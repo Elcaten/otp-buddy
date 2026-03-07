@@ -15,6 +15,7 @@
   },
   "type": "module",
   "scripts": {
+    "check:import-case": "node check-import-case.mjs",
     "dev:chrome": "cross-env TARGET_BROWSER=chrome vite build --config vite.config.ts --mode development --watch",
     "dev:firefox": "cross-env TARGET_BROWSER=firefox vite build --config vite.config.ts --mode development --watch",
     "build:chrome": "cross-env TARGET_BROWSER=chrome vite build --config vite.config.ts",
