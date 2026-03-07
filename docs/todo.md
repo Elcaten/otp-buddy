@@ -1,7 +1,7 @@
 # TODO
 
+- support config editing with https://carlosnz.github.io/json-edit-react/
 - append to input and autofill?
-- table horizontal scroll
 - error handling fastmail
   1. typo in api key
   2. expired api key (same error?)
@@ -18,3 +18,4 @@
 - ~~support gmail messages in safari - use native messaging for oAuth~~
 - ~~[Safari oAuth] - Ask to sign only first time.~~
 - ~~enable preview in safari (NSURLERRORdomain)~~
+- ~~table horizontal scroll~~
