@@ -1,18 +1,17 @@
 import {JSX} from 'react';
-import {tokenManager} from '../email-fetcher/gmail-fetcher/token-manager';
+import {useSignIn} from '../queries/use-gmail-auth';
 import styles from './sign-in-with-google-button.module.scss';
 
-export const SignInWithGoogleButton = ({disabled = false}: {disabled?: boolean}): JSX.Element => (
-  <button
-    type="button"
-    className={styles.button}
-    disabled={disabled}
-    onClick={() => tokenManager.getAccessToken({interactive: true})}
-  >
-    <GoogleIcon />
-    Sign In With Google
-  </button>
-);
+export const SignInWithGoogleButton = ({disabled = false}: {disabled?: boolean}) => {
+  const signIn = useSignIn();
+
+  return (
+    <button type="button" className={styles.button} disabled={disabled} onClick={() => signIn.trigger()}>
+      <GoogleIcon />
+      Sign In With Google
+    </button>
+  );
+};
 
 const GoogleIcon = (): JSX.Element => (
   <svg

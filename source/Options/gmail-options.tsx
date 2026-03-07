@@ -1,11 +1,10 @@
 import {PropsWithChildren, Suspense} from 'react';
 import {ErrorBoundary, FallbackProps as ErrorBoundaryFallbackProps} from 'react-error-boundary';
-import useSWR from 'swr';
-import {getUserProfile, UserProfile} from '../email-fetcher/gmail-fetcher/user-profile';
+import {UserProfile} from '../email-fetcher/gmail-fetcher/user-profile';
+import {useGmailProfile} from '../queries/use-gmail-auth';
+import s from './gmail-options.module.scss';
 import {SignInWithGoogleButton} from './sign-in-with-google-button';
 import {SignOutButton} from './sign-out-button';
-import s from './gmail-options.module.scss';
-import {tokenManager} from '../email-fetcher/gmail-fetcher/token-manager';
 
 //#region GmailOptions layout
 
@@ -66,16 +65,17 @@ const GmailOptionsState = {
 //#region Container
 
 function GmailOptionsContainer() {
-  const userProfileQuery = useSWR(
-    'gmailUserProfile',
-    async () => {
-      const token = await tokenManager.getAccessToken({interactive: false});
-      const profile = await getUserProfile(token.access_token);
+  const userProfileQuery = useGmailProfile();
 
-      return profile;
-    },
-    {suspense: true}
-  );
+  if (!userProfileQuery.data) {
+    return (
+      <GmailOptionsLayout>
+        <GmailOptionsLayout.Content>
+          <SignInWithGoogleButton />
+        </GmailOptionsLayout.Content>
+      </GmailOptionsLayout>
+    );
+  }
 
   return <GmailOptionsState.SignedIn profile={userProfileQuery.data} />;
 }
