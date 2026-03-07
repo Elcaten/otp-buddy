@@ -1,7 +1,10 @@
 import {JSX, useCallback, useEffect, useState} from 'react';
 import {Email} from '../../types/email';
-import {emailParser} from '../../email-parser';
+import {EmailParser} from '../../email-parser/email-parser';
 import {Button} from '../../components/ui/button';
+import {emailParserConfig} from '@/email-parser/email-parser-config';
+
+const emailParser = new EmailParser(emailParserConfig);
 
 function useCopyOTPToClipboard() {
   const [state, setState] = useState<'pending' | 'success' | 'error'>('pending');
