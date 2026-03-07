@@ -1,8 +1,11 @@
-import {JSX} from 'react';
-import {tokenManager} from '../email-fetcher/gmail-fetcher/token-manager';
+import {useSignOut} from '../queries/use-gmail-auth';
 
-export const SignOutButton = (): JSX.Element => (
-  <button type="button" onClick={tokenManager.revokeAccessToken}>
-    Sign Out
-  </button>
-);
+export const SignOutButton = () => {
+  const signOut = useSignOut();
+
+  return (
+    <button type="button" onClick={() => signOut.trigger()}>
+      Sign Out
+    </button>
+  );
+};
