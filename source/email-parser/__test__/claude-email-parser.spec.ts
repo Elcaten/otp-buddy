@@ -36,4 +36,49 @@ describe('ClaudeEmailParser', () => {
       'claude.ai/magic-link'
     );
   });
+
+  test('tryParse returns ambiguous when no sign-in links found (length !== 1)', () => {
+    const result = ClaudeEmailParser.tryParse({
+      id: '1',
+      subject: 'x',
+      from: [{email: 'no-reply@mail.anthropic.com'}],
+      content: '<html><body><p>No links here at all.</p></body></html>',
+    });
+    expect(result).toMatchObject({success: false, error: 'ambiguous'});
+  });
+
+  test('tryParse returns ambiguous when multiple sign-in links found', () => {
+    const result = ClaudeEmailParser.tryParse({
+      id: '1',
+      subject: 'x',
+      from: [{email: 'no-reply@mail.anthropic.com'}],
+      content: `
+        <html><body>
+          <a href="https://claude.ai/magic-link?token=1">Sign in here</a>
+          <a href="https://claude.ai/magic-link?token=2">Sign in again</a>
+        </body></html>
+      `,
+    });
+    expect(result).toMatchObject({success: false, error: 'ambiguous'});
+  });
+
+  test('tryParse returns ambiguous when content is empty', () => {
+    const result = ClaudeEmailParser.tryParse({
+      id: '1',
+      subject: 'x',
+      from: [{email: 'no-reply@mail.anthropic.com'}],
+      content: '',
+    });
+    expect(result).toMatchObject({success: false, error: 'ambiguous'});
+  });
+
+  test('tryParse returns ambiguous when content is undefined', () => {
+    const result = ClaudeEmailParser.tryParse({
+      id: '1',
+      subject: 'x',
+      from: [{email: 'no-reply@mail.anthropic.com'}],
+      content: undefined,
+    });
+    expect(result).toMatchObject({success: false, error: 'ambiguous'});
+  });
 });

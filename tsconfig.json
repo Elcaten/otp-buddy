@@ -11,7 +11,11 @@
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["source/*"]
+    }
   },
   "include": ["source"]
 }
