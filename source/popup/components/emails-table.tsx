@@ -1,6 +1,7 @@
 import type {FC} from 'react';
 import {Email} from '../../types/email';
 import {CopyOTPButton} from './copy-opt-button';
+import {FillOTPButton} from './fill-otp-button';
 import {OpenPreviewButton} from './open-preview-button';
 import styles from './emails-table.module.css';
 
@@ -18,6 +19,7 @@ export const EmailsTable: FC<{emails: Email[]}> = ({emails}) => (
           <td className={styles.subjectCell}>{email.subject}</td>
           <td className={styles.actionsCell}>
             <CopyOTPButton email={email} />
+            <FillOTPButton email={email} />
             <OpenPreviewButton email={email} />
           </td>
         </tr>
