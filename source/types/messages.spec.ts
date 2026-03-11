@@ -1,5 +1,7 @@
 import {describe, test, expect} from 'vitest';
 import {
+  isFillOtpMessage,
+  isFillOtpResponse,
   isOAuthLaunchMessage,
   isOAuthLaunchResponse,
   isLogMessage,
@@ -53,6 +55,33 @@ describe('isOAuthLaunchResponse', () => {
   test('returns false for invalid types', () => {
     expect(isOAuthLaunchResponse({redirectURL: 123})).toBe(false);
     expect(isOAuthLaunchResponse({error: 456})).toBe(false);
+  });
+});
+
+describe('isFillOtpMessage', () => {
+  test('returns true for valid fill message', () => {
+    expect(isFillOtpMessage({type: 'FILL_OTP', code: '123456'})).toBe(true);
+  });
+
+  test('returns false for wrong type or missing code', () => {
+    expect(isFillOtpMessage({type: 'log', code: '123456'})).toBe(false);
+    expect(isFillOtpMessage({type: 'FILL_OTP'})).toBe(false);
+  });
+});
+
+describe('isFillOtpResponse', () => {
+  test('returns true for valid success response', () => {
+    expect(isFillOtpResponse({success: true})).toBe(true);
+  });
+
+  test('returns true for valid error response', () => {
+    expect(isFillOtpResponse({success: false, error: 'OTP input not found'})).toBe(
+      true
+    );
+  });
+
+  test('returns false for invalid response shape', () => {
+    expect(isFillOtpResponse({success: 'yes'})).toBe(false);
   });
 });
 
