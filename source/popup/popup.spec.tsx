@@ -1,12 +1,9 @@
 import {describe, test, expect, vi, beforeEach} from 'vitest';
 import {render, screen, waitFor} from '@testing-library/react';
-import {mockBrowser} from '../__mocks__/webextension-polyfill';
 
 import useSWR from 'swr';
 import Popup from './popup';
 import type {StorageSchema} from '../types/storage';
-
-vi.mock('webextension-polyfill', () => {return {default: mockBrowser}});
 
 vi.mock('swr', () => {return {
   default: vi.fn(),

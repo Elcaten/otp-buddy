@@ -63,7 +63,7 @@ describe('CopyOTPButton', () => {
     const email: Email = {
       id: '1',
       subject: 'Hello',
-      from: [{email: 'user@gmail.com'}],
+      from: [],
       content: '<p>No OTP here</p>',
     };
 
@@ -72,6 +72,23 @@ describe('CopyOTPButton', () => {
 
     expect(
       screen.getByRole('button', {name: /parser not found/i})
+    ).toBeInTheDocument();
+    expect(mockWriteText).not.toHaveBeenCalled();
+  });
+
+  test('shows error when parser matches but extraction fails', () => {
+    const email: Email = {
+      id: '1',
+      subject: 'Hello',
+      from: [{email: 'user@gmail.com'}],
+      content: '<p>No OTP here</p>',
+    };
+
+    render(<CopyOTPButton email={email} />);
+    fireEvent.click(screen.getByRole('button', {name: /copy otp/i}));
+
+    expect(
+      screen.getByRole('button', {name: /parser error/i})
     ).toBeInTheDocument();
     expect(mockWriteText).not.toHaveBeenCalled();
   });
