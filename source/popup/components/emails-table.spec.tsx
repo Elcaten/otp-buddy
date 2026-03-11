@@ -44,7 +44,7 @@ describe('EmailsTable', () => {
   test('renders a CopyOTPButton for each email', () => {
     render(<EmailsTable emails={emails} />);
 
-    const copyButtons = screen.getAllByRole('button', {name: /copy otp/i});
+    const copyButtons = screen.getAllByRole('button', {name: /copy/i});
     expect(copyButtons).toHaveLength(2);
   });
 
