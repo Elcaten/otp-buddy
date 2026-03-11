@@ -1,14 +1,9 @@
 import {describe, test, expect, vi, beforeEach} from 'vitest';
-import {mockBrowser} from '@/__mocks__/webextension-polyfill';
 
 import {tokenStorage} from './token-storage';
 import {gmailOauth} from './gmail-oauth';
 import {tokenManager} from './token-manager';
 import {TokenEndpointResponse} from 'oauth4webapi';
-
-vi.mock('webextension-polyfill', () => {
-  return {default: mockBrowser};
-});
 
 vi.mock('./token-storage', () => {
   return {
