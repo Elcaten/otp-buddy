@@ -1,12 +1,7 @@
 import {describe, test, expect, vi, beforeEach} from 'vitest';
-import {mockBrowser} from '@/__mocks__/webextension-polyfill';
 
 import {GmailEmailFetcher} from './gmail-fetcher';
 import * as PostalMime from 'postal-mime';
-
-vi.mock('webextension-polyfill', () => {
-  return {default: mockBrowser};
-});
 
 vi.mock('postal-mime', () => {
   return {
