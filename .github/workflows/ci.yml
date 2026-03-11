@@ -136,16 +136,28 @@ jobs:
           name: safari-build-unsigned
           path: ${{ github.workspace }}/safari/OTPBuddy/build/Release
 
-      - name: Package Safari build products
+      - name: Create DMG installer
         run: |
-          cd "$GITHUB_WORKSPACE/safari/OTPBuddy/build"
-          ditto -c -k --sequesterRsrc --keepParent Release safari-unsigned.zip
+          BUILD_DIR="$GITHUB_WORKSPACE/safari/OTPBuddy/build"
+          APP_PATH="$BUILD_DIR/Release/OTPBuddy.app"
+          STAGING="$BUILD_DIR/dmg-staging"
+          DMG_PATH="$BUILD_DIR/OTPBuddy.dmg"
 
-      - name: Upload Safari package
+          mkdir -p "$STAGING"
+          cp -R "$APP_PATH" "$STAGING/"
+          ln -s /Applications "$STAGING/Applications"
+
+          hdiutil create \
+            -volname "OTPBuddy" \
+            -srcfolder "$STAGING" \
+            -ov -format UDZO \
+            "$DMG_PATH"
+
+      - name: Upload Safari DMG
         uses: actions/upload-artifact@v4
         with:
-          name: safari-build-unsigned-zip
-          path: ${{ github.workspace }}/safari/OTPBuddy/build/safari-unsigned.zip
+          name: safari-build-unsigned-dmg
+          path: ${{ github.workspace }}/safari/OTPBuddy/build/OTPBuddy.dmg
 
   e2e-chromium:
     runs-on: ubuntu-latest
@@ -192,10 +204,10 @@ jobs:
           name: extension-firefox-xpi
           path: release-assets
 
-      - name: Download Safari package
+      - name: Download Safari DMG
         uses: actions/download-artifact@v4
         with:
-          name: safari-build-unsigned-zip
+          name: safari-build-unsigned-dmg
           path: release-assets
 
       - name: Create GitHub Release and upload assets
@@ -204,7 +216,7 @@ jobs:
           files: |
             release-assets/chrome.zip
             release-assets/firefox.xpi
-            release-assets/safari-unsigned.zip
+            release-assets/OTPBuddy.dmg
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
