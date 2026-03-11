@@ -4,10 +4,6 @@ import {mockBrowser} from '@/__mocks__/webextension-polyfill';
 import {tokenStorage} from './token-storage';
 import {TokenEndpointResponse} from 'oauth4webapi';
 
-vi.mock('webextension-polyfill', () => {
-  return {default: mockBrowser};
-});
-
 describe('tokenStorage', () => {
   beforeEach(() => {
     vi.useFakeTimers();
