@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
 import {describe, test, expect} from 'vitest';
-import {emailParserConfig} from './email-parser-config';
-import {EmailParser} from './email-parser';
+import {emailParserConfig} from '../email-parser-config';
+import {EmailParser} from '../email-parser';
 
-import claudeJson from '../email-parser/__test__/otpEmailSamples/claude-login-link.json';
-import gitlabJson from '../email-parser/__test__/otpEmailSamples/gitlab-confirm-email.json';
-import polymarketJson from '../email-parser/__test__/otpEmailSamples/polymarket-login-code.json';
+import claudeJson from './claude-login-link.json';
+import gitlabJson from './gitlab-confirm-email.json';
+import polymarketJson from './polymarket-login-code.json';
 
 const parser = new EmailParser(emailParserConfig);
 

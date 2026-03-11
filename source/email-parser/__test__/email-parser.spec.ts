@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import {describe, test, expect} from 'vitest';
-import {EmailParser} from './email-parser';
-import type {EmailParserConfig} from './email-parser-config';
-import type {Email} from '../types/email';
+import {EmailParser} from '../email-parser';
+import type {EmailParserConfig} from '../email-parser-config';
+import type {Email} from '../../types/email';
 
 const makeEmail = (overrides: Partial<Email> = {}): Email => {
   return {
