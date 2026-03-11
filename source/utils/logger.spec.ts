@@ -3,8 +3,6 @@ import {mockBrowser} from '@/__mocks__/webextension-polyfill';
 
 import {log} from './logger';
 
-vi.mock('webextension-polyfill', () => {return {default: mockBrowser}});
-
 describe('logger', () => {
   beforeEach(() => {
     vi.clearAllMocks();

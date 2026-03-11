@@ -2,10 +2,6 @@ import {describe, test, expect, vi, beforeEach} from 'vitest';
 import {mockBrowser} from '../__mocks__/webextension-polyfill';
 import {getStorage, setStorage, getAllStorage, clearStorage} from './storage';
 
-vi.mock('webextension-polyfill', () => {
-  return {default: mockBrowser};
-});
-
 describe('storage utils', () => {
   beforeEach(() => {
     vi.mocked(mockBrowser.storage.local.get).mockResolvedValue({});
