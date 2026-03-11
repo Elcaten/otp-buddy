@@ -14,7 +14,7 @@ email HTML.
   - Gmail via OAuth (`gmail.readonly`, `profile`, `email` scopes).
 - **Popup workflow**
   - Shows recent email subjects.
-  - `Copy OTP` tries parser-based extraction and copies to clipboard.
+  - `Copy` tries parser-based extraction and copies to clipboard.
   - `Preview` opens a sanitized HTML preview of the email.
 - **OTP extraction model**
   - Extraction is parser-based, not generic regex for every sender.

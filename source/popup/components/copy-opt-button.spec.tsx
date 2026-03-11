@@ -13,7 +13,7 @@ describe('CopyOTPButton', () => {
     });
   });
 
-  test('renders Copy OTP when pending', () => {
+  test('renders Copy when pending', () => {
     const email: Email = {
       id: '1',
       subject: '123456 is your code',
@@ -22,7 +22,7 @@ describe('CopyOTPButton', () => {
     };
 
     render(<CopyOTPButton email={email} />);
-    expect(screen.getByRole('button', {name: /copy otp/i})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: /copy/i})).toBeInTheDocument();
   });
 
   test('copies OTP to clipboard and shows Copied! on success', async () => {
@@ -34,7 +34,7 @@ describe('CopyOTPButton', () => {
     };
 
     render(<CopyOTPButton email={email} />);
-    fireEvent.click(screen.getByRole('button', {name: /copy otp/i}));
+    fireEvent.click(screen.getByRole('button', {name: /copy/i}));
 
     await waitFor(() => {
       expect(mockWriteText).toHaveBeenCalledWith('641481');
@@ -51,11 +51,9 @@ describe('CopyOTPButton', () => {
     };
 
     render(<CopyOTPButton email={email} />);
-    fireEvent.click(screen.getByRole('button', {name: /copy otp/i}));
+    fireEvent.click(screen.getByRole('button', {name: /copy/i}));
 
-    expect(
-      screen.getByRole('button', {name: /empty email/i})
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: /empty email/i})).toBeInTheDocument();
     expect(mockWriteText).not.toHaveBeenCalled();
   });
 
@@ -68,11 +66,9 @@ describe('CopyOTPButton', () => {
     };
 
     render(<CopyOTPButton email={email} />);
-    fireEvent.click(screen.getByRole('button', {name: /copy otp/i}));
+    fireEvent.click(screen.getByRole('button', {name: /copy/i}));
 
-    expect(
-      screen.getByRole('button', {name: /parser not found/i})
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: /parser not found/i})).toBeInTheDocument();
     expect(mockWriteText).not.toHaveBeenCalled();
   });
 
