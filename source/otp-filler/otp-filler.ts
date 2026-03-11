@@ -48,12 +48,15 @@ export function fillOtp({code, input}: {code: string; input: OtpInputResult}): v
     }
 
     typeText(element, code);
+    submitAfterFill(element);
     return;
   }
 
   if (input.inputs.length !== code.length) {
     return;
   }
+
+  let lastFilledInput: HTMLInputElement | undefined;
 
   input.inputs.forEach((element, index) => {
     const inputElement = asInputElement(element);
@@ -62,7 +65,12 @@ export function fillOtp({code, input}: {code: string; input: OtpInputResult}): v
     }
 
     typeText(inputElement, code[index] ?? '');
+    lastFilledInput = inputElement;
   });
+
+  if (lastFilledInput) {
+    submitAfterFill(lastFilledInput);
+  }
 }
 
 function findMultiInputGroup(inputs: HTMLInputElement[]): HTMLInputElement[] {
@@ -185,7 +193,11 @@ function setInputValue(input: HTMLInputElement, value: string): void {
   descriptor?.set?.call(input, value);
 }
 
-function dispatchKeyboardEvent(input: HTMLInputElement, type: 'keydown' | 'keyup', key: string): void {
+function dispatchKeyboardEvent(
+  input: HTMLInputElement,
+  type: 'keydown' | 'keypress' | 'keyup',
+  key: string
+): void {
   input.dispatchEvent(
     new KeyboardEvent(type, {
       key,
@@ -222,4 +234,22 @@ function dispatchChangeEvent(input: HTMLInputElement): void {
       bubbles: true,
     })
   );
+}
+
+function submitAfterFill(input: HTMLInputElement): void {
+  dispatchKeyboardEvent(input, 'keydown', 'Enter');
+  dispatchKeyboardEvent(input, 'keypress', 'Enter');
+  dispatchKeyboardEvent(input, 'keyup', 'Enter');
+
+  if (input.form) {
+    input.form.requestSubmit();
+    return;
+  }
+
+  const container = input.closest('form, [role="form"], div, section, main, body');
+  const submitButton = container?.querySelector('button[type="submit"], input[type="submit"]');
+
+  if (submitButton instanceof HTMLElement) {
+    submitButton.click();
+  }
 }

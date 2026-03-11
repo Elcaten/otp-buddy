@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import {readFileSync} from 'node:fs';
-import {describe, expect, test} from 'vitest';
+import {describe, expect, test, vi} from 'vitest';
 import {fillOtp, findOtpInput} from './otp-filler';
 
 const vas3kFixture = readFileSync('source/otp-filler/__test__/vas3k.html', 'utf8');
@@ -57,14 +57,19 @@ describe('findOtpInput', () => {
 });
 
 describe('fillOtp', () => {
-  test('fills a single input and dispatches typing events', () => {
+  test('fills a single input and dispatches typing events followed by enter', () => {
     document.body.innerHTML = '<input type="text" />';
     const input = document.querySelector('input');
     expect(input).toBeInstanceOf(HTMLInputElement);
 
     const typedEvents: string[] = [];
-    ['keydown', 'beforeinput', 'input', 'keyup', 'change'].forEach((eventName) => {
-      input?.addEventListener(eventName, () => {
+    ['keydown', 'beforeinput', 'input', 'keyup', 'keypress', 'change'].forEach((eventName) => {
+      input?.addEventListener(eventName, (event) => {
+        if ((event as KeyboardEvent).key && (event as KeyboardEvent).key !== 'Enter') {
+          typedEvents.push(eventName);
+          return;
+        }
+
         typedEvents.push(eventName);
       });
     });
@@ -92,7 +97,31 @@ describe('fillOtp', () => {
       'input',
       'keyup',
       'change',
+      'keydown',
+      'keypress',
+      'keyup',
     ]);
+  });
+
+  test('submits the parent form after filling a single input', () => {
+    document.body.innerHTML = `
+      <form>
+        <input type="text" name="code" />
+      </form>
+    `;
+    const input = document.querySelector('input') as HTMLInputElement;
+    const form = document.querySelector('form') as HTMLFormElement;
+    const submitSpy = vi.spyOn(form, 'requestSubmit').mockImplementation(() => undefined);
+
+    fillOtp({
+      code: '123',
+      input: {
+        type: 'single',
+        input,
+      },
+    });
+
+    expect(submitSpy).toHaveBeenCalled();
   });
 
   test('fills multi-input OTP boxes one character at a time', () => {
@@ -115,6 +144,72 @@ describe('fillOtp', () => {
     });
 
     expect(inputs.map((input) => input.value)).toEqual(['9', '8', '7', '6']);
+  });
+
+  test('submits after filling multi-input OTP boxes', () => {
+    document.body.innerHTML = `
+      <form>
+        <div>
+          <input type="text" maxlength="1" />
+          <input type="text" maxlength="1" />
+          <input type="text" maxlength="1" />
+          <input type="text" maxlength="1" />
+        </div>
+      </form>
+    `;
+    const inputs = Array.from(document.querySelectorAll('input')) as HTMLInputElement[];
+    const form = document.querySelector('form') as HTMLFormElement;
+    const events: string[] = [];
+    const submitSpy = vi.spyOn(form, 'requestSubmit').mockImplementation(() => undefined);
+
+    inputs[3]?.addEventListener('keydown', (event) => {
+      if ((event as KeyboardEvent).key === 'Enter') {
+        events.push('keydown');
+      }
+    });
+    inputs[3]?.addEventListener('keypress', (event) => {
+      if ((event as KeyboardEvent).key === 'Enter') {
+        events.push('keypress');
+      }
+    });
+    inputs[3]?.addEventListener('keyup', (event) => {
+      if ((event as KeyboardEvent).key === 'Enter') {
+        events.push('keyup');
+      }
+    });
+
+    fillOtp({
+      code: '9876',
+      input: {
+        type: 'multi',
+        inputs,
+      },
+    });
+
+    expect(events).toEqual(['keydown', 'keypress', 'keyup']);
+    expect(submitSpy).toHaveBeenCalled();
+  });
+
+  test('clicks a nearby submit button when there is no form', () => {
+    document.body.innerHTML = `
+      <section>
+        <input type="text" name="code" />
+        <button type="submit">Continue</button>
+      </section>
+    `;
+    const input = document.querySelector('input') as HTMLInputElement;
+    const button = document.querySelector('button') as HTMLButtonElement;
+    const clickSpy = vi.spyOn(button, 'click').mockImplementation(() => undefined);
+
+    fillOtp({
+      code: '123456',
+      input: {
+        type: 'single',
+        input,
+      },
+    });
+
+    expect(clickSpy).toHaveBeenCalled();
   });
 
   test('does nothing when multi-input length does not match the code length', () => {
