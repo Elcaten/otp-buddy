@@ -1,6 +1,7 @@
 import {test as base, chromium, type BrowserContext, type Worker} from '@playwright/test';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import 'dotenv/config';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pathToExtension = path.join(__dirname, '..', '..', 'extension', 'chrome');

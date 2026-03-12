@@ -30,7 +30,7 @@
     "test:e2e:chromium:gmail": "playwright test --project=chromium-gmail",
     "test:e2e:chromium:nightly": "playwright test --project=chromium-nightly",
     "test:e2e:chromium:all": "playwright test --project=chromium --project=chromium-tigrmail --project=chromium-gmail",
-    "test:e2e:ui:chromium": "playwright test --ui --project=chromium",
+    "test:e2e:ui:chromium": "playwright test --ui",
     "init:safari": "xcrun safari-web-extension-packager --project-location safari --app-name OTPBuddy --bundle-identifier com.elcaten.otpbuddy ./extension/chrome"
   },
   "dependencies": {
