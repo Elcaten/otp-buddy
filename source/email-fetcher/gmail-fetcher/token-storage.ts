@@ -24,7 +24,7 @@ async function getStoredToken(): Promise<StoredToken> {
   }
 
   if (!parsedToken || !parsedToken.expires_in) {
-    log.emailFetcher.info('Stored token is invalid', {parsedToken});
+    log.emailFetcher.info('Stored token is invalid');
     return {type: 'not_found'};
   }
 

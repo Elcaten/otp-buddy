@@ -13,4 +13,5 @@ export const env = {
   OTP_BUDDY_SAFARI_CLIENT_ID: import.meta.env.VITE_OTP_BUDDY_SAFARI_CLIENT_ID,
   OTP_BUDDY_WEB_CLIENT_ID: import.meta.env.VITE_OTP_BUDDY_WEB_CLIENT_ID,
   OTP_BUDDY_WEB_CLIENT_SECRET: import.meta.env.VITE_OTP_BUDDY_WEB_CLIENT_SECRET,
+  SENTRY_DSN: import.meta.env.VITE_SENTRY_DSN as string | undefined,
 };

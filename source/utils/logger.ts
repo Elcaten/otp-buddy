@@ -4,10 +4,14 @@
  * Sends log entries to the background script via runtime.sendMessage.
  * Background script handles them in onMessage and outputs to its console.
  * Enable via storage.enableLogging.
+ *
+ * Also pipes every log to Sentry structured logging when VITE_SENTRY_DSN is set.
  */
 
+import * as Sentry from '@sentry/browser';
 import browser from 'webextension-polyfill';
 import type {LogMessage} from '../types/messages';
+import {getSentryScope} from './sentry';
 
 export type LogSource = LogMessage['source'];
 export type LogLevel = LogMessage['level'];
@@ -21,6 +25,17 @@ function sendLog(level: LogLevel, source: LogSource, message: string, data?: unk
     ...(data !== undefined && {data}),
   };
   void browser.runtime.sendMessage(payload);
+
+  const scope = getSentryScope();
+  if (scope) {
+    const attrs: Record<string, unknown> = {source};
+    if (data !== undefined && typeof data === 'object' && data !== null) {
+      Object.assign(attrs, data);
+    } else if (data !== undefined) {
+      attrs.data = data;
+    }
+    Sentry.logger[level](message, attrs, {scope});
+  }
 }
 
 export function log(level: LogLevel, source: LogSource, message: string, data?: unknown): void {
