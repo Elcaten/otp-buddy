@@ -14,7 +14,29 @@ export default defineConfig({
     {
       name: 'chromium',
       testDir: './e2e/chromium',
+      testMatch: ['popup.spec.ts', 'options.spec.ts', 'content-script.spec.ts'],
       use: {...devices['Desktop Chrome']},
+    },
+    {
+      name: 'chromium-fastmail',
+      testDir: './e2e/chromium',
+      testMatch: ['fastmail.spec.ts'],
+      use: {...devices['Desktop Chrome']},
+      timeout: 120000,
+    },
+    {
+      name: 'chromium-gmail',
+      testDir: './e2e/chromium',
+      testMatch: ['gmail.spec.ts'],
+      use: {...devices['Desktop Chrome']},
+      timeout: 120000,
+    },
+    {
+      name: 'chromium-nightly',
+      testDir: './e2e/chromium',
+      testMatch: ['nightly-*.spec.ts'],
+      use: {...devices['Desktop Chrome']},
+      timeout: 180000,
     },
   ],
 });

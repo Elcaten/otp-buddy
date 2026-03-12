@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OTP Multi Input Test Page</title>
+  <style>
+    body { font-family: sans-serif; padding: 40px; }
+    .otp-form { max-width: 400px; margin: 0 auto; }
+    .otp-inputs { display: flex; gap: 8px; margin: 16px 0; }
+    .otp-inputs input {
+      width: 40px; height: 48px; text-align: center;
+      font-size: 20px; border: 2px solid #ccc; border-radius: 4px;
+    }
+    button { padding: 8px 16px; }
+    #result { margin-top: 16px; padding: 12px; background: #f0f0f0; display: none; }
+  </style>
+</head>
+<body>
+  <div class="otp-form">
+    <h1>Enter Code</h1>
+    <p>Enter the 6-digit verification code.</p>
+    <form id="otpForm">
+      <label>Verification code</label>
+      <div class="otp-inputs" id="otpContainer">
+        <input type="text" maxlength="1" inputmode="numeric" data-index="0" aria-label="Digit 1" />
+        <input type="text" maxlength="1" inputmode="numeric" data-index="1" aria-label="Digit 2" />
+        <input type="text" maxlength="1" inputmode="numeric" data-index="2" aria-label="Digit 3" />
+        <input type="text" maxlength="1" inputmode="numeric" data-index="3" aria-label="Digit 4" />
+        <input type="text" maxlength="1" inputmode="numeric" data-index="4" aria-label="Digit 5" />
+        <input type="text" maxlength="1" inputmode="numeric" data-index="5" aria-label="Digit 6" />
+      </div>
+      <button type="submit">Verify</button>
+    </form>
+    <div id="result"></div>
+  </div>
+  <script>
+    const inputs = document.querySelectorAll('#otpContainer input');
+    inputs.forEach((input, idx) => {
+      input.addEventListener('input', function() {
+        if (this.value && idx < inputs.length - 1) {
+          inputs[idx + 1].focus();
+        }
+      });
+    });
+
+    document.getElementById('otpForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const code = Array.from(inputs).map(i => i.value).join('');
+      const resultDiv = document.getElementById('result');
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = 'Submitted code: ' + code;
+      resultDiv.setAttribute('data-submitted-code', code);
+    });
+  </script>
+</body>
+</html>
