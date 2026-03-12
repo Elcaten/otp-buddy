@@ -1,0 +1,66 @@
+name: Build Safari (unsigned)
+
+on:
+  workflow_call:
+
+jobs:
+  build-safari-unsigned:
+    runs-on: macos-latest
+    steps:
+      - uses: ./.github/actions/setup-node-env
+
+      - name: Build Chrome extension assets for Safari project
+        run: npm run build:chrome
+        env:
+          VITE_OTP_BUDDY_SAFARI_CLIENT_ID: ${{ secrets.VITE_OTP_BUDDY_SAFARI_CLIENT_ID }}
+          VITE_OTP_BUDDY_WEB_CLIENT_ID: ${{ secrets.VITE_OTP_BUDDY_WEB_CLIENT_ID }}
+          VITE_OTP_BUDDY_WEB_CLIENT_SECRET: ${{ secrets.VITE_OTP_BUDDY_WEB_CLIENT_SECRET }}
+
+      - name: Debug Xcode project metadata
+        run: xcodebuild -list -project "safari/OTPBuddy/OTPBuddy.xcodeproj"
+
+      - name: Build Safari app (unsigned)
+        run: |
+          SAFARI_BUILD_DIR="$GITHUB_WORKSPACE/safari/OTPBuddy/build"
+          xcodebuild \
+            -project "safari/OTPBuddy/OTPBuddy.xcodeproj" \
+            -target "OTPBuddy (macOS)" \
+            -configuration Release \
+            SYMROOT="$SAFARI_BUILD_DIR" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
+
+      - name: Debug Safari build outputs
+        run: |
+          ls -la "$GITHUB_WORKSPACE/safari/OTPBuddy/build"
+          ls -la "$GITHUB_WORKSPACE/safari/OTPBuddy/build/Release"
+
+      - name: Upload Safari build products
+        uses: actions/upload-artifact@v4
+        with:
+          name: safari-build-unsigned
+          path: ${{ github.workspace }}/safari/OTPBuddy/build/Release
+
+      - name: Create DMG installer
+        run: |
+          BUILD_DIR="$GITHUB_WORKSPACE/safari/OTPBuddy/build"
+          APP_PATH="$BUILD_DIR/Release/OTPBuddy.app"
+          STAGING="$BUILD_DIR/dmg-staging"
+          DMG_PATH="$BUILD_DIR/OTPBuddy.dmg"
+
+          mkdir -p "$STAGING"
+          cp -R "$APP_PATH" "$STAGING/"
+          ln -s /Applications "$STAGING/Applications"
+
+          hdiutil create \
+            -volname "OTPBuddy" \
+            -srcfolder "$STAGING" \
+            -ov -format UDZO \
+            "$DMG_PATH"
+
+      - name: Upload Safari DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: safari-build-unsigned-dmg
+          path: ${{ github.workspace }}/safari/OTPBuddy/build/OTPBuddy.dmg

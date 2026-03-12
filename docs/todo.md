@@ -1,5 +1,6 @@
 # TODO
 
+- safari build not working - dmg is donwloaded, app is not functioning
 - support config editing with https://carlosnz.github.io/json-edit-react/
 - append to input and autofill?
 - error handling fastmail

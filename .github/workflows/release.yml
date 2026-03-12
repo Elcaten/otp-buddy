@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  workflow_call:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download Chrome package
+        uses: actions/download-artifact@v4
+        with:
+          name: extension-chrome-zip
+          path: release-assets
+
+      - name: Download Firefox package
+        uses: actions/download-artifact@v4
+        with:
+          name: extension-firefox-xpi
+          path: release-assets
+
+      - name: Download Safari DMG
+        uses: actions/download-artifact@v4
+        with:
+          name: safari-build-unsigned-dmg
+          path: release-assets
+
+      - name: Create GitHub Release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release-assets/chrome.zip
+            release-assets/firefox.xpi
+            release-assets/OTPBuddy.dmg
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

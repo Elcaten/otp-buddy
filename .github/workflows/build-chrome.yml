@@ -1,0 +1,29 @@
+name: Build Chrome
+
+on:
+  workflow_call:
+
+jobs:
+  build-chrome:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup-node-env
+
+      - name: Build Chrome extension
+        run: npm run build:chrome
+        env:
+          VITE_OTP_BUDDY_SAFARI_CLIENT_ID: ${{ secrets.VITE_OTP_BUDDY_SAFARI_CLIENT_ID }}
+          VITE_OTP_BUDDY_WEB_CLIENT_ID: ${{ secrets.VITE_OTP_BUDDY_WEB_CLIENT_ID }}
+          VITE_OTP_BUDDY_WEB_CLIENT_SECRET: ${{ secrets.VITE_OTP_BUDDY_WEB_CLIENT_SECRET }}
+
+      - name: Upload extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-chrome
+          path: extension/chrome
+
+      - name: Upload Chrome package
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-chrome-zip
+          path: extension/chrome.zip

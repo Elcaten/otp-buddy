@@ -1,0 +1,29 @@
+name: Build Firefox
+
+on:
+  workflow_call:
+
+jobs:
+  build-firefox:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup-node-env
+
+      - name: Build Firefox extension
+        run: npm run build:firefox
+        env:
+          VITE_OTP_BUDDY_SAFARI_CLIENT_ID: ${{ secrets.VITE_OTP_BUDDY_SAFARI_CLIENT_ID }}
+          VITE_OTP_BUDDY_WEB_CLIENT_ID: ${{ secrets.VITE_OTP_BUDDY_WEB_CLIENT_ID }}
+          VITE_OTP_BUDDY_WEB_CLIENT_SECRET: ${{ secrets.VITE_OTP_BUDDY_WEB_CLIENT_SECRET }}
+
+      - name: Upload extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-firefox
+          path: extension/firefox
+
+      - name: Upload Firefox package
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-firefox-xpi
+          path: extension/firefox.xpi
