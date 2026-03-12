@@ -46,9 +46,17 @@
 
 .progressBarFill {
   height: 100%;
-  background: linear-gradient(90deg, #4EA7FC 0%, #2E7FD8 100%);
+  background: linear-gradient(
+    90deg,
+    #00d4ff 0%,
+    #0099ff 25%,
+    #0066ff 50%,
+    #0044cc 75%,
+    #0033aa 100%
+  );
   border-radius: 2px;
   transition: width 0.1s linear;
+  box-shadow: 0 0 8px rgba(0, 150, 255, 0.6);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -57,6 +65,14 @@
   }
   
   .progressBarFill {
-    background: linear-gradient(90deg, #6BB8FF 0%, #4EA7FC 100%);
+    background: linear-gradient(
+      90deg,
+      #00e5ff 0%,
+      #00b8ff 25%,
+      #0088ff 50%,
+      #0066ff 75%,
+      #0044dd 100%
+    );
+    box-shadow: 0 0 10px rgba(0, 180, 255, 0.8);
   }
 }
