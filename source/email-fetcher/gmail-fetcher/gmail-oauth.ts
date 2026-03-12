@@ -112,16 +112,16 @@ abstract class GmailOauth {
     const authURL = await this.buildAuthURL({
       code_verifier,
     });
-    log.emailFetcher.info('Requesting access', {authURL});
+    log.emailFetcher.info('Requesting access');
     const redirectUrlWithParams = await this.promptForAuth({interactive, authURL});
-    log.emailFetcher.info('Access granted', {redirectUrlWithParams});
+    log.emailFetcher.info('Access granted');
 
-    log.emailFetcher.info('Requesting token', {redirectUrlWithParams});
+    log.emailFetcher.info('Requesting token');
     const tokenResponse = await this.requestToken({
       redirectUrlSearchParams: new URL(redirectUrlWithParams).searchParams,
       code_verifier,
     });
-    log.emailFetcher.info('Token granted', {tokenResponse});
+    log.emailFetcher.info('Token granted');
 
     return tokenResponse;
   }

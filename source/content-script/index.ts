@@ -7,11 +7,9 @@
  */
 
 import browser from 'webextension-polyfill';
-import {log} from '../utils/logger';
+import {initSentry} from '../utils/sentry';
+
+initSentry();
 
 // Listen for messages from popup or background
-browser.runtime.onMessage.addListener(
-  (): Promise<undefined> | undefined => undefined
-);
-
-log.content.info('Content script loaded', {url: window.location.href});
+browser.runtime.onMessage.addListener((): Promise<undefined> | undefined => undefined);
