@@ -18,6 +18,7 @@ export const e2eEnv = {
 
   // Real login services (Tier 4 / nightly)
   testGitlabEmail: process.env.TEST_GITLAB_EMAIL ?? '',
+  testGitlabPassword: process.env.TEST_GITLAB_PASSWORD ?? '',
   testPolymarketEmail: process.env.TEST_POLYMARKET_EMAIL ?? '',
 };
 

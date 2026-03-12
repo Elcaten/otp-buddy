@@ -6,17 +6,10 @@ import {e2eEnv, hasGmailCredentials, hasTigrmailCredentials, hasNightlyCredentia
 /**
  * Nightly E2E test: GitLab login OTP flow.
  *
- * This test:
- * 1. Creates a Tigrmail disposable inbox
- * 2. Navigates to GitLab sign-in page
- * 3. Enters the disposable email to trigger a confirmation/OTP email
- * 4. Waits for the OTP email via Tigrmail API
- * 5. Verifies the extension popup can show and extract the code
- *    (when configured with Gmail, since the extension only reads from
- *     Fastmail/Gmail — the Tigrmail inbox is used to independently
- *     verify the OTP arrived)
+ * GitLab sign-in requires email + password. After successful password auth,
+ * GitLab sends a 6-digit OTP to the account's email address.
  *
- * Requires: TIGRMAIL_TOKEN + TEST_GITLAB_EMAIL (or we use the Tigrmail inbox).
+ * Requires: TIGRMAIL_TOKEN, TEST_GITLAB_EMAIL, TEST_GITLAB_PASSWORD.
  */
 test.describe('Nightly: GitLab OTP flow', () => {
   test.beforeEach(async () => {
@@ -29,21 +22,25 @@ test.describe('Nightly: GitLab OTP flow', () => {
   });
 
   test('receives GitLab OTP code via Tigrmail inbox', async ({page}) => {
-    // Create a fresh disposable inbox for this test
+    test.skip(!e2eEnv.testGitlabEmail || !e2eEnv.testGitlabPassword, 'GitLab credentials not set');
+
     const tigrmailInbox = await createTigrmailInbox();
     expect(tigrmailInbox).toContain('@');
 
-    // Navigate to GitLab sign-in
     await page.goto('https://gitlab.com/users/sign_in');
     await page.waitForLoadState('networkidle');
 
-    // Enter the Tigrmail email to trigger OTP
-    const emailInput = page.locator(
-      'input[name="user[login]"], input[name="user[email]"], #user_login, #user_email'
-    );
-    await expect(emailInput.first()).toBeVisible({timeout: 10000});
-    await emailInput.first().fill(tigrmailInbox);
+    // Fill email/username
+    const loginInput = page.locator('#user_login');
+    await expect(loginInput).toBeVisible({timeout: 10000});
+    await loginInput.fill(e2eEnv.testGitlabEmail);
 
+    // Fill password
+    const passwordInput = page.locator('#user_password');
+    await expect(passwordInput).toBeVisible({timeout: 5000});
+    await passwordInput.fill(e2eEnv.testGitlabPassword);
+
+    // Submit
     const submitButton = page.locator('button[type="submit"], input[type="submit"]').first();
     await submitButton.click();
 
@@ -56,7 +53,6 @@ test.describe('Nightly: GitLab OTP flow', () => {
     expect(message).toBeTruthy();
     expect(message.subject).toBeTruthy();
 
-    // Extract the 6-digit OTP from the email body
     const otpMatch = message.body.match(/\b(\d{6})\b/);
     expect(otpMatch).toBeTruthy();
     expect(otpMatch![1]).toMatch(/^\d{6}$/);
@@ -69,8 +65,8 @@ test.describe('Nightly: GitLab OTP flow', () => {
     context,
   }) => {
     test.skip(!hasGmailCredentials(), 'Gmail credentials needed for extension testing');
+    test.skip(!e2eEnv.testGitlabEmail || !e2eEnv.testGitlabPassword, 'GitLab credentials not set');
 
-    // Seed the extension with Gmail provider
     await seedExtensionStorage(serviceWorker, {
       provider: 'gmail',
       gmailToken: JSON.stringify({
@@ -82,20 +78,21 @@ test.describe('Nightly: GitLab OTP flow', () => {
       gmailTokenTimestamp: 0,
     });
 
-    // Use the Gmail test address to trigger GitLab OTP
     await page.goto('https://gitlab.com/users/sign_in');
     await page.waitForLoadState('networkidle');
 
-    const emailInput = page.locator(
-      'input[name="user[login]"], input[name="user[email]"], #user_login, #user_email'
-    );
-    await expect(emailInput.first()).toBeVisible({timeout: 10000});
-    await emailInput.first().fill(e2eEnv.testGitlabEmail);
+    const loginInput = page.locator('#user_login');
+    await expect(loginInput).toBeVisible({timeout: 10000});
+    await loginInput.fill(e2eEnv.testGitlabEmail);
+
+    const passwordInput = page.locator('#user_password');
+    await expect(passwordInput).toBeVisible({timeout: 5000});
+    await passwordInput.fill(e2eEnv.testGitlabPassword);
 
     const submitButton = page.locator('button[type="submit"], input[type="submit"]').first();
     await submitButton.click();
 
-    // Also verify via gmail-tester that the email arrived
+    // Verify via gmail-tester that the OTP email arrived
     const emails = await waitForGmailEmail({
       from: 'gitlab.com',
       after: new Date(Date.now() - 2 * 60 * 1000),
