@@ -205,3 +205,4 @@ dist/
 # playwright
 .playwright-user-data
 test-results
+secrets
