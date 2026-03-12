@@ -1,8 +1,11 @@
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
+import {SWRConfig, SWRConfiguration} from 'swr';
+import {initSentry} from '../utils/sentry';
 
 import Options from './options';
-import {SWRConfig, SWRConfiguration} from 'swr';
+
+initSentry();
 
 const container = document.getElementById('options-root');
 

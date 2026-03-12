@@ -1,7 +1,10 @@
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
+import {initSentry} from '../utils/sentry';
 
 import Popup from './popup';
+
+initSentry();
 
 const container = document.getElementById('popup-root');
 
