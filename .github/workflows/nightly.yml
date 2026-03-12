@@ -32,7 +32,7 @@ jobs:
           name: extension-chrome
           path: extension/chrome
 
-  # Tier 2+3: Provider integration tests
+  # Tier 2: Tigrmail + Tier 3: Gmail integration tests
   e2e-providers:
     runs-on: ubuntu-latest
     needs: build-chrome
@@ -55,12 +55,13 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Run Fastmail E2E tests
-        run: npm run test:e2e:chromium:fastmail
+      - name: Run Tigrmail E2E tests
+        run: npm run test:e2e:chromium:tigrmail
         env:
-          FASTMAIL_TEST_API_KEY: ${{ secrets.FASTMAIL_TEST_API_KEY }}
-          FASTMAIL_TEST_ACCOUNT_ID: ${{ secrets.FASTMAIL_TEST_ACCOUNT_ID }}
-          TEST_EMAIL_FASTMAIL: ${{ secrets.TEST_EMAIL_FASTMAIL }}
+          TIGRMAIL_TOKEN: ${{ secrets.TIGRMAIL_TOKEN }}
+          GMAIL_TESTER_CREDENTIALS_JSON: ${{ secrets.GMAIL_TESTER_CREDENTIALS_JSON }}
+          GMAIL_TESTER_TOKEN_JSON: ${{ secrets.GMAIL_TESTER_TOKEN_JSON }}
+          TEST_EMAIL_GMAIL: ${{ secrets.TEST_EMAIL_GMAIL }}
 
       - name: Run Gmail E2E tests
         run: npm run test:e2e:chromium:gmail
@@ -99,9 +100,7 @@ jobs:
       - name: Run nightly E2E tests (real login services)
         run: npm run test:e2e:chromium:nightly
         env:
-          FASTMAIL_TEST_API_KEY: ${{ secrets.FASTMAIL_TEST_API_KEY }}
-          FASTMAIL_TEST_ACCOUNT_ID: ${{ secrets.FASTMAIL_TEST_ACCOUNT_ID }}
-          TEST_EMAIL_FASTMAIL: ${{ secrets.TEST_EMAIL_FASTMAIL }}
+          TIGRMAIL_TOKEN: ${{ secrets.TIGRMAIL_TOKEN }}
           GMAIL_TESTER_CREDENTIALS_JSON: ${{ secrets.GMAIL_TESTER_CREDENTIALS_JSON }}
           GMAIL_TESTER_TOKEN_JSON: ${{ secrets.GMAIL_TESTER_TOKEN_JSON }}
           GMAIL_TEST_REFRESH_TOKEN: ${{ secrets.GMAIL_TEST_REFRESH_TOKEN }}

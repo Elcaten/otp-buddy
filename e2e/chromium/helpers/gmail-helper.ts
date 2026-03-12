@@ -62,6 +62,8 @@ export async function sendTestEmailToGmail(options: {
   subject: string;
   htmlBody: string;
   from?: string;
+  fromName?: string;
+  to?: string;
 }): Promise<void> {
   const credentials = getCredentials();
   const token = getToken();
@@ -84,8 +86,10 @@ export async function sendTestEmailToGmail(options: {
   const tokenData = (await tokenResponse.json()) as {access_token: string};
   const accessToken = tokenData.access_token;
 
-  const fromAddr = options.from ?? e2eEnv.testEmailGmail;
-  const toAddr = e2eEnv.testEmailGmail;
+  const fromEmail = options.from ?? e2eEnv.testEmailGmail;
+  const fromName = options.fromName;
+  const fromAddr = fromName ? `${fromName} <${fromEmail}>` : fromEmail;
+  const toAddr = options.to ?? e2eEnv.testEmailGmail;
 
   const rawMessage = [
     `From: ${fromAddr}`,

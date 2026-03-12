@@ -27,7 +27,7 @@ See `package.json` scripts. Summary:
 | Build (Chrome, dev) | `npm run dev:chrome` |
 | Build (Chrome, prod) | `npm run build:chrome` |
 | E2E tests (Tier 1, no creds) | `npm run test:e2e:chromium` (requires `npm run build:chrome` first) |
-| E2E tests (Fastmail) | `npm run test:e2e:chromium:fastmail` (needs `FASTMAIL_*` env vars) |
+| E2E tests (Tigrmail) | `npm run test:e2e:chromium:tigrmail` (needs `TIGRMAIL_TOKEN`) |
 | E2E tests (Gmail) | `npm run test:e2e:chromium:gmail` (needs `GMAIL_*` env vars) |
 | E2E tests (nightly) | `npm run test:e2e:chromium:nightly` (needs all provider + service creds) |
 | E2E tests (all non-nightly) | `npm run test:e2e:chromium:all` |

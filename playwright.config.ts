@@ -18,9 +18,9 @@ export default defineConfig({
       use: {...devices['Desktop Chrome']},
     },
     {
-      name: 'chromium-fastmail',
+      name: 'chromium-tigrmail',
       testDir: './e2e/chromium',
-      testMatch: ['fastmail.spec.ts'],
+      testMatch: ['tigrmail.spec.ts'],
       use: {...devices['Desktop Chrome']},
       timeout: 120000,
     },
