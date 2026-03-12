@@ -36,9 +36,9 @@ import {getAllStorage} from '../utils/storage';
 import s from './popup.module.scss';
 import {EmailsTable} from './components/emails-table';
 import {Email} from '../types/email';
-import clsx from 'clsx';
 import {log} from '../utils/logger';
 import {tokenManager} from '../email-fetcher/gmail-fetcher/token-manager';
+import {SplashScreen} from './components/splash-screen';
 
 //#region Popup layout
 
@@ -60,16 +60,7 @@ const PopupState = {
   Loading: () => (
     <PopupLayout>
       <PopupLayout.Content>
-        <img
-          src="/assets/images/loading_splash_light.webp"
-          alt=""
-          className={clsx(s.loadingImage, s.loadingImageLight)}
-        />
-        <img
-          src="/assets/images/loading_splash_dark.webp"
-          alt=""
-          className={clsx(s.loadingImage, s.loadingImageDark)}
-        />
+        <SplashScreen />
       </PopupLayout.Content>
     </PopupLayout>
   ),

@@ -1,0 +1,62 @@
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.splashImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.splashImageDark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .splashImageDark {
+    display: block;
+  }
+  .splashImageLight {
+    display: none;
+  }
+}
+
+.progressBarContainer {
+  position: absolute;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  padding: 0 20px;
+}
+
+.progressBarTrack {
+  width: 100%;
+  height: 4px;
+  background-color: rgba(128, 128, 128, 0.3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #4EA7FC 0%, #2E7FD8 100%);
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
+@media (prefers-color-scheme: dark) {
+  .progressBarTrack {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .progressBarFill {
+    background: linear-gradient(90deg, #6BB8FF 0%, #4EA7FC 100%);
+  }
+}
