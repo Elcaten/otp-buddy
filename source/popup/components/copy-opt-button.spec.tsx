@@ -81,7 +81,7 @@ describe('CopyOTPButton', () => {
     };
 
     render(<CopyOTPButton email={email} />);
-    fireEvent.click(screen.getByRole('button', {name: /copy otp/i}));
+    fireEvent.click(screen.getByRole('button', {name: /copy/i}));
 
     expect(
       screen.getByRole('button', {name: /parser error/i})
