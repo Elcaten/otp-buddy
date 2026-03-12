@@ -1,7 +1,12 @@
 import {describe, test, expect, vi, beforeEach} from 'vitest';
 import {render, screen} from '@testing-library/react';
+import {mockBrowser} from '../../__mocks__/webextension-polyfill';
 import {EmailsTable} from './emails-table';
 import type {Email} from '../../types/email';
+
+vi.mock('webextension-polyfill', () => {
+  return {default: mockBrowser};
+});
 
 beforeEach(() => {
   Object.assign(navigator, {
@@ -44,8 +49,15 @@ describe('EmailsTable', () => {
   test('renders a CopyOTPButton for each email', () => {
     render(<EmailsTable emails={emails} />);
 
-    const copyButtons = screen.getAllByRole('button', {name: /copy otp/i});
+    const copyButtons = screen.getAllByRole('button', {name: /copy/i});
     expect(copyButtons).toHaveLength(2);
+  });
+
+  test('renders a FillOTPButton for each email', () => {
+    render(<EmailsTable emails={emails} />);
+
+    const fillButtons = screen.getAllByRole('button', {name: /fill/i});
+    expect(fillButtons).toHaveLength(2);
   });
 
   test('renders a Preview button for each email', () => {

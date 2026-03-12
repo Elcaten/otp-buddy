@@ -54,7 +54,7 @@ export function CopyOTPButton({email}: {email: Email}): JSX.Element {
 
   return (
     <Button style={{minWidth: '140px'}} onClick={() => trigger(email)}>
-      {state === 'pending' && 'Copy OTP'}
+      {state === 'pending' && 'Copy'}
       {state === 'success' && 'Copied!'}
       {state === 'error' && stateDescription}
     </Button>

@@ -34,6 +34,32 @@ export function isOAuthLaunchResponse(message: unknown): message is OAuthLaunchR
   }).guard(message);
 }
 
+/** Popup -> Content script: fill the current page OTP input(s). */
+export interface FillOtpMessage {
+  type: 'FILL_OTP';
+  code: string;
+}
+
+export function isFillOtpMessage(message: unknown): message is FillOtpMessage {
+  return R.Object({
+    type: R.Literal('FILL_OTP'),
+    code: R.String,
+  }).guard(message);
+}
+
+/** Content script -> Popup: result of attempting to fill OTP inputs. */
+export interface FillOtpResponse {
+  success: boolean;
+  error?: string;
+}
+
+export function isFillOtpResponse(message: unknown): message is FillOtpResponse {
+  return R.Object({
+    success: R.Boolean,
+    error: R.String.optional(),
+  }).guard(message);
+}
+
 /** Any context -> Background: log entry for centralized logging. */
 export interface LogMessage {
   type: 'log';
@@ -55,4 +81,9 @@ export function isLogMessage(message: unknown): message is LogMessage {
   }).guard(message);
 }
 
-export type ExtensionMessage = OAuthLaunchMessage | OAuthLaunchResponse | LogMessage;
+export type ExtensionMessage =
+  | OAuthLaunchMessage
+  | OAuthLaunchResponse
+  | FillOtpMessage
+  | FillOtpResponse
+  | LogMessage;

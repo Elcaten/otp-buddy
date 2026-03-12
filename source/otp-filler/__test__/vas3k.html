@@ -1,0 +1,149 @@
+<!doctype html>
+
+<html lang="ru">
+  <head>
+    <title>Вастрик.Клуб 🤘✖️👩‍💻</title>
+
+    <link rel="preload" href="/static/webfonts/Ubuntu-Italic.woff2" as="font" crossorigin />
+    <link rel="preload" href="/static/webfonts/Ubuntu-BoldItalic.woff2" as="font" crossorigin />
+    <link rel="preload" href="/static/webfonts/Ubuntu-Bold.woff2" as="font" crossorigin />
+    <link rel="preload" href="/static/webfonts/Ubuntu-Medium.woff2" as="font" crossorigin />
+    <link rel="preload" href="/static/webfonts/Ubuntu-MediumItalic.woff2" as="font" crossorigin />
+    <link rel="preload" href="/static/webfonts/Ubuntu-Regular.woff2" as="font" crossorigin />
+
+    <link rel="preload" href="/static/webfonts/Merriweather-Italic.woff2" as="font" crossorigin />
+    <link rel="preload" href="/static/webfonts/Merriweather-Black.woff2" as="font" crossorigin />
+    <link rel="preload" href="/static/webfonts/Merriweather-Bold.woff2" as="font" crossorigin />
+    <link rel="preload" href="/static/webfonts/Merriweather-Light.woff2" as="font" crossorigin />
+    <link rel="preload" href="/static/webfonts/Merriweather-Regular.woff2" as="font" crossorigin />
+
+    <meta charset="UTF-8" />
+    <meta name="description" content="Всё интересное происходит за закрытыми дверями" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <script>
+      // check and set theme before render. After render the theme switch is controlled by the <theme-switcher> component
+      // the component contains the same theme detection code as below. If you change this code, update the theme too
+      const theme = localStorage.getItem('theme') ?? 'auto';
+      const currentTheme =
+        theme === 'auto' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : theme;
+      document.documentElement.setAttribute('theme', currentTheme);
+    </script>
+
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Вастрик.Клуб: Новые посты"
+      href="https://vas3k.club/posts.rss"
+    />
+
+    <link
+      rel="alternate"
+      title="Вастрик.Клуб: JSON Feed"
+      type="application/feed+json"
+      href="https://vas3k.club/feed.json"
+    />
+
+    <meta property="og:title" content="Вастрик.Клуб" />
+    <meta property="og:site_name" content="Вастрик.Клуб" />
+    <meta property="og:url" content="https://vas3k.club" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Всё интересное происходит за закрытыми дверями" />
+    <meta property="og:image" content="/static/images/share.png" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Вастрик.Клуб" />
+    <meta name="twitter:description" content="Всё интересное происходит за закрытыми дверями" />
+    <meta name="twitter:image" content="/static/images/share.png" />
+
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon/favicon.svg" />
+    <link rel="icon" type="image/png" href="/static/images/favicon/favicon-16x16.png" sizes="16x16" />
+    <link rel="icon" type="image/png" href="/static/images/favicon/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/static/images/favicon/android-chrome-192x192.png" sizes="192x192" />
+    <link rel="shortcut icon" type="image/png" href="/static/images/favicon/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" type="image/png" href="/static/images/favicon/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/static/images/favicon/android-chrome-192x192.png" color="#333333" />
+    <link rel="manifest" href="/static/images/favicon/site.webmanifest" />
+
+    <link href="/static/dist/main-16e0d3088925de04b207.css" rel="stylesheet" />
+  </head>
+  <body>
+    <main id="app">
+      <nav class="menu menu-simplified">
+        <a href="/" class="logo">
+          Вастрик<img src="/static/images/logo/logo-128.png" alt=" x " width="26" height="26" />Клуб
+        </a>
+
+        <span class="menu-simplified-right">
+          <a href="/landing" class="hide-on-iphone">Что за Клуб?</a>
+
+          <a href="/auth/login/" class="button button-black">Войти</a>
+        </span>
+      </nav>
+
+      <div class="login">
+        <div class="block login-code">
+          <div class="login-code-title">🤘 Вам отправлен код!</div>
+
+          <div class="login-code-description">
+            Введите секретный код доступа к Клубу, который упал вам на почту или в бота
+          </div>
+
+          <div class="login-code-form">
+            <form action="/auth/email/code/" method="get">
+              <input
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                name="code"
+                placeholder="000000"
+                class="login-code-input"
+                autocomplete="off"
+                autofocus
+              />
+              <input type="hidden" name="email" value="test@mail.com" />
+
+              <button type="submit" class="button login-code-button">Войти</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer" id="footer">
+      <div class="footer-left">
+        <a href="/docs/about/">О Клубе</a> &nbsp;&middot;&nbsp;
+
+        <a href="https://vas3k.club/post/values/">Наши ценности</a> &nbsp;&middot;&nbsp;
+
+        <a href="/crew/">Команда</a> &nbsp;&middot;&nbsp;
+
+        <a href="/docs/privacy_policy/">Политика приватности</a> &nbsp;&middot;&nbsp;
+
+        <a href="/docs/contact/">Связаться с нами</a>
+
+        <br /><br />
+
+        <a href="https://github.com/vas3k/vas3k.club">Опенсорс</a> &nbsp;&middot;&nbsp;
+
+        <a href="/docs/blocked_dolor/">Оплата из России</a>
+
+        <br /><br />
+
+        CC BY-SA
+      </div>
+      <div class="footer-right">
+        <theme-switcher></theme-switcher>
+      </div>
+    </footer>
+
+    <script>
+      window.imageUploadUrl = 'https://i.vas3k.club/upload/multipart/';
+      window.imageUploadCode = 'heygimmeupload';
+    </script>
+    <script src="/static/dist/main-16e0d3088925de04b207.js"></script>
+  </body>
+</html>
