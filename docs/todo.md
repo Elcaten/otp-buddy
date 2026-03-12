@@ -6,6 +6,7 @@
   1. typo in api key
   2. expired api key (same error?)
 - delete message after successfull copy
+- sentry personal data leak check
 
 # Sideline
 
@@ -19,3 +20,4 @@
 - ~~[Safari oAuth] - Ask to sign only first time.~~
 - ~~enable preview in safari (NSURLERRORdomain)~~
 - ~~table horizontal scroll~~
+- ~~fill otp on button press~~
