@@ -1,6 +1,6 @@
 # TODO
 
-- safari build not working - dmg is donwloaded, app is not functioning
+- ~~safari build not working - dmg is downloaded, app is not functioning~~ (fixed: ad-hoc signing added to CI)
 - support config editing with https://carlosnz.github.io/json-edit-react/
 - append to input and autofill?
 - error handling fastmail

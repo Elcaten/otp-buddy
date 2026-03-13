@@ -33,6 +33,11 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             build
 
+      - name: Ad-hoc sign Safari app
+        run: |
+          APP_PATH="$GITHUB_WORKSPACE/safari/OTPBuddy/build/Release/OTPBuddy.app"
+          codesign --force --deep --sign - "$APP_PATH"
+
       - name: Debug Safari build outputs
         run: |
           ls -la "$GITHUB_WORKSPACE/safari/OTPBuddy/build"

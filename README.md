@@ -47,6 +47,23 @@ https://github.com/Elcaten/otp-buddy/releases
 2. Click This Firefox.
 3. Install the downloaded extension package.
 
+#### Safari (macOS)
+
+The Safari release is an ad-hoc signed `.dmg`. After downloading:
+
+1. Open the DMG and drag **OTPBuddy.app** into `/Applications`.
+2. Remove the quarantine attribute (macOS blocks unsigned/ad-hoc downloads):
+   ```bash
+   xattr -cr /Applications/OTPBuddy.app
+   ```
+3. Enable the Safari Developer menu if you haven't already:
+   Safari > Settings > Advanced > check **Show features for web developers**.
+4. Enable unsigned extensions:
+   Safari > Develop > check **Allow Unsigned Extensions** (required each Safari
+   launch).
+5. Open **OTPBuddy.app** and click **Quit and Open Safari Extension Settings**.
+6. Enable the OTP Buddy extension in Safari settings.
+
 ### 3) Configure provider in extension options
 
 Open OTP Buddy options from the extension menu and choose one provider.
