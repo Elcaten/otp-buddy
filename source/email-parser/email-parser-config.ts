@@ -47,6 +47,13 @@ export const emailParserConfig: EmailParserConfig = {
       ],
     },
     {
+      name: 'Booking',
+      matchers: [{field: 'sender.email', op: 'endsWith', value: 'booking.com'}],
+      extractors: [
+        {source: 'subject', method: 'regex', pattern: '\\b[A-Za-z0-9]{6}\\b'},
+      ],
+    },
+    {
       name: 'Polymarket',
       matchers: [{field: 'sender.name', op: 'contains', value: 'Polymarket'}],
       extractors: [{source: 'subject', method: 'regex', pattern: '\\d{6}'}],

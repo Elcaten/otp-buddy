@@ -3,6 +3,7 @@ import {describe, test, expect} from 'vitest';
 import {emailParserConfig} from '../email-parser-config';
 import {EmailParser} from '../email-parser';
 
+import bookingJson from './booking-login-code.json';
 import claudeJson from './claude-login-link.json';
 import gitlabJson from './gitlab-confirm-email.json';
 import polymarketJson from './polymarket-login-code.json';
@@ -21,6 +22,18 @@ describe('Claude', () => {
       success: true,
       result: 'https://claude.ai/magic-link#530c5933f4b0d0aa6d7a93085ab558c1:Y29vbC5jZWxsODEzM0BmYXN0bWFpbC5jb20=',
     });
+  });
+});
+
+describe('Booking', () => {
+  const email = {id: '1', ...bookingJson};
+
+  test('canParse', () => {
+    expect(parser.canParse(email)).toBe(true);
+  });
+
+  test('extracts OTP from subject', () => {
+    expect(parser.tryParse(email)).toMatchObject({success: true, result: 'WKAV74'});
   });
 });
 
