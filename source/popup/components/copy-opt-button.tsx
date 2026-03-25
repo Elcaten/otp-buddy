@@ -24,7 +24,6 @@ function useCopyOTPToClipboard() {
       return;
     }
 
-    debugger;
     const result = emailParser.tryParse(email);
     if (!result.success) {
       setState('error');
