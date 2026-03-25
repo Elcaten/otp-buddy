@@ -49,9 +49,7 @@ export const emailParserConfig: EmailParserConfig = {
     {
       name: 'Booking',
       matchers: [{field: 'sender.email', op: 'endsWith', value: 'booking.com'}],
-      extractors: [
-        {source: 'subject', method: 'regex', pattern: '\\b[A-Za-z0-9]{6}\\b'},
-      ],
+      extractors: [{source: 'subject', method: 'regex', pattern: '\\b[A-Za-z0-9]{6}\\b'}],
     },
     {
       name: 'Polymarket',
@@ -75,7 +73,8 @@ export const emailParserConfig: EmailParserConfig = {
       name: 'Fallback',
       matchers: [{field: 'sender.email', op: 'contains', value: '@'}],
       extractors: [
-        {source: 'subject', method: 'regex', pattern: '\\d{6}'},
+        {source: 'subject', method: 'regex', pattern: '\\d{4,6}'},
+        {source: 'subject', method: 'regex', pattern: '\\b[A-Za-z0-9]{6}\\b'},
         {
           source: 'body',
           method: 'xpath',
