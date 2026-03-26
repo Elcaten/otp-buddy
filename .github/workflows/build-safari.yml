@@ -73,7 +73,7 @@ jobs:
           BUILD_DIR="$GITHUB_WORKSPACE/safari/OTPBuddy/build"
           APP_PATH="$BUILD_DIR/Release/OTPBuddy.app"
           STAGING="$BUILD_DIR/dmg-staging"
-          DMG_PATH="$BUILD_DIR/OTPBuddy.dmg"
+          DMG_PATH="$BUILD_DIR/otp-buddy-safari.dmg"
 
           mkdir -p "$STAGING"
           cp -R "$APP_PATH" "$STAGING/"
@@ -88,5 +88,5 @@ jobs:
       - name: Upload Safari DMG
         uses: actions/upload-artifact@v4
         with:
-          name: safari-build-unsigned-dmg
-          path: ${{ github.workspace }}/safari/OTPBuddy/build/OTPBuddy.dmg
+          name: otp-buddy-safari-dmg
+          path: ${{ github.workspace }}/safari/OTPBuddy/build/otp-buddy-safari.dmg
