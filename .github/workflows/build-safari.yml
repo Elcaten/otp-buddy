@@ -21,27 +21,46 @@ jobs:
       - name: Debug Xcode project metadata
         run: xcodebuild -list -project "safari/OTPBuddy/OTPBuddy.xcodeproj"
 
-      - name: Build Safari app (unsigned)
+      - name: Build Safari
+        env:
+          BUILD_KEYCHAIN_PASSWORD: ${{ secrets.BUILD_KEYCHAIN_PASSWORD }}
+          CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
+          CERTIFICATE_P12: ${{ secrets.CERTIFICATE_P12 }}
         run: |
+          set -euo pipefail
+
+          KEYCHAIN_PATH="$RUNNER_TEMP/build.keychain-db"
+          CERT_PATH="$RUNNER_TEMP/cert.p12"
           SAFARI_BUILD_DIR="$GITHUB_WORKSPACE/safari/OTPBuddy/build"
+
+          cleanup() {
+            rm -f "$CERT_PATH"
+            security delete-keychain "$KEYCHAIN_PATH" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          # Materialize certificate from base64 secret
+          echo "$CERTIFICATE_P12" | base64 --decode > "$CERT_PATH"
+
+          # Keychain setup
+          security create-keychain -p "$BUILD_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$BUILD_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$CERTIFICATE_PASSWORD" -f pkcs12 -A
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$BUILD_KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH" "/Library/Keychains/System.keychain"
+          security default-keychain -d user -s "$KEYCHAIN_PATH"
+
+          # Build (automatic signing)
           xcodebuild \
             -project "safari/OTPBuddy/OTPBuddy.xcodeproj" \
             -target "OTPBuddy (macOS)" \
             -configuration Release \
             SYMROOT="$SAFARI_BUILD_DIR" \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_REQUIRED=YES \
+            CODE_SIGN_IDENTITY="Apple Development" \
+            OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" \
             build
-
-      - name: Ad-hoc sign Safari app
-        run: |
-          APP_PATH="$GITHUB_WORKSPACE/safari/OTPBuddy/build/Release/OTPBuddy.app"
-          codesign --force --deep --sign - "$APP_PATH"
-
-      - name: Debug Safari build outputs
-        run: |
-          ls -la "$GITHUB_WORKSPACE/safari/OTPBuddy/build"
-          ls -la "$GITHUB_WORKSPACE/safari/OTPBuddy/build/Release"
 
       - name: Upload Safari build products
         uses: actions/upload-artifact@v4
