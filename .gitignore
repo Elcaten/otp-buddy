@@ -208,3 +208,5 @@ test-results
 
 # local husky artifacts
 .husky
+
+*.p12
