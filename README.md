@@ -1,11 +1,7 @@
 # OTP Buddy
 
-OTP Buddy is a cross-browser extension that helps you fetch one-time passwords
-(OTPs) from recent emails and copy them quickly.
-
-It currently supports Fastmail and Gmail as providers, with a popup workflow
-focused on speed: review recent messages, copy parsed OTPs, or preview sanitized
-email HTML.
+OTP Buddy is a cross-browser extension that helps you preview, copy and fill one-time passwords
+(OTPs) from your recent emails. It currently supports Fastmail and Gmail
 
 ## Visual Tour
 
@@ -24,9 +20,10 @@ can help fill the code from recent email messages.
 - **Popup workflow**
   - Shows recent email subjects.
   - `Copy` tries parser-based extraction and copies to clipboard.
+  - `Fill` tries to find an inuput on a page and auto-fill OTP
   - `Preview` opens a sanitized HTML preview of the email.
 - **OTP extraction model**
-  - Extraction is parser-based, not generic regex for every sender.
+  - Extraction is provider-based, not generic regex for every sender.
   - Current parser coverage is explicit: GitLab, Claude, and Polymarket email
     formats.
 - **Recent email fetching**
@@ -37,10 +34,8 @@ can help fill the code from recent email messages.
 
 ### 1) Download from Releases
 
-Go to the OTP Buddy Releases page and download the extension package for your
+Go to the OTP Buddy [Releases page](https://github.com/Elcaten/otp-buddy/releases/latest) and download the extension package for your
 browser:
-
-https://github.com/Elcaten/otp-buddy/releases
 
 ### 2) Install extension in browser
 
@@ -58,36 +53,17 @@ https://github.com/Elcaten/otp-buddy/releases
 
 #### Safari (macOS)
 
-The Safari release is an ad-hoc signed `.dmg`. After downloading:
-
-1. Open the DMG and drag **OTPBuddy.app** into `/Applications`.
+1. Open the DMG file and drag **OTPBuddy.app** into `/Applications`.
 2. Remove the quarantine attribute (macOS blocks unsigned/ad-hoc downloads):
    ```bash
    xattr -cr /Applications/OTPBuddy.app
    ```
-3. Enable the Safari Developer menu if you haven't already:
-   Safari > Settings > Advanced > check **Show features for web developers**.
-4. Enable unsigned extensions:
-   Safari > Develop > check **Allow Unsigned Extensions** (required each Safari
-   launch).
 5. Open **OTPBuddy.app** and click **Quit and Open Safari Extension Settings**.
 6. Enable the OTP Buddy extension in Safari settings.
 
 ### 3) Configure provider in extension options
 
-Open OTP Buddy options from the extension menu and choose one provider.
-
-#### Fastmail
-
-- Enter a Fastmail API key.
-- Select a Fastmail account from the discovered account list.
-- Save settings.
-
-#### Gmail
-
-- Choose Gmail provider.
-- Sign in with Google in the options page.
-- Save settings if prompted.
+Open OTP Buddy options from the extension menu and set up the provider.
 
 ## Browser Notes
 
