@@ -7,6 +7,16 @@ It currently supports Fastmail and Gmail as providers, with a popup workflow
 focused on speed: review recent messages, copy parsed OTPs, or preview sanitized
 email HTML.
 
+## Visual Tour
+
+### Popup workflow + in-page autofill
+
+<video src="output.webm"  muted playsinline autoplay style="max-width: 100%;"></video>
+
+Review recent emails, copy parsed OTP values, and open a sanitized email preview
+in a new tab. When OTP input fields are detected on supported pages, OTP Buddy
+can help fill the code from recent email messages.
+
 ## Current Functionality
 
 - **Provider support**
