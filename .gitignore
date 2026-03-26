@@ -205,3 +205,6 @@ dist/
 # playwright
 .playwright-user-data
 test-results
+
+# local husky artifacts
+.husky
