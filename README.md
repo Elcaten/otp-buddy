@@ -10,8 +10,7 @@ email HTML.
 ## Visual Tour
 
 ### Popup workflow + in-page autofill
-
-<video src="docs/Popup workflow + in-page autofill.webm"  muted playsinline autoplay style="max-width: 100%;"></video>
+[Popup workflow + in-page autofill.webm](https://github.com/user-attachments/assets/b1e42a33-4ed9-4399-a533-01754a20ce18)
 
 Review recent emails, copy parsed OTP values, and open a sanitized email preview
 in a new tab. When OTP input fields are detected on supported pages, OTP Buddy
