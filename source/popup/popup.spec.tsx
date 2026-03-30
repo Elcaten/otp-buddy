@@ -5,18 +5,22 @@ import useSWR from 'swr';
 import Popup from './popup';
 import type {StorageSchema} from '../types/storage';
 
-vi.mock('swr', () => {return {
-  default: vi.fn(),
-}});
+vi.mock('swr', () => {
+  return {
+    default: vi.fn(),
+  };
+});
 
 vi.mock('../email-fetcher/fastmail-fetcher');
 vi.mock('../email-fetcher/gmail-fetcher/gmail-fetcher');
-vi.mock('../email-fetcher/gmail-fetcher/token-manager', () => {return {
-  tokenManager: {
-    getAccessToken: vi.fn(),
-    revokeAccessToken: vi.fn(),
-  },
-}});
+vi.mock('../email-fetcher/gmail-fetcher/token-manager', () => {
+  return {
+    tokenManager: {
+      getAccessToken: vi.fn(),
+      revokeAccessToken: vi.fn(),
+    },
+  };
+});
 
 function makeStorageData(overrides: Partial<StorageSchema> = {}): StorageSchema {
   return {
@@ -50,9 +54,7 @@ describe('Popup', () => {
       render(<Popup />);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/please set up your email provider/i)
-        ).toBeInTheDocument();
+        expect(screen.getByText(/please set up your email provider/i)).toBeInTheDocument();
       });
     });
 
@@ -69,9 +71,7 @@ describe('Popup', () => {
       render(<Popup />);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/please set up your email provider/i)
-        ).toBeInTheDocument();
+        expect(screen.getByText(/please set up your email provider/i)).toBeInTheDocument();
       });
     });
 
@@ -84,9 +84,7 @@ describe('Popup', () => {
       render(<Popup />);
 
       await waitFor(() => {
-        expect(
-          screen.getByRole('button', {name: /extension settings/i})
-        ).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: /extension settings/i})).toBeInTheDocument();
       });
     });
   });
@@ -106,9 +104,7 @@ describe('Popup', () => {
       render(<Popup />);
 
       await waitFor(() => {
-        expect(
-          screen.queryByText(/please set up your email provider/i)
-        ).not.toBeInTheDocument();
+        expect(screen.queryByText(/please set up your email provider/i)).not.toBeInTheDocument();
       });
     });
 
@@ -126,7 +122,7 @@ describe('Popup', () => {
       render(<Popup />);
 
       await waitFor(() => {
-        expect(screen.getByText(/no recent messages/i)).toBeInTheDocument();
+        expect(screen.getByText('No messages yet')).toBeInTheDocument();
       });
     });
   });
@@ -150,9 +146,7 @@ describe('Popup', () => {
       render(<Popup />);
 
       await waitFor(() => {
-        expect(
-          screen.queryByText(/please set up your email provider/i)
-        ).not.toBeInTheDocument();
+        expect(screen.queryByText(/please set up your email provider/i)).not.toBeInTheDocument();
       });
     });
   });

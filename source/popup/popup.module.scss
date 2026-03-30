@@ -1,16 +1,23 @@
-.loadingImage {
-  display: block;
+.content {
+  width: 400px;
+  height: 200px;
+  box-sizing: border-box;
+  padding: 16px;
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
-.loadingImageDark {
-  display: none;
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
 }
-@media (prefers-color-scheme: dark) {
-  .loadingImageDark {
-    display: block;
-  }
-  .loadingImageLight {
-    display: none;
-  }
+.description {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .buttonLink {

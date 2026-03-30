@@ -44,11 +44,11 @@ import {SplashScreen} from './components/splash-screen';
 
 const PopupLayout = Object.assign(
   function ({children}: PropsWithChildren) {
-    return <section>{children}</section>;
+    return <main>{children}</main>;
   },
   {
     Content: function Content({children}: PropsWithChildren) {
-      return <>{children}</>;
+      return <section className={s.content}>{children}</section>;
     },
   }
 );
@@ -59,9 +59,7 @@ const PopupLayout = Object.assign(
 const PopupState = {
   Loading: () => (
     <PopupLayout>
-      <PopupLayout.Content>
-        <SplashScreen />
-      </PopupLayout.Content>
+      <SplashScreen />
     </PopupLayout>
   ),
   Error: (_props: ErrorBoundaryFallbackProps) => (
@@ -74,28 +72,30 @@ const PopupState = {
   MissingSettings: () => (
     <PopupLayout>
       <PopupLayout.Content>
-        <p>
+        <div className={s.title}>Set up required</div>
+        <div className={s.description}>
           Please set up your email provider in the{' '}
           <button type="button" onClick={() => browser.runtime.openOptionsPage()} className={s.buttonLink}>
             extension settings
           </button>
           .
-        </p>
+        </div>
       </PopupLayout.Content>
     </PopupLayout>
   ),
   NoMessages: () => (
     <PopupLayout>
       <PopupLayout.Content>
-        <p>No recent messages</p>
+        <div className={s.title}>No messages yet</div>
+        <div className={s.description}>
+          There are no messages yet. When you receive a new message, it will appear here.
+        </div>
       </PopupLayout.Content>
     </PopupLayout>
   ),
   MessagesList: (props: {emails: Email[]}) => (
     <PopupLayout>
-      <PopupLayout.Content>
-        <EmailsTable emails={props.emails} />
-      </PopupLayout.Content>
+      <EmailsTable emails={props.emails} />
     </PopupLayout>
   ),
 };
