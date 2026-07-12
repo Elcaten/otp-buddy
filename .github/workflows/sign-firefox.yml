@@ -29,7 +29,9 @@ jobs:
           fi
 
       - name: Package source code for AMO review
-        run: git archive --format=zip --output=firefox-source.zip HEAD
+        run: |
+          mkdir -p signing-output
+          git archive --format=zip --output=firefox-source.zip HEAD
 
       - name: Sign Firefox extension through AMO
         id: sign-firefox
@@ -37,6 +39,7 @@ jobs:
         with:
           cmd: sign
           source: signing-input/firefox.xpi
+          artifacts: signing-output
           sourceCode: firefox-source.zip
           channel: unlisted
           apiKey: ${{ secrets.AMO_JWT_ISSUER }}
