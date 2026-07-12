@@ -29,12 +29,11 @@ function buildIIFEScripts(options: {
             emptyOutDir: false,
             sourcemap: options.isDevelopment ? 'inline' : false,
             minify: !options.isDevelopment,
-            rollupOptions: {
+            rolldownOptions: {
               input: script.entry,
               output: {
                 entryFileNames: `assets/js/${script.name}.bundle.js`,
                 format: 'iife',
-                inlineDynamicImports: true,
               },
             },
             lib: {
@@ -142,7 +141,7 @@ export default defineConfig(({mode}) => {
 
       minify: mode === 'production',
 
-      rollupOptions: {
+      rolldownOptions: {
         input: {
           // For UI pages, use the HTML file as the entry.
           // Vite will find the <script> tag inside and bundle it.
@@ -155,6 +154,21 @@ export default defineConfig(({mode}) => {
         },
 
         output: {
+          minify:
+            mode === 'production'
+              ? {
+                  compress: {
+                    dropConsole: true,
+                    dropDebugger: true,
+                  },
+                  mangle: {
+                    toplevel: true,
+                  },
+                  codegen: {
+                    removeWhitespace: true,
+                  },
+                }
+              : false,
           entryFileNames: 'assets/js/[name].bundle.js',
           assetFileNames: (assetInfo) => {
             if (assetInfo.names?.[0]?.match(/\.(css|s[ac]ss|less)$/)) {
@@ -167,12 +181,5 @@ export default defineConfig(({mode}) => {
       },
     },
 
-    // esbuild options - drop console/debugger in production
-    esbuild:
-      mode === 'production'
-        ? {
-            drop: ['console', 'debugger'],
-          }
-        : {},
   };
 });
