@@ -33,7 +33,7 @@
 
   "__firefox__browser_specific_settings": {
     "gecko": {
-      "id": "{58cd6e3f-dc23-458e-9b38-ff3f4de2a621}",
+      "id": "{5ecaf2c3-d99d-4b69-94d8-fb24c23e0e1a}",
       "strict_min_version": "140.0",
       "data_collection_permissions": {
         "required": ["authenticationInfo", "personalCommunications"],
