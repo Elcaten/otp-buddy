@@ -18,7 +18,7 @@ jobs:
       - name: Download Firefox package
         uses: actions/download-artifact@v4
         with:
-          name: extension-firefox-xpi
+          name: extension-firefox-signed-xpi
           path: release-assets
 
       - name: Download Safari DMG

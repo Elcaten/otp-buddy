@@ -26,9 +26,9 @@ browser.
 
 #### Firefox
 
-1. Open `about:debugging`.
-2. Click This Firefox.
-3. Install the downloaded extension package.
+1. Open `about:addons`.
+2. Click the gear menu.
+3. Click **Install Add-on From File...** and select the downloaded `.xpi`.
 
 #### Safari (macOS)
 
@@ -93,3 +93,18 @@ Firefox:
 2. Click This Firefox.
 3. Click Load Temporary Add-on.
 4. Select `extension/firefox/manifest.json`.
+
+### Release automation
+
+Version tags matching `v*` build all extension packages. The Firefox package is
+submitted to AMO as an unlisted add-on, signed, and then attached to the GitHub
+release. The release tag must match the version in `package.json`, for example
+`v3.0.1` for version `3.0.1`.
+
+Configure these GitHub Actions repository secrets before publishing a tag:
+
+- `AMO_JWT_ISSUER`: the AMO API JWT issuer.
+- `AMO_JWT_SECRET`: the AMO API JWT secret.
+
+Generate the credentials from the
+[AMO API keys page](https://addons.mozilla.org/en-US/developers/addon/api/key/).

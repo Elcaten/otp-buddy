@@ -1,0 +1,54 @@
+name: Sign Firefox
+
+on:
+  workflow_call:
+    secrets:
+      AMO_JWT_ISSUER:
+        required: true
+      AMO_JWT_SECRET:
+        required: true
+
+jobs:
+  sign-firefox:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download unsigned Firefox package
+        uses: actions/download-artifact@v4
+        with:
+          name: extension-firefox-xpi
+          path: signing-input
+
+      - name: Verify release tag matches extension version
+        run: |
+          version="$(jq -r .version package.json)"
+          if [[ "${GITHUB_REF_NAME}" != "v${version}" ]]; then
+            echo "Release tag ${GITHUB_REF_NAME} does not match package version ${version}." >&2
+            exit 1
+          fi
+
+      - name: Package source code for AMO review
+        run: git archive --format=zip --output=firefox-source.zip HEAD
+
+      - name: Sign Firefox extension through AMO
+        id: sign-firefox
+        uses: kewisch/action-web-ext@84a13bb9e1b6108c43788ba091c41ca1dba6ad45 # v2
+        with:
+          cmd: sign
+          source: signing-input/firefox.xpi
+          sourceCode: firefox-source.zip
+          channel: unlisted
+          apiKey: ${{ secrets.AMO_JWT_ISSUER }}
+          apiSecret: ${{ secrets.AMO_JWT_SECRET }}
+          timeout: 900000
+
+      - name: Prepare signed Firefox package
+        run: cp "${{ steps.sign-firefox.outputs.target }}" firefox.xpi
+
+      - name: Upload signed Firefox package
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-firefox-signed-xpi
+          path: firefox.xpi
+          if-no-files-found: error
