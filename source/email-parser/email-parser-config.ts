@@ -30,7 +30,6 @@ export type XpathOtpExtractor = {
 
 export type CssOtpExtractor = {
   source: 'body';
-
   method: 'css';
   selector: string;
   attribute?: string;
@@ -83,21 +82,17 @@ export const emailParserConfig: EmailParserConfig = {
       ],
     },
     {
-      name: 'Magic Link Fallback',
+      name: 'Fallback',
       matchers: [{field: 'sender.email', op: 'contains', value: '@'}],
       extractors: [
+        // Fallback magick link parser
         {
           source: 'body',
           method: 'css',
           selector: ' a[href*="magic"]',
           attribute: 'href',
         },
-      ],
-    },
-    {
-      name: 'OTP Fallback',
-      matchers: [{field: 'sender.email', op: 'contains', value: '@'}],
-      extractors: [
+        // Fallback OTP parsers
         {source: 'subject', method: 'regex', pattern: '\\d{4,6}'},
         {source: 'subject', method: 'regex', pattern: '\\b[A-Za-z0-9]{6}\\b'},
         {

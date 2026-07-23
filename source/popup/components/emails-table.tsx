@@ -29,12 +29,19 @@ function TableRow({email}: {email: Email}) {
   const isError = copyOtp.state === 'error' || fillOtp.state === 'error';
   const primaryCellText = isError ? (copyOtp.stateDescription ?? fillOtp.stateDescription) : email.subject;
 
+  const copyButtonText = copyOtp.state === 'success' ? 'Copied 🎉' : 'Copy';
+  const fillButtonText = fillOtp.state === 'success' ? 'Filled 🎉' : 'Fill';
+
   return (
     <tr key={email.id} data-error={isError}>
       <td className={styles.subjectCell}>{primaryCellText}</td>
       <td className={styles.actionsCell}>
-        <Button onClick={() => copyOtp.trigger(email)}>Copy</Button>
-        <Button onClick={() => fillOtp.trigger(email)}>Fill</Button>
+        <Button onClick={() => copyOtp.trigger(email)} style={{minWidth: '120px'}}>
+          {copyButtonText}
+        </Button>
+        <Button onClick={() => fillOtp.trigger(email)} style={{minWidth: '120px'}}>
+          {fillButtonText}
+        </Button>
         <OpenPreviewButton email={email} />
       </td>
     </tr>
