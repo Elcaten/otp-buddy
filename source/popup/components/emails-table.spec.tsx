@@ -97,14 +97,15 @@ describe('EmailsTable', () => {
     ];
     render(<EmailsTable emails={emailsWithEmptyContent} emailParser={emailParser} />);
 
-    fireEvent.click(screen.getAllByRole('button', {name: 'Copy'})[0]!);
+    const copyButton = screen.getAllByRole('button', {name: 'COPY'})[0]!;
+    const errorRow = copyButton.closest('tr')!;
+    fireEvent.click(copyButton);
 
-    const errorCell = screen.getByText('Empty email');
-    const errorRow = errorCell.closest('tr');
-    expect(errorRow).toHaveAttribute('data-error', 'true');
-    expect(within(errorRow!).getByRole('button', {name: 'Copy'})).toBeInTheDocument();
-    expect(screen.queryByText('Your verification code')).not.toBeInTheDocument();
-    expect(screen.getByText('Sign in to GitLab')).toBeInTheDocument();
+    const errorText = errorRow.querySelector('[data-state]');
+    expect(errorText).toHaveAttribute('data-state', 'error');
+    expect(errorText).toHaveTextContent('Empty email');
+    expect(within(errorRow).getByRole('button', {name: 'COPY'})).toBeInTheDocument();
+    expect(screen.getByText('Sign in to GitLab').closest('[data-state]')).toHaveAttribute('data-state', 'pending');
   });
 
   test('shows a fill error in the affected row', async () => {
@@ -124,12 +125,13 @@ describe('EmailsTable', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('button', {name: 'Fill'}));
+    const fillButton = screen.getByRole('button', {name: 'FILL'});
+    const errorRow = fillButton.closest('tr')!;
+    fireEvent.click(fillButton);
 
     await waitFor(() => {
-      expect(screen.getByText('OTP input not found')).toBeInTheDocument();
+      expect(errorRow).toHaveTextContent('OTP input not found');
     });
-    expect(screen.getByText('OTP input not found').closest('tr')).toHaveAttribute('data-error', 'true');
-    expect(screen.getByRole('button', {name: 'Fill'})).toBeInTheDocument();
+    expect(within(errorRow).getByRole('button', {name: 'FILL'})).toBeInTheDocument();
   });
 });

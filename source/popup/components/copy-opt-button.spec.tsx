@@ -41,7 +41,7 @@ describe('useCopyOTPToClipboard', () => {
 
     expect(mockWriteText).toHaveBeenCalledWith('641481');
     expect(result.current.state).toBe('success');
-    expect(result.current.stateDescription).toBeUndefined();
+    expect(result.current.stateDescription).toBe('641481');
   });
 
   test('shows error when email has no content', () => {
