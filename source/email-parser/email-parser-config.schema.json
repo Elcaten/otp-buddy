@@ -1,0 +1,142 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://otp-buddy.dev/schemas/email-parser-config.schema.json",
+  "title": "EmailParserConfig",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["rules"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Optional schema reference used by JSON-aware editors."
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/EmailParserRule"
+      }
+    }
+  },
+  "definitions": {
+    "EmailParserRule": {
+      "title": "EmailParserRule",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["matchers", "extractors"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "matchers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EmailMatcher"
+          }
+        },
+        "matchMode": {
+          "type": "string",
+          "enum": ["all", "any"],
+          "default": "all"
+        },
+        "extractors": {
+          "type": "array",
+          "description": "Extractors are tried in order and the first successful result wins.",
+          "items": {
+            "$ref": "#/definitions/OtpExtractor"
+          }
+        }
+      }
+    },
+    "EmailMatcher": {
+      "title": "EmailMatcher",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field", "op", "value"],
+      "properties": {
+        "field": {
+          "type": "string",
+          "enum": ["sender.email", "sender.name", "subject", "body"]
+        },
+        "op": {
+          "type": "string",
+          "enum": ["contains", "startsWith", "endsWith", "equals", "matches"]
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "RegexOtpExtractor": {
+      "title": "RegexOtpExtractor",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "method", "pattern"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["subject", "body"]
+        },
+        "method": {
+          "const": "regex"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "captureGroup": {
+          "type": "number"
+        }
+      }
+    },
+    "XpathOtpExtractor": {
+      "title": "XpathOtpExtractor",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "method", "expression"],
+      "properties": {
+        "source": {
+          "const": "body"
+        },
+        "method": {
+          "const": "xpath"
+        },
+        "expression": {
+          "type": "string"
+        }
+      }
+    },
+    "CssOtpExtractor": {
+      "title": "CssOtpExtractor",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "method", "selector"],
+      "properties": {
+        "source": {
+          "const": "body"
+        },
+        "method": {
+          "const": "css"
+        },
+        "selector": {
+          "type": "string"
+        },
+        "attribute": {
+          "type": "string"
+        }
+      }
+    },
+    "OtpExtractor": {
+      "title": "OtpExtractor",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/RegexOtpExtractor"
+        },
+        {
+          "$ref": "#/definitions/XpathOtpExtractor"
+        },
+        {
+          "$ref": "#/definitions/CssOtpExtractor"
+        }
+      ]
+    }
+  }
+}

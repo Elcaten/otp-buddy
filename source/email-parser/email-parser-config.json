@@ -1,0 +1,125 @@
+{
+  "$schema": "./email-parser-config.schema.json",
+  "rules": [
+    {
+      "name": "Claude",
+      "matchers": [
+        {
+          "field": "sender.email",
+          "op": "endsWith",
+          "value": "anthropic.com"
+        }
+      ],
+      "extractors": [
+        {
+          "source": "body",
+          "method": "css",
+          "selector": "a[href^=\"https://claude.ai/magic-link\"]",
+          "attribute": "href"
+        }
+      ]
+    },
+    {
+      "name": "Booking",
+      "matchers": [
+        {
+          "field": "sender.email",
+          "op": "endsWith",
+          "value": "booking.com"
+        }
+      ],
+      "extractors": [
+        {
+          "source": "subject",
+          "method": "regex",
+          "pattern": "\\b[A-Za-z0-9]{6}\\b"
+        }
+      ]
+    },
+    {
+      "name": "Polymarket",
+      "matchers": [
+        {
+          "field": "sender.name",
+          "op": "contains",
+          "value": "Polymarket"
+        }
+      ],
+      "extractors": [
+        {
+          "source": "subject",
+          "method": "regex",
+          "pattern": "\\d{6}"
+        }
+      ]
+    },
+    {
+      "name": "Gitlab",
+      "matchers": [
+        {
+          "field": "sender.email",
+          "op": "endsWith",
+          "value": "gitlab.com"
+        }
+      ],
+      "extractors": [
+        {
+          "source": "body",
+          "method": "xpath",
+          "expression": "//*[not(*)][string-length(normalize-space()) = 6][translate(normalize-space(), '0123456789', '') = '']"
+        }
+      ]
+    },
+    {
+      "name": "Josh Comeau",
+      "matchers": [
+        {
+          "field": "sender.email",
+          "op": "endsWith",
+          "value": "joshwcomeau.com"
+        }
+      ],
+      "extractors": [
+        {
+          "source": "body",
+          "method": "css",
+          "selector": "a[href^=\"https://courses.joshwcomeau.com/api/auth/email/magic\"]",
+          "attribute": "href"
+        }
+      ]
+    },
+    {
+      "name": "Fallback",
+      "matchers": [
+        {
+          "field": "sender.email",
+          "op": "contains",
+          "value": "@"
+        }
+      ],
+      "extractors": [
+        {
+          "source": "body",
+          "method": "css",
+          "selector": " a[href*=\"magic\"]",
+          "attribute": "href"
+        },
+        {
+          "source": "subject",
+          "method": "regex",
+          "pattern": "\\d{4,6}"
+        },
+        {
+          "source": "subject",
+          "method": "regex",
+          "pattern": "\\b[A-Za-z0-9]{6}\\b"
+        },
+        {
+          "source": "body",
+          "method": "xpath",
+          "expression": "//*[not(*)][string-length(normalize-space()) = 6][translate(normalize-space(), '0123456789', '') = '']"
+        }
+      ]
+    }
+  ]
+}
