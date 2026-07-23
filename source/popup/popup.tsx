@@ -30,6 +30,8 @@ import {PropsWithChildren, Suspense} from 'react';
 import {ErrorBoundary, FallbackProps as ErrorBoundaryFallbackProps} from 'react-error-boundary';
 import useSWR from 'swr';
 import browser from 'webextension-polyfill';
+import {EmailParserConfigError} from '../email-parser/email-parser-config';
+import {EmailParser} from '../email-parser/email-parser';
 import {FastmailEmailFetcher} from '../email-fetcher/fastmail-fetcher';
 import {GmailEmailFetcher} from '../email-fetcher/gmail-fetcher/gmail-fetcher';
 import {getAllStorage} from '../utils/storage';
@@ -39,6 +41,7 @@ import {Email} from '../types/email';
 import {log} from '../utils/logger';
 import {tokenManager} from '../email-fetcher/gmail-fetcher/token-manager';
 import {SplashScreen} from './components/splash-screen';
+import {EmailParserConfigGate, resetEmailParserConfigQuery} from './components/email-parser-config-gate';
 
 //#region Popup layout
 
@@ -62,13 +65,31 @@ const PopupState = {
       <SplashScreen />
     </PopupLayout>
   ),
-  Error: (_props: ErrorBoundaryFallbackProps) => (
-    <PopupLayout>
-      <PopupLayout.Content>
-        <p>Something went wrong</p>
-      </PopupLayout.Content>
-    </PopupLayout>
-  ),
+  Error: ({error, resetErrorBoundary}: ErrorBoundaryFallbackProps) => {
+    const isParserConfigError = error instanceof EmailParserConfigError;
+
+    return (
+      <PopupLayout>
+        <PopupLayout.Content>
+          <div className={s.title}>{isParserConfigError ? 'Unable to load parser rules' : 'Something went wrong'}</div>
+          {isParserConfigError && (
+            <>
+              <div className={s.description}>OTP Buddy could not load its email parsing configuration.</div>
+              <button
+                type="button"
+                className={s.buttonLink}
+                onClick={() => {
+                  void resetEmailParserConfigQuery().then(() => resetErrorBoundary());
+                }}
+              >
+                Retry
+              </button>
+            </>
+          )}
+        </PopupLayout.Content>
+      </PopupLayout>
+    );
+  },
   MissingSettings: () => (
     <PopupLayout>
       <PopupLayout.Content>
@@ -93,9 +114,9 @@ const PopupState = {
       </PopupLayout.Content>
     </PopupLayout>
   ),
-  MessagesList: (props: {emails: Email[]}) => (
+  MessagesList: (props: {emails: Email[]; emailParser: EmailParser}) => (
     <PopupLayout>
-      <EmailsTable emails={props.emails} />
+      <EmailsTable emails={props.emails} emailParser={props.emailParser} />
     </PopupLayout>
   ),
 };
@@ -103,8 +124,12 @@ const PopupState = {
 
 //#region Container components
 
-function FastmailMessagesContainer(props: {fastmailApiKey: string; fastmailAccountId: string}) {
-  const {fastmailApiKey, fastmailAccountId} = props;
+function FastmailMessagesContainer(props: {
+  fastmailApiKey: string;
+  fastmailAccountId: string;
+  emailParser: EmailParser;
+}) {
+  const {fastmailApiKey, fastmailAccountId, emailParser} = props;
 
   const recentFastmailMessagesQuery = useSWR(
     'recentFastmailMessages',
@@ -117,10 +142,10 @@ function FastmailMessagesContainer(props: {fastmailApiKey: string; fastmailAccou
     return <PopupState.NoMessages />;
   }
 
-  return <PopupState.MessagesList emails={recentFastmailMessagesQuery.data} />;
+  return <PopupState.MessagesList emails={recentFastmailMessagesQuery.data} emailParser={emailParser} />;
 }
 
-function GmailMessagesContainer() {
+function GmailMessagesContainer({emailParser}: {emailParser: EmailParser}) {
   const recentGmailMessagesQuery = useSWR(
     'recentGmailMessages',
     async () => {
@@ -139,10 +164,10 @@ function GmailMessagesContainer() {
     return <PopupState.NoMessages />;
   }
 
-  return <PopupState.MessagesList emails={recentGmailMessagesQuery.data} />;
+  return <PopupState.MessagesList emails={recentGmailMessagesQuery.data} emailParser={emailParser} />;
 }
 
-function PopupContentContainer() {
+function PopupContentContainer({emailParser}: {emailParser: EmailParser}) {
   const storageQuery = useSWR('storage', async () => getAllStorage(), {
     suspense: true,
   });
@@ -161,16 +186,18 @@ function PopupContentContainer() {
       <FastmailMessagesContainer
         fastmailApiKey={storageQuery.data.fastmailApiKey}
         fastmailAccountId={storageQuery.data.fastmailAccountId}
+        emailParser={emailParser}
       />
     );
   }
 
   if (storageQuery.data.provider === 'gmail') {
-    return <GmailMessagesContainer />;
+    return <GmailMessagesContainer emailParser={emailParser} />;
   }
 
   throw new Error('Unknown provider');
 }
+
 //#endregion
 
 //#region Popup itself
@@ -179,7 +206,9 @@ export default function Popup() {
   return (
     <ErrorBoundary FallbackComponent={PopupState.Error}>
       <Suspense fallback={<PopupState.Loading />}>
-        <PopupContentContainer />
+        <EmailParserConfigGate>
+          {(emailParser) => <PopupContentContainer emailParser={emailParser} />}
+        </EmailParserConfigGate>
       </Suspense>
     </ErrorBoundary>
   );

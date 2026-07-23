@@ -1,11 +1,8 @@
-import {emailParserConfig} from '@/email-parser/email-parser-config';
 import {useCallback, useEffect, useState} from 'react';
 import {EmailParser} from '../../email-parser/email-parser';
 import {Email} from '../../types/email';
 
-const emailParser = new EmailParser(emailParserConfig);
-
-export function useCopyOTPToClipboard() {
+export function useCopyOTPToClipboard(emailParser: EmailParser) {
   const [state, setState] = useState<'pending' | 'success' | 'error'>('pending');
   const [stateDescription, setStateDescription] = useState<string | undefined>();
 
@@ -33,7 +30,7 @@ export function useCopyOTPToClipboard() {
     setState('success');
 
     await navigator.clipboard.writeText(result.result);
-  }, []);
+  }, [emailParser]);
 
   useEffect(() => {
     let timeout: number;

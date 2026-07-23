@@ -1,13 +1,37 @@
 import {describe, test, expect, vi, beforeEach} from 'vitest';
-import {render, screen, waitFor} from '@testing-library/react';
+import {fireEvent, render, screen, waitFor} from '@testing-library/react';
 
 import useSWR from 'swr';
 import Popup from './popup';
+import {EmailParserConfigError} from '../email-parser/email-parser-config';
 import type {StorageSchema} from '../types/storage';
+
+const configGateMock = vi.hoisted(() => {
+  return {
+    shouldFail: false,
+    reset: vi.fn(),
+  };
+});
 
 vi.mock('swr', () => {
   return {
     default: vi.fn(),
+  };
+});
+
+vi.mock('./components/email-parser-config-gate', async () => {
+  const {default: config} = await import('../email-parser/email-parser-config.json');
+  const {EmailParser} = await import('../email-parser/email-parser');
+
+  return {
+    EmailParserConfigGate: ({children}: {children: (emailParser: InstanceType<typeof EmailParser>) => React.ReactNode}) => {
+      if (configGateMock.shouldFail) {
+        throw new EmailParserConfigError('Config unavailable');
+      }
+
+      return children(new EmailParser(config as never));
+    },
+    resetEmailParserConfigQuery: configGateMock.reset,
   };
 });
 
@@ -38,10 +62,32 @@ function makeStorageData(overrides: Partial<StorageSchema> = {}): StorageSchema 
 describe('Popup', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    configGateMock.shouldFail = false;
+    configGateMock.reset.mockImplementation(async () => {
+      configGateMock.shouldFail = false;
+    });
     Object.assign(navigator, {
       clipboard: {writeText: vi.fn().mockResolvedValue(undefined)},
     });
     vi.spyOn(window, 'open').mockReturnValue(null);
+  });
+
+  test('shows a critical parser configuration error and allows retrying', async () => {
+    configGateMock.shouldFail = true;
+    vi.mocked(useSWR).mockReturnValue({
+      data: makeStorageData({provider: 'fastmail', fastmailApiKey: ''}),
+      isLoading: false,
+    } as ReturnType<typeof useSWR>);
+
+    render(<Popup />);
+
+    expect(await screen.findByText('Unable to load parser rules')).toBeInTheDocument();
+    expect(screen.getByText(/could not load its email parsing configuration/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', {name: 'Retry'}));
+
+    expect(configGateMock.reset).toHaveBeenCalledOnce();
+    expect(await screen.findByText(/please set up your email provider/i)).toBeInTheDocument();
   });
 
   describe('MissingSettings state', () => {

@@ -1,4 +1,5 @@
 import {defineConfig, build} from 'vite';
+import fs from 'node:fs';
 import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import process from 'node:process';
@@ -53,6 +54,11 @@ export default defineConfig(({mode}) => {
   const sourcePath = path.resolve(__dirname, 'source');
   const destPath = path.resolve(__dirname, 'extension');
   const targetBrowser = process.env.TARGET_BROWSER || 'chrome';
+  const localEmailParserConfig = isDevelopment
+    ? JSON.parse(
+        fs.readFileSync(path.resolve(sourcePath, 'email-parser/email-parser-config.json'), 'utf8')
+      )
+    : undefined;
 
   const getOutDir = () => path.resolve(destPath, targetBrowser);
 
@@ -86,6 +92,7 @@ export default defineConfig(({mode}) => {
 
     define: {
       __DEV__: isDevelopment,
+      __EMAIL_PARSER_CONFIG__: JSON.stringify(localEmailParserConfig) ?? 'undefined',
       __TARGET_BROWSER__: JSON.stringify(targetBrowser),
     },
 

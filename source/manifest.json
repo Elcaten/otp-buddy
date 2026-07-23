@@ -19,7 +19,7 @@
 
   "optional_permissions": [],
 
-  "__chrome__host_permissions": [],
+  "host_permissions": ["https://raw.githubusercontent.com/*"],
 
   "__chrome__optional_host_permissions": ["http://*/*", "https://*/*"],
 

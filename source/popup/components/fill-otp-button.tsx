@@ -1,13 +1,10 @@
-import {emailParserConfig} from '@/email-parser/email-parser-config';
 import {useCallback, useEffect, useState} from 'react';
 import browser from 'webextension-polyfill';
 import {EmailParser} from '../../email-parser/email-parser';
 import type {Email} from '../../types/email';
 import {type FillOtpResponse} from '../../types/messages';
 
-const emailParser = new EmailParser(emailParserConfig);
-
-export function useFillOtp() {
+export function useFillOtp(emailParser: EmailParser) {
   const [state, setState] = useState<'pending' | 'success' | 'error'>('pending');
   const [stateDescription, setStateDescription] = useState<string | undefined>();
 
@@ -57,7 +54,7 @@ export function useFillOtp() {
       setState('error');
       setStateDescription(getFillErrorDescription(error));
     }
-  }, []);
+  }, [emailParser]);
 
   useEffect(() => {
     let timeout: number;

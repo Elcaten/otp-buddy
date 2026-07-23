@@ -1,15 +1,17 @@
 // @vitest-environment jsdom
 import {describe, test, expect} from 'vitest';
 import Ajv from 'ajv';
-import {emailParserConfig} from '../email-parser-config';
 import {EmailParser} from '../email-parser';
 
+import emailParserConfigJson from '../email-parser-config.json';
 import emailParserConfigSchema from '../email-parser-config.schema.json';
+import type {EmailParserConfig} from '../email-parser-config';
 import bookingJson from './booking-login-code.json';
 import claudeJson from './claude-login-link.json';
 import gitlabJson from './gitlab-confirm-email.json';
 import polymarketJson from './polymarket-login-code.json';
 
+const emailParserConfig = emailParserConfigJson as EmailParserConfig;
 const parser = new EmailParser(emailParserConfig);
 
 test('config matches its JSON Schema', () => {

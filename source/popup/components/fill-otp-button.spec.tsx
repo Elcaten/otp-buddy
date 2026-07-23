@@ -1,8 +1,13 @@
 import {act, renderHook} from '@testing-library/react';
 import {beforeEach, describe, expect, test, vi} from 'vitest';
 import {mockBrowser} from '../../__mocks__/webextension-polyfill';
+import emailParserConfigJson from '../../email-parser/email-parser-config.json';
+import type {EmailParserConfig} from '../../email-parser/email-parser-config';
+import {EmailParser} from '../../email-parser/email-parser';
 import type {Email} from '../../types/email';
 import {useFillOtp} from './fill-otp-button';
+
+const emailParser = new EmailParser(emailParserConfigJson as EmailParserConfig);
 
 vi.mock('webextension-polyfill', () => {
   return {default: mockBrowser};
@@ -16,7 +21,7 @@ describe('useFillOtp', () => {
   });
 
   test('starts pending', () => {
-    const {result} = renderHook(() => useFillOtp());
+    const {result} = renderHook(() => useFillOtp(emailParser));
 
     expect(result.current.state).toBe('pending');
     expect(result.current.stateDescription).toBeUndefined();
@@ -30,7 +35,7 @@ describe('useFillOtp', () => {
       content: '<p>body</p>',
     };
 
-    const {result} = renderHook(() => useFillOtp());
+    const {result} = renderHook(() => useFillOtp(emailParser));
 
     await act(async () => {
       await result.current.trigger(email);
@@ -53,7 +58,7 @@ describe('useFillOtp', () => {
       content: undefined,
     };
 
-    const {result} = renderHook(() => useFillOtp());
+    const {result} = renderHook(() => useFillOtp(emailParser));
 
     act(() => {
       void result.current.trigger(email);
@@ -73,7 +78,7 @@ describe('useFillOtp', () => {
     };
     vi.mocked(mockBrowser.tabs.sendMessage).mockResolvedValue({success: false, error: 'OTP input not found'} as never);
 
-    const {result} = renderHook(() => useFillOtp());
+    const {result} = renderHook(() => useFillOtp(emailParser));
 
     await act(async () => {
       await result.current.trigger(email);
@@ -94,7 +99,7 @@ describe('useFillOtp', () => {
       new Error('Could not establish connection. Receiving end does not exist.')
     );
 
-    const {result} = renderHook(() => useFillOtp());
+    const {result} = renderHook(() => useFillOtp(emailParser));
 
     await act(async () => {
       await result.current.trigger(email);

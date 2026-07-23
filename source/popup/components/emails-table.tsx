@@ -1,4 +1,5 @@
 import {Button} from '@/components/ui/button';
+import {EmailParser} from '@/email-parser/email-parser';
 import type {FC} from 'react';
 import {Email} from '../../types/email';
 import {useCopyOTPToClipboard} from './copy-opt-button';
@@ -6,7 +7,7 @@ import styles from './emails-table.module.css';
 import {useFillOtp} from './fill-otp-button';
 import {OpenPreviewButton} from './open-preview-button';
 
-export const EmailsTable: FC<{emails: Email[]}> = ({emails}) => (
+export const EmailsTable: FC<{emails: Email[]; emailParser: EmailParser}> = ({emails, emailParser}) => (
   <table className={styles.table}>
     <thead>
       <tr>
@@ -16,15 +17,15 @@ export const EmailsTable: FC<{emails: Email[]}> = ({emails}) => (
     </thead>
     <tbody>
       {emails?.map((email) => (
-        <TableRow key={email.id} email={email} />
+        <TableRow key={email.id} email={email} emailParser={emailParser} />
       ))}
     </tbody>
   </table>
 );
 
-function TableRow({email}: {email: Email}) {
-  const copyOtp = useCopyOTPToClipboard();
-  const fillOtp = useFillOtp();
+function TableRow({email, emailParser}: {email: Email; emailParser: EmailParser}) {
+  const copyOtp = useCopyOTPToClipboard(emailParser);
+  const fillOtp = useFillOtp(emailParser);
 
   const isError = copyOtp.state === 'error' || fillOtp.state === 'error';
   const primaryCellText = isError ? (copyOtp.stateDescription ?? fillOtp.stateDescription) : email.subject;

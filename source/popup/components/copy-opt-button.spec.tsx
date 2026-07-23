@@ -1,7 +1,12 @@
 import {act, renderHook} from '@testing-library/react';
 import {beforeEach, describe, expect, test, vi} from 'vitest';
+import emailParserConfigJson from '../../email-parser/email-parser-config.json';
+import type {EmailParserConfig} from '../../email-parser/email-parser-config';
+import {EmailParser} from '../../email-parser/email-parser';
 import type {Email} from '../../types/email';
 import {useCopyOTPToClipboard} from './copy-opt-button';
+
+const emailParser = new EmailParser(emailParserConfigJson as EmailParserConfig);
 
 describe('useCopyOTPToClipboard', () => {
   const mockWriteText = vi.fn();
@@ -14,7 +19,7 @@ describe('useCopyOTPToClipboard', () => {
   });
 
   test('starts pending', () => {
-    const {result} = renderHook(() => useCopyOTPToClipboard());
+    const {result} = renderHook(() => useCopyOTPToClipboard(emailParser));
 
     expect(result.current.state).toBe('pending');
     expect(result.current.stateDescription).toBeUndefined();
@@ -28,7 +33,7 @@ describe('useCopyOTPToClipboard', () => {
       content: '<p>body</p>',
     };
 
-    const {result} = renderHook(() => useCopyOTPToClipboard());
+    const {result} = renderHook(() => useCopyOTPToClipboard(emailParser));
 
     await act(async () => {
       await result.current.trigger(email);
@@ -47,7 +52,7 @@ describe('useCopyOTPToClipboard', () => {
       content: undefined,
     };
 
-    const {result} = renderHook(() => useCopyOTPToClipboard());
+    const {result} = renderHook(() => useCopyOTPToClipboard(emailParser));
 
     act(() => {
       void result.current.trigger(email);
@@ -66,7 +71,7 @@ describe('useCopyOTPToClipboard', () => {
       content: '<p>No OTP here</p>',
     };
 
-    const {result} = renderHook(() => useCopyOTPToClipboard());
+    const {result} = renderHook(() => useCopyOTPToClipboard(emailParser));
 
     act(() => {
       void result.current.trigger(email);
@@ -85,7 +90,7 @@ describe('useCopyOTPToClipboard', () => {
       content: '<p>No OTP here</p>',
     };
 
-    const {result} = renderHook(() => useCopyOTPToClipboard());
+    const {result} = renderHook(() => useCopyOTPToClipboard(emailParser));
 
     act(() => {
       void result.current.trigger(email);

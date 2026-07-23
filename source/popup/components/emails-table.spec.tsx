@@ -1,8 +1,13 @@
 import {fireEvent, render, screen, waitFor, within} from '@testing-library/react';
 import {beforeEach, describe, expect, test, vi} from 'vitest';
 import {mockBrowser} from '../../__mocks__/webextension-polyfill';
+import emailParserConfigJson from '../../email-parser/email-parser-config.json';
+import type {EmailParserConfig} from '../../email-parser/email-parser-config';
+import {EmailParser} from '../../email-parser/email-parser';
 import type {Email} from '../../types/email';
 import {EmailsTable} from './emails-table';
+
+const emailParser = new EmailParser(emailParserConfigJson as EmailParserConfig);
 
 vi.mock('webextension-polyfill', () => {
   return {default: mockBrowser};
@@ -35,7 +40,7 @@ describe('EmailsTable', () => {
   ];
 
   test('renders one table row per email', () => {
-    render(<EmailsTable emails={emails} />);
+    render(<EmailsTable emails={emails} emailParser={emailParser} />);
 
     const rows = screen.getAllByRole('row');
     // header row + 2 data rows
@@ -43,42 +48,42 @@ describe('EmailsTable', () => {
   });
 
   test('renders email subject in each row', () => {
-    render(<EmailsTable emails={emails} />);
+    render(<EmailsTable emails={emails} emailParser={emailParser} />);
 
     expect(screen.getByText('Your verification code')).toBeInTheDocument();
     expect(screen.getByText('Sign in to GitLab')).toBeInTheDocument();
   });
 
   test('renders a Copy action for each email', () => {
-    render(<EmailsTable emails={emails} />);
+    render(<EmailsTable emails={emails} emailParser={emailParser} />);
 
     const copyButtons = screen.getAllByRole('button', {name: /copy/i});
     expect(copyButtons).toHaveLength(2);
   });
 
   test('renders a Fill action for each email', () => {
-    render(<EmailsTable emails={emails} />);
+    render(<EmailsTable emails={emails} emailParser={emailParser} />);
 
     const fillButtons = screen.getAllByRole('button', {name: /fill/i});
     expect(fillButtons).toHaveLength(2);
   });
 
   test('renders a Preview button for each email', () => {
-    render(<EmailsTable emails={emails} />);
+    render(<EmailsTable emails={emails} emailParser={emailParser} />);
 
     const previewButtons = screen.getAllByRole('button', {name: /preview/i});
     expect(previewButtons).toHaveLength(2);
   });
 
   test('renders header columns', () => {
-    render(<EmailsTable emails={emails} />);
+    render(<EmailsTable emails={emails} emailParser={emailParser} />);
 
     expect(screen.getByText('Subject')).toBeInTheDocument();
     expect(screen.getByText('Actions')).toBeInTheDocument();
   });
 
   test('renders empty table body when emails is empty', () => {
-    render(<EmailsTable emails={[]} />);
+    render(<EmailsTable emails={[]} emailParser={emailParser} />);
 
     const rows = screen.getAllByRole('row');
     // Only header row
@@ -90,7 +95,7 @@ describe('EmailsTable', () => {
       {...emails[0]!, content: undefined},
       emails[1]!,
     ];
-    render(<EmailsTable emails={emailsWithEmptyContent} />);
+    render(<EmailsTable emails={emailsWithEmptyContent} emailParser={emailParser} />);
 
     fireEvent.click(screen.getAllByRole('button', {name: 'Copy'})[0]!);
 
@@ -109,6 +114,7 @@ describe('EmailsTable', () => {
     } as never);
     render(
       <EmailsTable
+        emailParser={emailParser}
         emails={[
           {
             ...emails[0]!,
