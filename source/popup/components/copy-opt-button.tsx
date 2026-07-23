@@ -6,39 +6,43 @@ export function useCopyOTPToClipboard(emailParser: EmailParser) {
   const [state, setState] = useState<'pending' | 'success' | 'error'>('pending');
   const [stateDescription, setStateDescription] = useState<string | undefined>();
 
-  const trigger = useCallback(async (email: Email) => {
-    const emailContent = email.content;
-    if (!emailContent) {
-      setState('error');
-      setStateDescription('Empty email');
-      return;
-    }
+  const trigger = useCallback(
+    async (email: Email) => {
+      const emailContent = email.content;
+      if (!emailContent) {
+        setState('error');
+        setStateDescription('Empty email');
+        return;
+      }
 
-    if (!emailParser.canParse(email)) {
-      setState('error');
-      setStateDescription('Parser not found');
-      return;
-    }
+      if (!emailParser.canParse(email)) {
+        setState('error');
+        setStateDescription('Parser not found');
+        return;
+      }
 
-    const result = emailParser.tryParse(email);
-    if (!result.success) {
-      setState('error');
-      setStateDescription('Parser error: ' + result.error);
-      return;
-    }
+      const result = emailParser.tryParse(email);
+      if (!result.success) {
+        setState('error');
+        setStateDescription('Parser error: ' + result.error);
+        return;
+      }
 
-    setState('success');
+      setState('success');
+      setStateDescription(result.result);
 
-    await navigator.clipboard.writeText(result.result);
-  }, [emailParser]);
+      await navigator.clipboard.writeText(result.result);
+    },
+    [emailParser]
+  );
 
   useEffect(() => {
     let timeout: number;
     if (state === 'success') {
-      timeout = window.setTimeout(() => setState('pending'), 3000);
+      timeout = window.setTimeout(() => setState('pending'), 4000);
     }
     if (state === 'error') {
-      timeout = window.setTimeout(() => setState('pending'), 3000);
+      timeout = window.setTimeout(() => setState('pending'), 4000);
     }
     return (): void => {
       timeout && clearTimeout(timeout);

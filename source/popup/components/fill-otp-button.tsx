@@ -8,61 +8,64 @@ export function useFillOtp(emailParser: EmailParser) {
   const [state, setState] = useState<'pending' | 'success' | 'error'>('pending');
   const [stateDescription, setStateDescription] = useState<string | undefined>();
 
-  const trigger = useCallback(async (email: Email) => {
-    const emailContent = email.content;
-    if (!emailContent) {
-      setState('error');
-      setStateDescription('Empty email');
-      return;
-    }
-
-    if (!emailParser.canParse(email)) {
-      setState('error');
-      setStateDescription('Parser not found');
-      return;
-    }
-
-    const result = emailParser.tryParse(email);
-    if (!result.success) {
-      setState('error');
-      setStateDescription('Parser error');
-      return;
-    }
-
-    try {
-      const [activeTab] = await browser.tabs.query({active: true, currentWindow: true});
-      if (activeTab?.id == null) {
+  const trigger = useCallback(
+    async (email: Email) => {
+      const emailContent = email.content;
+      if (!emailContent) {
         setState('error');
-        setStateDescription('Active tab not found');
+        setStateDescription('Empty email');
         return;
       }
 
-      const response = (await browser.tabs.sendMessage(activeTab.id, {
-        type: 'FILL_OTP',
-        code: result.result,
-      })) as FillOtpResponse | undefined;
-
-      if (!response?.success) {
+      if (!emailParser.canParse(email)) {
         setState('error');
-        setStateDescription(response?.error ?? 'Fill failed');
+        setStateDescription('Parser not found');
         return;
       }
 
-      setState('success');
-      setStateDescription(undefined);
-    } catch (error) {
-      setState('error');
-      setStateDescription(getFillErrorDescription(error));
-    }
-  }, [emailParser]);
+      const result = emailParser.tryParse(email);
+      if (!result.success) {
+        setState('error');
+        setStateDescription('Parser error');
+        return;
+      }
+
+      try {
+        const [activeTab] = await browser.tabs.query({active: true, currentWindow: true});
+        if (activeTab?.id == null) {
+          setState('error');
+          setStateDescription('Active tab not found');
+          return;
+        }
+
+        const response = (await browser.tabs.sendMessage(activeTab.id, {
+          type: 'FILL_OTP',
+          code: result.result,
+        })) as FillOtpResponse | undefined;
+
+        if (!response?.success) {
+          setState('error');
+          setStateDescription(response?.error ?? 'Fill failed');
+          return;
+        }
+
+        setState('success');
+        setStateDescription(undefined);
+      } catch (error) {
+        setState('error');
+        setStateDescription(getFillErrorDescription(error));
+      }
+    },
+    [emailParser]
+  );
 
   useEffect(() => {
     let timeout: number;
     if (state === 'success') {
-      timeout = window.setTimeout(() => setState('pending'), 3000);
+      timeout = window.setTimeout(() => setState('pending'), 4000);
     }
     if (state === 'error') {
-      timeout = window.setTimeout(() => setState('pending'), 3000);
+      timeout = window.setTimeout(() => setState('pending'), 4000);
     }
     return (): void => {
       timeout && clearTimeout(timeout);

@@ -1,6 +1,6 @@
 import {Button} from '@/components/ui/button';
 import {EmailParser} from '@/email-parser/email-parser';
-import type {FC} from 'react';
+import type {FC, PropsWithChildren, ReactNode} from 'react';
 import {Email} from '../../types/email';
 import {useCopyOTPToClipboard} from './copy-opt-button';
 import styles from './emails-table.module.css';
@@ -27,24 +27,47 @@ function TableRow({email, emailParser}: {email: Email; emailParser: EmailParser}
   const copyOtp = useCopyOTPToClipboard(emailParser);
   const fillOtp = useFillOtp(emailParser);
 
-  const isError = copyOtp.state === 'error' || fillOtp.state === 'error';
-  const primaryCellText = isError ? (copyOtp.stateDescription ?? fillOtp.stateDescription) : email.subject;
-
-  const copyButtonText = copyOtp.state === 'success' ? 'Copied 🎉' : 'Copy';
-  const fillButtonText = fillOtp.state === 'success' ? 'Filled 🎉' : 'Fill';
-
   return (
-    <tr key={email.id} data-error={isError}>
-      <td className={styles.subjectCell}>{primaryCellText}</td>
+    <tr key={email.id}>
+      <td className={styles.subjectCell}>
+        <Text
+          state={copyOtp.state}
+          pendingText={email.subject ?? 'No subject'}
+          errorText={
+            (copyOtp.state === 'error'
+              ? copyOtp.stateDescription
+              : fillOtp.state === 'error'
+                ? fillOtp.stateDescription
+                : undefined) ?? 'Unknown error'
+          }
+          successText={copyOtp.stateDescription}
+        />
+      </td>
       <td className={styles.actionsCell}>
-        <Button onClick={() => copyOtp.trigger(email)} style={{minWidth: '120px'}}>
-          {copyButtonText}
-        </Button>
-        <Button onClick={() => fillOtp.trigger(email)} style={{minWidth: '120px'}}>
-          {fillButtonText}
-        </Button>
+        <Button onClick={() => copyOtp.trigger(email)}>COPY</Button>
+        <Button onClick={() => fillOtp.trigger(email)}>FILL</Button>
         <OpenPreviewButton email={email} />
       </td>
     </tr>
+  );
+}
+
+function Text({
+  state,
+  pendingText,
+  errorText,
+  successText,
+}: PropsWithChildren<{
+  state: 'pending' | 'success' | 'error';
+  pendingText: string;
+  errorText: string;
+  successText: ReactNode;
+}>) {
+  return (
+    <div className={styles.text} data-state={state}>
+      <span className={styles.textPending}>{pendingText}</span>
+      <strong className={styles.textSuccess}>🎉 {successText}</strong>
+      <strong className={styles.textError}>❌ {errorText}</strong>
+    </div>
   );
 }

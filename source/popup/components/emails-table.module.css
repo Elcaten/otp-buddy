@@ -20,11 +20,6 @@
   gap: 4px;
 }
 
-[data-error='true'] .subjectCell {
-  color: orangered;
-  animation: shake 0.35s ease-in-out;
-}
-
 @keyframes shake {
   0%,
   100% {
@@ -42,4 +37,43 @@
   80% {
     transform: translateX(4px);
   }
+}
+
+.text {
+  display: grid;
+  grid-template-areas: 'cell';
+  align-items: center;
+}
+
+.textPending {
+  grid-area: cell;
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+[data-state='pending'] .textPending {
+  opacity: 1;
+}
+
+.textError {
+  grid-area: cell;
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+  color: orangered;
+}
+[data-state='error'] .textError {
+  opacity: 1;
+  animation: shake 0.35s ease-in-out;
+}
+
+.textSuccess {
+  grid-area: cell;
+  opacity: 0;
+  transform: translateY(100%);
+  transition:
+    opacity 200ms ease-out,
+    transform 300ms ease-out;
+}
+[data-state='success'] .textSuccess {
+  opacity: 1;
+  transform: translateY(0);
 }
