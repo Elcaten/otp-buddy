@@ -1,12 +1,11 @@
-import {JSX, useCallback, useEffect, useState} from 'react';
-import {Email} from '../../types/email';
-import {EmailParser} from '../../email-parser/email-parser';
-import {Button} from '../../components/ui/button';
 import {emailParserConfig} from '@/email-parser/email-parser-config';
+import {useCallback, useEffect, useState} from 'react';
+import {EmailParser} from '../../email-parser/email-parser';
+import {Email} from '../../types/email';
 
 const emailParser = new EmailParser(emailParserConfig);
 
-function useCopyOTPToClipboard() {
+export function useCopyOTPToClipboard() {
   const [state, setState] = useState<'pending' | 'success' | 'error'>('pending');
   const [stateDescription, setStateDescription] = useState<string | undefined>();
 
@@ -27,7 +26,7 @@ function useCopyOTPToClipboard() {
     const result = emailParser.tryParse(email);
     if (!result.success) {
       setState('error');
-      setStateDescription('Parser error');
+      setStateDescription('Parser error: ' + result.error);
       return;
     }
 
@@ -41,22 +40,13 @@ function useCopyOTPToClipboard() {
     if (state === 'success') {
       timeout = window.setTimeout(() => setState('pending'), 3000);
     }
+    if (state === 'error') {
+      timeout = window.setTimeout(() => setState('pending'), 3000);
+    }
     return (): void => {
       timeout && clearTimeout(timeout);
     };
   }, [state]);
 
   return {trigger, state, stateDescription};
-}
-
-export function CopyOTPButton({email}: {email: Email}): JSX.Element {
-  const {trigger, state, stateDescription} = useCopyOTPToClipboard();
-
-  return (
-    <Button style={{minWidth: '140px'}} onClick={() => trigger(email)}>
-      {state === 'pending' && 'Copy'}
-      {state === 'success' && 'Copied!'}
-      {state === 'error' && stateDescription}
-    </Button>
-  );
 }

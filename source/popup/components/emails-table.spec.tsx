@@ -1,17 +1,20 @@
-import {describe, test, expect, vi, beforeEach} from 'vitest';
-import {render, screen} from '@testing-library/react';
+import {fireEvent, render, screen, waitFor, within} from '@testing-library/react';
+import {beforeEach, describe, expect, test, vi} from 'vitest';
 import {mockBrowser} from '../../__mocks__/webextension-polyfill';
-import {EmailsTable} from './emails-table';
 import type {Email} from '../../types/email';
+import {EmailsTable} from './emails-table';
 
 vi.mock('webextension-polyfill', () => {
   return {default: mockBrowser};
 });
 
 beforeEach(() => {
+  vi.clearAllMocks();
   Object.assign(navigator, {
     clipboard: {writeText: vi.fn().mockResolvedValue(undefined)},
   });
+  vi.mocked(mockBrowser.tabs.query).mockResolvedValue([{id: 123}] as never);
+  vi.mocked(mockBrowser.tabs.sendMessage).mockResolvedValue({success: true} as never);
   vi.spyOn(window, 'open').mockReturnValue(null);
 });
 
@@ -46,14 +49,14 @@ describe('EmailsTable', () => {
     expect(screen.getByText('Sign in to GitLab')).toBeInTheDocument();
   });
 
-  test('renders a CopyOTPButton for each email', () => {
+  test('renders a Copy action for each email', () => {
     render(<EmailsTable emails={emails} />);
 
     const copyButtons = screen.getAllByRole('button', {name: /copy/i});
     expect(copyButtons).toHaveLength(2);
   });
 
-  test('renders a FillOTPButton for each email', () => {
+  test('renders a Fill action for each email', () => {
     render(<EmailsTable emails={emails} />);
 
     const fillButtons = screen.getAllByRole('button', {name: /fill/i});
@@ -80,5 +83,47 @@ describe('EmailsTable', () => {
     const rows = screen.getAllByRole('row');
     // Only header row
     expect(rows).toHaveLength(1);
+  });
+
+  test('shows a copy error in only the affected row', () => {
+    const emailsWithEmptyContent: Email[] = [
+      {...emails[0]!, content: undefined},
+      emails[1]!,
+    ];
+    render(<EmailsTable emails={emailsWithEmptyContent} />);
+
+    fireEvent.click(screen.getAllByRole('button', {name: 'Copy'})[0]!);
+
+    const errorCell = screen.getByText('Empty email');
+    const errorRow = errorCell.closest('tr');
+    expect(errorRow).toHaveAttribute('data-error', 'true');
+    expect(within(errorRow!).getByRole('button', {name: 'Copy'})).toBeInTheDocument();
+    expect(screen.queryByText('Your verification code')).not.toBeInTheDocument();
+    expect(screen.getByText('Sign in to GitLab')).toBeInTheDocument();
+  });
+
+  test('shows a fill error in the affected row', async () => {
+    vi.mocked(mockBrowser.tabs.sendMessage).mockResolvedValue({
+      success: false,
+      error: 'OTP input not found',
+    } as never);
+    render(
+      <EmailsTable
+        emails={[
+          {
+            ...emails[0]!,
+            subject: '641481 is your Polymarket login code',
+          },
+        ]}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', {name: 'Fill'}));
+
+    await waitFor(() => {
+      expect(screen.getByText('OTP input not found')).toBeInTheDocument();
+    });
+    expect(screen.getByText('OTP input not found').closest('tr')).toHaveAttribute('data-error', 'true');
+    expect(screen.getByRole('button', {name: 'Fill'})).toBeInTheDocument();
   });
 });

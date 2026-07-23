@@ -1,33 +1,28 @@
+import {act, renderHook} from '@testing-library/react';
 import {beforeEach, describe, expect, test, vi} from 'vitest';
-import {fireEvent, render, screen, waitFor} from '@testing-library/react';
 import {mockBrowser} from '../../__mocks__/webextension-polyfill';
-import {FillOTPButton} from './fill-otp-button';
 import type {Email} from '../../types/email';
+import {useFillOtp} from './fill-otp-button';
 
 vi.mock('webextension-polyfill', () => {
   return {default: mockBrowser};
 });
 
-describe('FillOTPButton', () => {
+describe('useFillOtp', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(mockBrowser.tabs.query).mockResolvedValue([{id: 123}] as never);
     vi.mocked(mockBrowser.tabs.sendMessage).mockResolvedValue({success: true} as never);
   });
 
-  test('renders Fill when pending', () => {
-    const email: Email = {
-      id: '1',
-      subject: '123456 is your code',
-      from: [{name: 'Polymarket', email: 'noreply@trymagic.com'}],
-      content: '<html>641481</html>',
-    };
+  test('starts pending', () => {
+    const {result} = renderHook(() => useFillOtp());
 
-    render(<FillOTPButton email={email} />);
-    expect(screen.getByRole('button', {name: /fill/i})).toBeInTheDocument();
+    expect(result.current.state).toBe('pending');
+    expect(result.current.stateDescription).toBeUndefined();
   });
 
-  test('fills OTP on the active tab and shows Filled! on success', async () => {
+  test('fills OTP on the active tab and reports success', async () => {
     const email: Email = {
       id: '1',
       subject: '641481 is your Polymarket login code',
@@ -35,17 +30,19 @@ describe('FillOTPButton', () => {
       content: '<p>body</p>',
     };
 
-    render(<FillOTPButton email={email} />);
-    fireEvent.click(screen.getByRole('button', {name: /fill/i}));
+    const {result} = renderHook(() => useFillOtp());
 
-    await waitFor(() => {
-      expect(mockBrowser.tabs.query).toHaveBeenCalledWith({active: true, currentWindow: true});
-      expect(mockBrowser.tabs.sendMessage).toHaveBeenCalledWith(123, {
-        type: 'FILL_OTP',
-        code: '641481',
-      });
+    await act(async () => {
+      await result.current.trigger(email);
     });
-    expect(screen.getByRole('button', {name: /filled!/i})).toBeInTheDocument();
+
+    expect(mockBrowser.tabs.query).toHaveBeenCalledWith({active: true, currentWindow: true});
+    expect(mockBrowser.tabs.sendMessage).toHaveBeenCalledWith(123, {
+      type: 'FILL_OTP',
+      code: '641481',
+    });
+    expect(result.current.state).toBe('success');
+    expect(result.current.stateDescription).toBeUndefined();
   });
 
   test('shows error when email has no content', () => {
@@ -56,10 +53,14 @@ describe('FillOTPButton', () => {
       content: undefined,
     };
 
-    render(<FillOTPButton email={email} />);
-    fireEvent.click(screen.getByRole('button', {name: /fill/i}));
+    const {result} = renderHook(() => useFillOtp());
 
-    expect(screen.getByRole('button', {name: /empty email/i})).toBeInTheDocument();
+    act(() => {
+      void result.current.trigger(email);
+    });
+
+    expect(result.current.state).toBe('error');
+    expect(result.current.stateDescription).toBe('Empty email');
     expect(mockBrowser.tabs.sendMessage).not.toHaveBeenCalled();
   });
 
@@ -72,12 +73,14 @@ describe('FillOTPButton', () => {
     };
     vi.mocked(mockBrowser.tabs.sendMessage).mockResolvedValue({success: false, error: 'OTP input not found'} as never);
 
-    render(<FillOTPButton email={email} />);
-    fireEvent.click(screen.getByRole('button', {name: /fill/i}));
+    const {result} = renderHook(() => useFillOtp());
 
-    await waitFor(() => {
-      expect(screen.getByRole('button', {name: /otp input not found/i})).toBeInTheDocument();
+    await act(async () => {
+      await result.current.trigger(email);
     });
+
+    expect(result.current.state).toBe('error');
+    expect(result.current.stateDescription).toBe('OTP input not found');
   });
 
   test('shows a friendly error when the tab has no receiving content script', async () => {
@@ -91,11 +94,13 @@ describe('FillOTPButton', () => {
       new Error('Could not establish connection. Receiving end does not exist.')
     );
 
-    render(<FillOTPButton email={email} />);
-    fireEvent.click(screen.getByRole('button', {name: /fill/i}));
+    const {result} = renderHook(() => useFillOtp());
 
-    await waitFor(() => {
-      expect(screen.getByRole('button', {name: /open a website tab first/i})).toBeInTheDocument();
+    await act(async () => {
+      await result.current.trigger(email);
     });
+
+    expect(result.current.state).toBe('error');
+    expect(result.current.stateDescription).toBe('Open a website tab first');
   });
 });

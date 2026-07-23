@@ -1,14 +1,13 @@
-import {JSX, useCallback, useEffect, useState} from 'react';
-import browser from 'webextension-polyfill';
-import {Button} from '../../components/ui/button';
-import {EmailParser} from '../../email-parser/email-parser';
-import {type FillOtpResponse} from '../../types/messages';
-import type {Email} from '../../types/email';
 import {emailParserConfig} from '@/email-parser/email-parser-config';
+import {useCallback, useEffect, useState} from 'react';
+import browser from 'webextension-polyfill';
+import {EmailParser} from '../../email-parser/email-parser';
+import type {Email} from '../../types/email';
+import {type FillOtpResponse} from '../../types/messages';
 
 const emailParser = new EmailParser(emailParserConfig);
 
-function useFillOtp() {
+export function useFillOtp() {
   const [state, setState] = useState<'pending' | 'success' | 'error'>('pending');
   const [stateDescription, setStateDescription] = useState<string | undefined>();
 
@@ -65,6 +64,9 @@ function useFillOtp() {
     if (state === 'success') {
       timeout = window.setTimeout(() => setState('pending'), 3000);
     }
+    if (state === 'error') {
+      timeout = window.setTimeout(() => setState('pending'), 3000);
+    }
     return (): void => {
       timeout && clearTimeout(timeout);
     };
@@ -80,16 +82,4 @@ function getFillErrorDescription(error: unknown): string {
   }
 
   return 'Fill failed';
-}
-
-export function FillOTPButton({email}: {email: Email}): JSX.Element {
-  const {trigger, state, stateDescription} = useFillOtp();
-
-  return (
-    <Button style={{minWidth: '140px'}} onClick={() => trigger(email)}>
-      {state === 'pending' && 'Fill'}
-      {state === 'success' && 'Filled!'}
-      {state === 'error' && stateDescription}
-    </Button>
-  );
 }

@@ -1,9 +1,9 @@
-import {describe, test, expect, vi, beforeEach} from 'vitest';
-import {render, screen, fireEvent, waitFor} from '@testing-library/react';
-import {CopyOTPButton} from './copy-opt-button';
+import {act, renderHook} from '@testing-library/react';
+import {beforeEach, describe, expect, test, vi} from 'vitest';
 import type {Email} from '../../types/email';
+import {useCopyOTPToClipboard} from './copy-opt-button';
 
-describe('CopyOTPButton', () => {
+describe('useCopyOTPToClipboard', () => {
   const mockWriteText = vi.fn();
 
   beforeEach(() => {
@@ -13,19 +13,14 @@ describe('CopyOTPButton', () => {
     });
   });
 
-  test('renders Copy when pending', () => {
-    const email: Email = {
-      id: '1',
-      subject: '123456 is your code',
-      from: [{name: 'Polymarket', email: 'noreply@trymagic.com'}],
-      content: '<html>641481</html>',
-    };
+  test('starts pending', () => {
+    const {result} = renderHook(() => useCopyOTPToClipboard());
 
-    render(<CopyOTPButton email={email} />);
-    expect(screen.getByRole('button', {name: /copy/i})).toBeInTheDocument();
+    expect(result.current.state).toBe('pending');
+    expect(result.current.stateDescription).toBeUndefined();
   });
 
-  test('copies OTP to clipboard and shows Copied! on success', async () => {
+  test('copies OTP to clipboard and reports success', async () => {
     const email: Email = {
       id: '1',
       subject: '641481 is your Polymarket login code',
@@ -33,13 +28,15 @@ describe('CopyOTPButton', () => {
       content: '<p>body</p>',
     };
 
-    render(<CopyOTPButton email={email} />);
-    fireEvent.click(screen.getByRole('button', {name: /copy/i}));
+    const {result} = renderHook(() => useCopyOTPToClipboard());
 
-    await waitFor(() => {
-      expect(mockWriteText).toHaveBeenCalledWith('641481');
+    await act(async () => {
+      await result.current.trigger(email);
     });
-    expect(screen.getByRole('button', {name: /copied!/i})).toBeInTheDocument();
+
+    expect(mockWriteText).toHaveBeenCalledWith('641481');
+    expect(result.current.state).toBe('success');
+    expect(result.current.stateDescription).toBeUndefined();
   });
 
   test('shows error when email has no content', () => {
@@ -50,10 +47,14 @@ describe('CopyOTPButton', () => {
       content: undefined,
     };
 
-    render(<CopyOTPButton email={email} />);
-    fireEvent.click(screen.getByRole('button', {name: /copy/i}));
+    const {result} = renderHook(() => useCopyOTPToClipboard());
 
-    expect(screen.getByRole('button', {name: /empty email/i})).toBeInTheDocument();
+    act(() => {
+      void result.current.trigger(email);
+    });
+
+    expect(result.current.state).toBe('error');
+    expect(result.current.stateDescription).toBe('Empty email');
     expect(mockWriteText).not.toHaveBeenCalled();
   });
 
@@ -65,10 +66,14 @@ describe('CopyOTPButton', () => {
       content: '<p>No OTP here</p>',
     };
 
-    render(<CopyOTPButton email={email} />);
-    fireEvent.click(screen.getByRole('button', {name: /copy/i}));
+    const {result} = renderHook(() => useCopyOTPToClipboard());
 
-    expect(screen.getByRole('button', {name: /parser not found/i})).toBeInTheDocument();
+    act(() => {
+      void result.current.trigger(email);
+    });
+
+    expect(result.current.state).toBe('error');
+    expect(result.current.stateDescription).toBe('Parser not found');
     expect(mockWriteText).not.toHaveBeenCalled();
   });
 
@@ -80,12 +85,14 @@ describe('CopyOTPButton', () => {
       content: '<p>No OTP here</p>',
     };
 
-    render(<CopyOTPButton email={email} />);
-    fireEvent.click(screen.getByRole('button', {name: /copy/i}));
+    const {result} = renderHook(() => useCopyOTPToClipboard());
 
-    expect(
-      screen.getByRole('button', {name: /parser error/i})
-    ).toBeInTheDocument();
+    act(() => {
+      void result.current.trigger(email);
+    });
+
+    expect(result.current.state).toBe('error');
+    expect(result.current.stateDescription).toBe('Parser error: not-found');
     expect(mockWriteText).not.toHaveBeenCalled();
   });
 });
