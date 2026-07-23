@@ -31,7 +31,7 @@ export class EmailParserConfigError extends Error {
 export async function loadEmailParserConfig(
   options: LoadEmailParserConfigOptions = {}
 ): Promise<EmailParserConfig> {
-  const isDevelopment = options.isDevelopment ?? import.meta.env.DEV;
+  const isDevelopment = options.isDevelopment ?? __DEV__;
 
   if (isDevelopment) {
     return parseEmailParserConfig(options.localConfig ?? __EMAIL_PARSER_CONFIG__);

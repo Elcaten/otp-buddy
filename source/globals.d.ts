@@ -5,3 +5,4 @@ declare module '*.scss' {
 }
 
 declare const __EMAIL_PARSER_CONFIG__: unknown;
+declare const __DEV__: boolean;
