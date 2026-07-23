@@ -17,6 +17,7 @@ jobs:
           VITE_OTP_BUDDY_SAFARI_CLIENT_ID: ${{ secrets.VITE_OTP_BUDDY_SAFARI_CLIENT_ID }}
           VITE_OTP_BUDDY_WEB_CLIENT_ID: ${{ secrets.VITE_OTP_BUDDY_WEB_CLIENT_ID }}
           VITE_OTP_BUDDY_WEB_CLIENT_SECRET: ${{ secrets.VITE_OTP_BUDDY_WEB_CLIENT_SECRET }}
+          VITE_EMAIL_PARSER_CONFIG_URL: ${{ secrets.VITE_EMAIL_PARSER_CONFIG_URL }}
 
       - name: Upload extension
         uses: actions/upload-artifact@v4
