@@ -1,4 +1,5 @@
 import validateConfig from './email-parser-config.validator.js';
+import localConfig from './email-parser-config.json';
 
 import type {EmailParserConfig} from './email-parser-config.types';
 
@@ -34,7 +35,7 @@ export async function loadEmailParserConfig(
   const isDevelopment = options.isDevelopment ?? __DEV__;
 
   if (isDevelopment) {
-    return parseEmailParserConfig(options.localConfig ?? __EMAIL_PARSER_CONFIG__);
+    return parseEmailParserConfig(options.localConfig ?? getBundledDevelopmentConfig());
   }
 
   const configUrl = options.configUrl ?? import.meta.env.VITE_EMAIL_PARSER_CONFIG_URL;
@@ -77,6 +78,10 @@ export async function loadEmailParserConfig(
   }
 
   return parseEmailParserConfig(config);
+}
+
+function getBundledDevelopmentConfig(): unknown {
+  return __DEV__ ? localConfig : undefined;
 }
 
 function parseEmailParserConfig(config: unknown): EmailParserConfig {
