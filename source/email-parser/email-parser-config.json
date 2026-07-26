@@ -88,6 +88,7 @@
         }
       ]
     },
+
     {
       "name": "Fallback",
       "matchers": [
@@ -107,17 +108,12 @@
         {
           "source": "subject",
           "method": "regex",
-          "pattern": "\\d{4,6}"
-        },
-        {
-          "source": "subject",
-          "method": "regex",
-          "pattern": "\\b[A-Za-z0-9]{6}\\b"
+          "pattern": "\\d{4,8}"
         },
         {
           "source": "body",
           "method": "xpath",
-          "expression": "//*[not(*)][string-length(normalize-space()) = 6][translate(normalize-space(), '0123456789', '') = '']"
+          "expression": "//*[not(*)][string-length(normalize-space()) >= 4][string-length(normalize-space()) <= 8][translate(normalize-space(), '0123456789', '') = '']"
         }
       ]
     }

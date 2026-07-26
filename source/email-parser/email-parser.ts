@@ -22,6 +22,7 @@ export class EmailParser implements IEmailParser {
   tryParse(email: Email): ParseResult {
     const rule = this.config.rules.find((r) => ruleMatches(r, email));
     if (!rule) return {success: false, error: 'not-found'};
+    console.log('rule found ', rule);
     for (const extractor of rule.extractors) {
       const result = runExtractor(extractor, email);
       // only 'not-found' falls through to the next extractor;
