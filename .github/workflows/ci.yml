@@ -40,6 +40,17 @@ jobs:
     needs: build-chrome
     uses: ./.github/workflows/e2e-chromium.yml
 
+  ci-required:
+    name: CI required
+    if: always()
+    needs: [lint-and-test, build-chrome, build-firefox, e2e-chromium]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require all checks to pass
+        env:
+          CHECK_RESULTS: ${{ join(needs.*.result, ',') }}
+        run: test "$CHECK_RESULTS" = 'success,success,success,success'
+
   release:
     if: startsWith(github.ref, 'refs/tags/')
     needs: [build-chrome, sign-firefox, build-safari-unsigned]
