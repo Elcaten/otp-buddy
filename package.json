@@ -89,6 +89,6 @@
     "vite-plugin-clean": "^2.0.1",
     "vite-plugin-wext-manifest": "^1.2.2",
     "vite-plugin-zip-pack": "^1.2.4",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.11"
   }
 }
